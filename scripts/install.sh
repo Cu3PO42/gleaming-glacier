@@ -2,8 +2,9 @@
 
 mac_deps() {
   # Set up pre-requisites
+  echo "Installing XCode Command Line Tools..."
   xcode-select --install || true
-  if [[ $(arch) == 'arm64' ]]; then
+  if [[ $(arch) == 'arm64' ]] && ! pgrep -q oahd; then
     # Ask if the user wants to install Rosetta
     choice=""
     while ! [[ "$choice" =~ ^[YyNn]$ ]]; do
@@ -77,8 +78,8 @@ template() {
     return
   fi
   nix flake init --template github:Cu3PO42/gleaming-glacier#system
-  git add --all
-  git commit -m "Init from template"
+  git add --all > /dev/null 2>&1
+  git commit -m "Init from template" > /dev/null 2>&1
 }
 
 if [[ "$OSTYPE" == "darwin"* ]]; then

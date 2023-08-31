@@ -19,7 +19,7 @@ user() {
 }
 EOF
     echo "Created user configuration at $USER"
-    git add "$USER"
+    git add "$USER" > /dev/null
 }
 
 darwin() {
@@ -52,7 +52,7 @@ darwin() {
 }
 EOF
     echo "Created darwin configuration at $HOST"
-    git add "$HOST"
+    git add "$HOST" > /dev/null
 }
 
 if [[ $# -eq 0 ]]; then

@@ -28,28 +28,41 @@ done
 if [[ $DO_HOST -eq 1 ]]; then
     # If darwin
     if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "Building nix-darwin configuration..."
         nix build ".#darwinConfigurations.$HOSTNAME.system" --extra-experimental-features "nix-command flakes"
+        echo "Activating configuration..."
         ./result/sw/bin/darwin-rebuild switch --flake ".#$HOSTNAME"
 
         # The previous step may install XCode, which breaks Git unless we accept the license
-        # if xcodebuild exists
         if command -v xcodebuild &> /dev/null; then
-            sudo xcodebuild -license
+            XCODE_VERSION=`xcodebuild -version | grep '^Xcode\s' | sed -E 's/^Xcode[[:space:]]+([0-9\.]+)/\1/'`
+            ACCEPTED_LICENSE_VERSION=`defaults read /Library/Preferences/com.apple.dt.Xcode 2> /dev/null | grep IDEXcodeVersionForAgreedToGMLicense | cut -d '"' -f 2`
+            if [ "$XCODE_VERSION" != "$ACCEPTED_LICENSE_VERSION" ]; then
+                echo "XCode version $XCODE_VERSION is installed, but the license has not been"
+                echo "accepted. We are now running 'sudo xcodebuild -license' to accept the"
+                echo "license. This is an interactive process, so please follow the instructions."
+                echo "Press enter to continue."
+                read -r
+                sudo xcodebuild -license
+            fi
         fi
     fi
 
     # If /etc/NIXOS exists
     if [[ -d "/etc/NIXOS" ]]; then
+        echo "Building and activating NixOS configuration..."
         nixos-rebuild switch --flake ".#$HOSTNAME"
     fi
 fi
 
 if [[ $DO_USER -eq 1 ]]; then
+    echo "Building Home-Manager configuration..."
     if ! nix build ".#homeConfigurations.$(whoami)@$HOSTNAME.activationPackage"; then
         echo "Building your Home-Manager configuration failed. There is most likely a problem in users/$(whoami)@$HOSTNAME."
         echo "Please check the logs above for more information."
         exit 1
     fi
+    echo "Activating Home-Manager configuration..."
     if ! ./result/activate; then
         echo "Activation of your Home-Manager configuration was not successful. This is most"
         echo "likely because Home-Manager would overwrite files that you already have. If"
