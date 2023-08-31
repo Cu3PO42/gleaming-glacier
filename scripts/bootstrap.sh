@@ -45,6 +45,35 @@ if [[ $DO_HOST -eq 1 ]]; then
 fi
 
 if [[ $DO_USER -eq 1 ]]; then
-    nix build ".#homeConfigurations.$(whoami)@$HOSTNAME.activationPackage"
-    ./result/activate
+    if ! nix build ".#homeConfigurations.$(whoami)@$HOSTNAME.activationPackage"; then
+        echo "Building your Home-Manager configuration failed. There is most likely a problem in users/$(whoami)@$HOSTNAME."
+        echo "Please check the logs above for more information."
+        exit 1
+    fi
+    if ! ./result/activate; then
+        echo "Activation of your Home-Manager configuration was not successful. This is most"
+        echo "likely because Home-Manager would overwrite files that you already have. If"
+        echo "you haven't manually modified any of those files, it is probably safe to"
+        echo "overwrite them. Any old files will be renamed with the extension '.backup'."
+        echo "If you have modified these files, you will need to manually merge the changes"
+        echo "into your Home-Manager configuration or disable features modifying these files."
+        echo "Would you like to overwrite these files? [y/n]"
+        while true; do
+            read -r yn
+            case $yn in
+                [Yy]* )
+                    HOME_MANAGER_BACKUP_EXT=backup ./result/activate
+                    break
+                    ;;
+                [Nn]* )
+                    echo "Aborting activation. Please manually merge your changes to those files, move"
+                    echo "them and re-run the bootstrap script."
+                    exit 1
+                    ;;
+                * )
+                    echo "Please answer yes or no."
+                    ;;
+            esac
+        done
+    fi
 fi
