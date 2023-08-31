@@ -36,8 +36,8 @@ in {
       fzf_configure_bindings
     '';
     shellAliases = {
-      he = "$EDITOR ${config.copper.file.symlink.base}";
-      hes = "he; hs";
+      he = lib.mkIf (config.copper.file.symlink.base != null) "$EDITOR ${config.copper.file.symlink.base}";
+      hes = lib.mkIf (config.copper.file.symlink.base != null) "he; hs";
       nr = "nix run nixpkgs#$argv[1] -- $argv[2..-1]";
       nsh = "nix shell (for prog in $argv; echo \"nixpkgs#$prog\"; end)";
       nd = "nix develop -c $SHELL";
@@ -48,12 +48,14 @@ in {
       # Disable greeting
       fish_greeting = "";
 
-      hs.body = ''
-        pushd ${config.copper.file.symlink.base}
-        git add --all
-        home-manager switch
-        popd
-      '';
+      hs = lib.mkIf (config.copper.file.symlink.base != null) {
+        body = ''
+          pushd ${config.copper.file.symlink.base}
+          git add --all
+          home-manager switch
+          popd
+        '';
+      };
 
       lb.body = ''
         if test -d $argv
