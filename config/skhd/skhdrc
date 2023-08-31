@@ -1,0 +1,129 @@
+## Navigation (lalt - ...)
+# Space Navigation (four spaces per display): lalt - {1, 2, 3, 4}
+lalt - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[0]} ]] && yabai -m space --focus ${SPACES[0]}
+lalt - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[1]} ]] && yabai -m space --focus ${SPACES[1]}
+lalt - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[2]} ]] && yabai -m space --focus ${SPACES[2]}
+lalt - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[4]} ]] && yabai -m space --focus ${SPACES[4]}
+lalt - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[5]} ]] && yabai -m space --focus ${SPACES[5]}
+lalt - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[6]} ]] && yabai -m space --focus ${SPACES[6]}
+lalt - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[7]} ]] && yabai -m space --focus ${SPACES[7]}
+
+# Window Navigation (through display borders): lalt - {n, t, r, d}
+lalt - t    : yabai -m window --focus west  || yabai -m display --focus west
+lalt - r    : yabai -m window --focus south || yabai -m display --focus south
+lalt - n    : yabai -m window --focus north || yabai -m display --focus north
+lalt - d    : yabai -m window --focus east  || yabai -m display --focus east
+
+# Extended Window Navigation: lalt - {s, y}
+lalt -    s : yabai -m window --focus first
+lalt -    y : yabai -m window --focus  last
+
+# Float / Unfloat window: lalt - space
+lalt - space : yabai -m window --toggle float; sketchybar --trigger window_focus
+
+# Make window zoom to fullscreen: shift + lalt - f
+shift + lalt - f : yabai -m window --toggle zoom-fullscreen; sketchybar --trigger window_focus
+
+# Make window zoom to parent node: lalt - f 
+lalt - f : yabai -m window --toggle zoom-parent; sketchybar --trigger window_focus
+
+## Window Movement (shift + lalt - ...)
+# Moving windows in spaces: shift + lalt - {n, t, r, d}
+shift + lalt - t : yabai -m window --warp west || $(yabai -m window --display west && sketchybar --trigger windows_on_spaces && yabai -m display --focus west && yabai -m window --warp last) || yabai -m window --move rel:-10:0
+shift + lalt - r : yabai -m window --warp south || $(yabai -m window --display south && sketchybar --trigger windows_on_spaces && yabai -m display --focus south) || yabai -m window --move rel:0:10
+shift + lalt - n : yabai -m window --warp north || $(yabai -m window --display north && sketchybar --trigger windows_on_spaces && yabai -m display --focus north) || yabai -m window --move rel:0:-10
+shift + lalt - d : yabai -m window --warp east || $(yabai -m window --display east && sketchybar --trigger windows_on_spaces && yabai -m display --focus east && yabai -m window --warp first) || yabai -m window --move rel:10:0
+
+# Toggle split orientation of the selected windows node: shift + lalt - s
+shift + lalt - s : yabai -m window --toggle split
+
+# Moving windows between spaces: shift + lalt - {1, 2, 3, 4, p, n } (Assumes 4 Spaces Max per Display)
+shift + lalt - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[0]} ]] \
+                  && yabai -m window --space ${SPACES[0]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[1]} ]] \
+                  && yabai -m window --space ${SPACES[1]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[2]} ]] \
+                  && yabai -m window --space ${SPACES[2]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 4 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[3]} ]] \
+                  && yabai -m window --space ${SPACES[3]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[4]} ]] \
+                  && yabai -m window --space ${SPACES[4]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[5]} ]] \
+                  && yabai -m window --space ${SPACES[5]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[6]} ]] \
+                  && yabai -m window --space ${SPACES[6]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[7]} ]] \
+                  && yabai -m window --space ${SPACES[7]} \
+                  && sketchybar --trigger windows_on_spaces
+
+shift + lalt - p : yabai -m window --space prev && yabai -m space --focus prev && sketchybar --trigger windows_on_spaces
+shift + lalt - e : yabai -m window --space next && yabai -m space --focus next && sketchybar --trigger windows_on_spaces
+
+# Mirror Space on X and Y Axis: shift + lalt - {x, y}
+shift + lalt - x : yabai -m space --mirror x-axis
+shift + lalt - y : yabai -m space --mirror y-axis
+
+## Stacks (shift + ctrl - ...)
+# Add the active window to the window or stack to the {direction}: shift + ctrl - {n, t, r, d}
+shift + ctrl - t    : yabai -m window  west --stack $(yabai -m query --windows --window | jq -r '.id') && sketchybar --trigger window_focus
+shift + ctrl - r    : yabai -m window south --stack $(yabai -m query --windows --window | jq -r '.id') && sketchybar --trigger window_focus
+shift + ctrl - n    : yabai -m window north --stack $(yabai -m query --windows --window | jq -r '.id') && sketchybar --trigger window_focus
+shift + ctrl - d    : yabai -m window  east --stack $(yabai -m query --windows --window | jq -r '.id') && sketchybar --trigger window_focus
+
+# Stack Navigation: shift + ctrl - {e, p}
+shift + ctrl - e : yabai -m window --focus stack.next
+shift + ctrl - p : yabai -m window --focus stack.prev
+
+## Resize (ctrl + lalt - ...)
+# Resize windows: ctrl + lalt - {n, t, r, d}
+ctrl + lalt - t    : yabai -m window --resize right:-100:0 || yabai -m window --resize left:-100:0
+ctrl + lalt - r    : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:100
+ctrl + lalt - n    : yabai -m window --resize bottom:0:-100 || yabai -m window --resize top:0:-100
+ctrl + lalt - d    : yabai -m window --resize right:100:0 || yabai -m window --resize left:100:0
+
+# Equalize size of windows: ctrl + lalt - e
+ctrl + lalt - e : yabai -m space --balance
+
+# Enable / Disable gaps in current workspace: ctrl + lalt - g
+ctrl + lalt - g : yabai -m space --toggle padding; yabai -m space --toggle gap
+
+# Enable / Disable gaps in current workspace: ctrl + lalt - b
+ctrl + lalt - b : yabai -m config window_border off 
+shift + ctrl + lalt - b : yabai -m config window_border on
+
+## Insertion (shift + ctrl + lalt - ...)
+# Set insertion point for focused container: shift + ctrl + lalt - {n, t, r, d, s}
+shift + ctrl + lalt - t : yabai -m window --insert west
+shift + ctrl + lalt - r : yabai -m window --insert south
+shift + ctrl + lalt - n : yabai -m window --insert north
+shift + ctrl + lalt - d : yabai -m window --insert east
+shift + ctrl + lalt - s : yabai -m window --insert stack
+
+## Misc
+# Open new iTerm2 window
+# TODO: check if iTerm2 is already running, if not launch it with open 
+lalt - c : printf "tell application \"iTerm2\"\n create window with default profile\n end tell" | osascript
+# Scratchpad wwindow
+lalt - w : toggle-scratchpad
+
+# New window in hor./ vert. splits for all applications with yabai
+lalt - h : yabai -m window --insert east;  skhd -k "cmd - n"
+lalt - v : yabai -m window --insert south; skhd -k "cmd - n"
+
+# Toggle sketchybar
+shift + lalt - space : sketchybar --bar hidden=toggle
+shift + lalt - r : launchctl stop org.nixos.sketchybar # It is automatically restarted

@@ -1,0 +1,1 @@
+My Karabiner elements config includes the Neo2 rules available [here](https://git.neo-layout.org/neo/neo-layout/src/branch/master/mac_osx/neo_karabiner_rules.json) under the terms of GPLv3.

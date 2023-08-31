@@ -1,0 +1,3 @@
+{...}: {
+  programs.lunarvim.enable = true;
+}
