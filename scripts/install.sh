@@ -98,7 +98,7 @@ fi
 
 if [[ "$1" == "--template" ]] && ! (git config user.name && git config user.email); then
   echo "To create a template, you need to configure your git user.name and user.email."
-  echo "Please run 'git config user.name \"Your Name\"' and 'git config user.email \"your@email.com\"' and run this script again."
+  echo "Please run 'git config --global user.name \"Your Name\"' and 'git config --global user.email \"your@email.com\"' and run this script again."
   exit 1
 fi
 
