@@ -12,15 +12,25 @@
       mv npiperelay.exe $out/bin
     '';
   };
+
   # This approach is originally based on
   # https://stuartleeks.com/posts/wsl-ssh-key-forward-to-windows/ but has been
-  # heavily simplified. We'd really like to define a systemd user service, but
-  # that's not posisble # on WSL2 by default. (since there is no systemd).
+  # heavily simplified on the one side and extendet to automaticall install
+  # npiperelay on the other side. We'd really like to define a systemd user
+  # service, but that's not posisble on WSL2 by default. (since there is no
+  # systemd).
 in
   pkgs.writeShellScriptBin "wsl-ssh-agent" ''
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     if ! (${pkgs.iproute2}/bin/ss -a | grep -q $SSH_AUTH_SOCK); then
       rm -f "$SSH_AUTH_SOCK"
-      (setsid ${pkgs.socat}/bin/socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"${npiperelay}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
+
+      WINPATH="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' | sed -e 's/\r//')")/nix-cache"
+      if ! [ -e "$WSLPATH" ]; then
+        mkdir "$APPDATA/nix-cache"
+      fi
+      cp ${npiperelay}/bin/npiperelay.exe "$WINPATH"
+
+      (setsid ${pkgs.socat}/bin/socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$WINPATH/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
     fi
   ''
