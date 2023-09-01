@@ -67,7 +67,14 @@ update() {
     if [ -z "$TARGET_USER" ]; then
         TARGET_USER="$(whoami)"
     fi
-    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" switch --fast --use-remote-sudo --use-substitutes
+
+    if [[ "$3" == "--build-on-remote" ]]; then
+        REMOTE_ARGS=( --build-host "$TARGET_USER@$TARGET" )
+    else
+        REMOTE_ARGS=()
+    fi
+
+    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" switch --fast --use-remote-sudo --use-substitutes "${REMOTE_ARGS[@]}"
 }
 
 unlock() {
@@ -83,7 +90,7 @@ case "$1" in
         provision
         ;;
     update)
-        update
+        update "$@"
         ;;
     unlock)
         unlock
