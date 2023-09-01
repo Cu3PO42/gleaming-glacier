@@ -25,11 +25,14 @@ in
     if ! (${pkgs.iproute2}/bin/ss -a | grep -q $SSH_AUTH_SOCK); then
       rm -f "$SSH_AUTH_SOCK"
 
-      WINPATH="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' | sed -e 's/\r//')")/nix-cache"
+      WINPATH="$(wslpath "$( (cd /mnt/c/; cmd.exe /c 'echo %LOCALAPPDATA%') | sed -e 's/\r//')")/nix-cache"
       if ! [ -e "$WSLPATH" ]; then
-        mkdir "$APPDATA/nix-cache"
+        mkdir "$WINPATH/nix-cache"
       fi
-      cp ${npiperelay}/bin/npiperelay.exe "$WINPATH"
+
+      if ! cmp -s ${npiperelay}/bin/npiperelay.exe "$WINPATH/npiperelay.exe"; then
+        cp ${npiperelay}/bin/npiperelay.exe "$WINPATH/npiperelay.exe"
+      fi
 
       (setsid ${pkgs.socat}/bin/socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$WINPATH/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
     fi
