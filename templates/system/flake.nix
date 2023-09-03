@@ -31,6 +31,8 @@
       packages = forAllSystems (s: {inherit (copper.packages.${s}) plate;});
       # Copy the scripts that simplify usage of this template.
       apps = forAllSystems (s: {inherit (copper.apps.${s}) generate bootstrap;});
+      # Copy the devShell that can be used for initial setup
+      devShells = forAllSystems (s: {inherit (copper.devShells) default;});
 
       # Just as in Copper's flake, load all modules from their respective folders.
       # This implicilty imports all .nix files in the module folders!
