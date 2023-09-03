@@ -45,8 +45,11 @@ in {
           cat <<EOF > /root/.profile
           if pgrep -x "zfs" > /dev/null
           then
-            zfs load-key -a
-            killall zfs
+            if zfs load-key -a; then
+              killall zfs
+            else
+              echo "zfs passphrase invalid. Please try again."
+            fi
           else
             echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
           fi
