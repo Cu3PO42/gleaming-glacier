@@ -93,11 +93,11 @@ in {
         };
       };
       datasets = {
-        "user/home" = {
+        "rpool/user/home" = {
           useTemplate = ["frequent"];
         };
 
-        system = {
+        "rpool/system" = {
           recursive = true;
           useTemplate = ["recent"];
         };
