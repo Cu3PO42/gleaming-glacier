@@ -58,4 +58,17 @@
     tree
     tokei
   ];
+
+  # This is a fix for ripgrep-all not building on current nixpkgs.
+  # TODO: remove once nixos/nixpkgs#250306 is reolved
+  nixpkgs.overlays = [
+    (self: super: {
+      ripgrep-all = super.ripgrep-all.overrideAttrs (finalAttrs: prevAttrs: {
+        patches = prevAttrs.patches ++ [(pkgs.fetchpatch {
+          url = "https://gist.githubusercontent.com/liketechnik/2be6df2fa77728239d545a0d155afcc4/raw/4d5cf1afe207315f999db06f0cb4b5b816150b38/0001-fix-adapters-pandoc-adjust-flag-for-requesting-atx-h.patch";
+          hash = "sha256-4uWyXcr8aYH65Mh9Ay6JQBJHZ8QaU7+dwWN/Ceif2TQ";
+        })];
+      });
+    })
+  ];
 }
