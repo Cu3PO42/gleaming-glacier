@@ -89,7 +89,10 @@ provision() {
     fi
 
     if [ -n "$DISK_ENCRYPTION_KEY" ]; then
-        DEK_ARGS=( --disk-encryption-keys /tmp/dek.key <(op read "$DISK_ENCRYPTION_KEY") )
+        DEK_FILE=$(mktemp)
+        trap 'rm -f "$DEK_FILE"' EXIT
+        op read "$DISK_ENCRYPTION_KEY" > "$DEK_FILE"
+        DEK_ARGS=( --disk-encryption-keys /tmp/dek.key "$DEK_FILE" )
     else
         DEK_ARGS=()
     fi
