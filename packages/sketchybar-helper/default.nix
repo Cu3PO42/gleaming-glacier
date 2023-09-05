@@ -16,6 +16,6 @@ stdenv.mkDerivation {
   '';
 
   meta = {
-    supportedPlatforms = lib.platforms.darwin;
+    platforms = lib.platforms.darwin;
   };
 }
