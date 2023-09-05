@@ -49,10 +49,20 @@ updateHosts() {
 
 provision() {
     BUILD_ON_REMOTE=0
+    TARGET_USER="root"
+    PORT="22"
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --build-on-remote)
                 BUILD_ON_REMOTE=1
+                ;;
+            --target-user)
+                TARGET_USER="$2"
+                shift
+                ;;
+            --port)
+                PORT="$2"
+                shift
                 ;;
             *)
                 parseFlake "$1"
@@ -88,7 +98,8 @@ provision() {
         --extra-files "$TEMP" \
         "${DEK_ARGS[@]}" \
         "${REMOTE_ARGS[@]}" \
-        "root@$TARGET"
+        -p "$PORT" \
+        "$TARGET_USER@$TARGET"
 
     if [ -n "$HOST_KEY" ]; then
         ssh-keygen -R "$TARGET"
