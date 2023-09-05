@@ -19,8 +19,7 @@
   # npiperelay on the other side. We'd really like to define a systemd user
   # service, but that's not posisble on WSL2 by default. (since there is no
   # systemd).
-in
-  pkgs.writeShellScriptBin "wsl-ssh-agent" ''
+  wsl-ssh-agent = pkgs.writeShellScriptBin "wsl-ssh-agent" ''
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     if ! (${pkgs.iproute2}/bin/ss -a | grep -q $SSH_AUTH_SOCK); then
       rm -f "$SSH_AUTH_SOCK"
@@ -36,4 +35,6 @@ in
 
       (setsid ${pkgs.socat}/bin/socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$WINPATH/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork &) >/dev/null 2>&1
     fi
-  ''
+  '';
+in
+  wsl-ssh-agent // {meta = (wsl-ssh-agent.meta or {}) // {platforms = ["x86_64-linux"];};}
