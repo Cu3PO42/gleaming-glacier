@@ -171,47 +171,48 @@ in {
       withNodeJs = true;
       plugins = [];
     };
-  in mkIf cfg.enable {
-    home.packages = [cfg.finalPackage];
+  in
+    mkIf cfg.enable {
+      home.packages = [cfg.finalPackage];
 
-    home.sessionVariables = mkIf cfg.defaultEditor {EDITOR = "lvim";};
+      home.sessionVariables = mkIf cfg.defaultEditor {EDITOR = "lvim";};
 
-    home.file."${lunarvimConfigDir}/config.lua" = cfg.config;
+      home.file."${lunarvimConfigDir}/config.lua" = cfg.config;
 
-    programs.lunarvim.finalPackage = let
-      wrappedNeovim =
-        pkgs.wrapNeovimUnstable cfg.package
-        (neovimConfig
-          // {
-            wrapperArgs =
-              (lib.escapeShellArgs neovimConfig.wrapperArgs)
-              + " "
-              + extraMakeWrapperArgs
-              + " "
-              + extraMakeWrapperLuaCArgs
-              + " "
-              + extraMakeWrapperLuaArgs
-              + " "
-              + extraMakeWrapperLunarVimArgs;
-            wrapRc = false;
-          });
-    in
-      pkgs.symlinkJoin {
-        name = "lunarvim";
-        paths = [wrappedNeovim];
-        postBuild = "mv $out/bin/nvim $out/bin/lvim";
-      };
+      programs.lunarvim.finalPackage = let
+        wrappedNeovim =
+          pkgs.wrapNeovimUnstable cfg.package
+          (neovimConfig
+            // {
+              wrapperArgs =
+                (lib.escapeShellArgs neovimConfig.wrapperArgs)
+                + " "
+                + extraMakeWrapperArgs
+                + " "
+                + extraMakeWrapperLuaCArgs
+                + " "
+                + extraMakeWrapperLuaArgs
+                + " "
+                + extraMakeWrapperLunarVimArgs;
+              wrapRc = false;
+            });
+      in
+        pkgs.symlinkJoin {
+          name = "lunarvim";
+          paths = [wrappedNeovim];
+          postBuild = "mv $out/bin/nvim $out/bin/lvim";
+        };
 
-    programs.bash.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
-    programs.fish.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
-    programs.zsh.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
+      programs.bash.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
+      programs.fish.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
+      programs.zsh.shellAliases = mkIf cfg.vimdiffAlias {vimdiff = "lvim -d";};
 
-    home.activation.lunarvimInit = lib.hm.dag.entryAfter ["writeBoundary"] "
+      home.activation.lunarvimInit = lib.hm.dag.entryAfter ["writeBoundary"] "
       ${cfg.finalPackage}/bin/lvim --headless -c 'quitall'
 
       if ! PATH=\"${cfg.finalPackage}/bin\":$PATH bash '${lunarvimBaseDir}/utils/ci/verify_plugins.sh'; then
         echo '[LunarVim]: Unable to verify plugins, make sure to manually run \":Lazy sync\" when starting lvim for the first time.'
       fi
     ";
-  };
+    };
 }
