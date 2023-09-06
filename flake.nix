@@ -222,7 +222,7 @@
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     apps = forAllSystems (pkgs: import ./apps (inputs // {inherit pkgs;}));
-    packages = forAllSystems (pkgs: import ./packages (inputs // {inherit pkgs;}));
+    packages = forAllSystems (pkgs: pkgs.lib.filterAttrs (n: v: v != null) (import ./packages (inputs // {inherit pkgs;})));
 
     overlays = import ./overlays {
       inherit inputs;

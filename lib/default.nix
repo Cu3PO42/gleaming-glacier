@@ -14,16 +14,14 @@ rec {
 
   loadDir = with nixpkgs.lib;
     dir: f:
-      filterAttrs (name: value: value != null) (
-        mapAttrs' (name: _: {
-          name = removeSuffix ".nix" name;
-          value = f {
-            inherit name;
-            path = dir + "/${name}";
-          };
-        })
-        (filterAttrs (name: typ: (hasSuffix ".nix" name && name != "default.nix") || typ == "directory") (builtins.readDir dir))
-      );
+      mapAttrs' (name: _: {
+        name = removeSuffix ".nix" name;
+        value = f {
+          inherit name;
+          path = dir + "/${name}";
+        };
+      })
+      (filterAttrs (name: typ: (hasSuffix ".nix" name && name != "default.nix") || typ == "directory") (builtins.readDir dir));
 
   loadDirRec = dir: f:
     with nixpkgs.lib; let
