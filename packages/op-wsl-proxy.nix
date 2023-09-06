@@ -5,10 +5,10 @@
 }: let
   op-wsl-proxy = pkgs.writeShellScriptBin "op" ''
     if [ -n "$WSL_DISTRO_NAME" ] && command -v op.exe >/dev/null; then
-      exec op.exe $@
+      exec op.exe "$@"
     fi
 
-    exec ${_1password}/bin/op $@
+    exec ${_1password}/bin/op "$@"
   '';
 in
   if pkgs.system == "x86_64-linux"
