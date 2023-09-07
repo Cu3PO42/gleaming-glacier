@@ -37,7 +37,16 @@ in {
       default = false;
       example = true;
       description = ''
-        Format a single disk at /dev/sda for use with ZFS and a UEFI system.
+        Format a single disk at `disko.disk` for use with ZFS and a UEFI system.
+      '';
+    };
+
+    disko.disk = mkOption {
+      type = types.str;
+      default = "/dev/sda";
+      example = "/dev/nvme0n1";
+      description = ''
+        The device node of the disk that hosts the filesystem.
       '';
     };
   };
@@ -104,9 +113,9 @@ in {
       };
     };
 
-    disko.devices.disk.sda = lib.mkIf cfg.disko.singleDiskFormat {
+    disko.devices.disk.base = lib.mkIf cfg.disko.singleDiskFormat {
       type = "disk";
-      device = "/dev/sda";
+      device = cfg.disko.disk;
       content = {
         type = "gpt";
         partitions = {
