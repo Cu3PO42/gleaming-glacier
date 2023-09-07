@@ -1,14 +1,4 @@
 {...}: {
-  boot = {
-    # Get a boot log
-    kernelParams = ["console=tty"];
-
-    initrd.kernelModules = [
-      # Force GPU so that we get early boot output.
-      "virtio_gpu"
-    ];
-  };
-
   # Prevent root login
   users.users.root.hashedPassword = null;
   users.mutableUsers = false;

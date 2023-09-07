@@ -27,9 +27,17 @@
       }
     ];
 
-    boot.initrd = {
-      availableKernelModules = ["xhci_pci" "virtio_pci" "virtio_scsi" "usbhid" "sr_mod"];
+    boot = {
+      # Get a boot log
+      kernelParams = ["console=tty"];
+
+      initrd.availableKernelModules = ["xhci_pci" "virtio_pci" "virtio_scsi" "usbhid" "sr_mod"];
+      initrd.kernelModules = [
+        # Force GPU so that we get early boot output.
+        "virtio_gpu"
+      ];
     };
+
 
     # TODO: this is the interface only for aarch64? might need changes for x64
     systemd.network.networks."10-wan" = {
