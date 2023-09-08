@@ -8,7 +8,7 @@
   ];
 
   # Use the same nixpkgs as the system config
-  home-manager.useGlobalPkgs = true;
+  home-manager.useGlobalPkgs = false;
   # Store user packages in $HOME
   home-manager.useUserPackages = false;
   home-manager.extraSpecialArgs = {
