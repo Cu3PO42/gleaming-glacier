@@ -49,6 +49,15 @@ in {
         The device node of the disk that hosts the filesystem.
       '';
     };
+
+    disko.diskLabel = mkOption {
+      type = types.str;
+      default = "base";
+      example = "sda";
+      description = ''
+        The label that will be used as part of the constructed partition labels.
+      '';
+    };
   };
 
   config = {
@@ -113,7 +122,7 @@ in {
       };
     };
 
-    disko.devices.disk.base = lib.mkIf cfg.disko.singleDiskFormat {
+    disko.devices.disk.${cfg.disko.diskLabel} = lib.mkIf cfg.disko.singleDiskFormat {
       type = "disk";
       device = cfg.disko.disk;
       content = {
