@@ -37,7 +37,7 @@
     bottom
     inputs.nix-index-database.comma-with-db
     entr
-    exa
+    eza
     fd
     fzf
     lsd
