@@ -112,10 +112,14 @@ provision() {
 
 update() {
     BUILD_ON_REMOTE=0
+    TEST=0
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --build-on-remote)
                 BUILD_ON_REMOTE=1
+                ;;
+            --test)
+                TEST=1
                 ;;
             *)
                 parseFlake "$1"
@@ -134,8 +138,13 @@ update() {
         REMOTE_ARGS=()
     fi
 
-    echo "${REMOTE_ARGS[@]}"
-    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" switch --fast --use-remote-sudo --use-substitutes "${REMOTE_ARGS[@]}"
+    if [ $TEST -eq 1 ]; then
+        CMD="test"
+    else
+        CMD="switch"
+    fi
+
+    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" $CMD --fast --use-remote-sudo --use-substitutes "${REMOTE_ARGS[@]}"
 }
 
 unlock() {
