@@ -376,6 +376,7 @@ copper.file.symlink = {
 ### Common Modules
 
 * `copper-features`: a trivial helper that allows setting `copper.features = [...]` instead of a number of `copper.feature.<name>.enable = true`. This exists mainly for legacy reasons.
+* `copper-patches`: a helper to apply patches to `nixpkgs`. By setting `copper.patches.<pkg>` to any list of patch files, an overlay is created that uses `overrideAttrs` on `<pkg>` to add the specified patches
 
 ### Host Configurations
 
