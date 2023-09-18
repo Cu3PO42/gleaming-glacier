@@ -35,8 +35,8 @@ if [[ $DO_HOST -eq 1 ]]; then
 
         # The previous step may install XCode, which breaks Git unless we accept the license
         if command -v xcodebuild &> /dev/null; then
-            XCODE_VERSION=`xcodebuild -version | grep '^Xcode\s' | sed -E 's/^Xcode[[:space:]]+([0-9\.]+)/\1/'`
-            ACCEPTED_LICENSE_VERSION=`defaults read /Library/Preferences/com.apple.dt.Xcode 2> /dev/null | grep IDEXcodeVersionForAgreedToGMLicense | cut -d '"' -f 2`
+            XCODE_VERSION=$(xcodebuild -version | grep '^Xcode\s' | sed -E 's/^Xcode[[:space:]]+([0-9\.]+)/\1/')
+            ACCEPTED_LICENSE_VERSION=$(defaults read /Library/Preferences/com.apple.dt.Xcode 2> /dev/null | grep IDEXcodeVersionForAgreedToGMLicense | cut -d '"' -f 2)
             if [ "$XCODE_VERSION" != "$ACCEPTED_LICENSE_VERSION" ]; then
                 echo "XCode version $XCODE_VERSION is installed, but the license has not been"
                 echo "accepted. We are now running 'sudo xcodebuild -license' to accept the"
