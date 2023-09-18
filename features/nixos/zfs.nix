@@ -78,8 +78,8 @@ in {
       sha256 = "sha256-lA0M7E/Z0NjuvppC7GZA5rWdL7c+5l+3SF5yUe7nEz8=";
     })];
 
-    # This will need to be enabled as soon as we have a ZFS version with support for 6.4
-    #zfs.removeLinuxDRM = true;
+    # Relevant to support Linux 6.4 and newer on aarch64
+    boot.zfs.removeLinuxDRM = true;
 
     services.sanoid = lib.mkIf cfg.snapshot {
       enable = true;
