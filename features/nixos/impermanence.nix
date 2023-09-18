@@ -2,6 +2,7 @@
   inputs,
   config,
   lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -20,9 +21,30 @@
   };
   fileSystems."/persist".neededForBoot = true;
 
-  boot.initrd.postDeviceCommands = lib.mkIf config.copper.feature.zfs.enable (lib.mkAfter ''
+  boot.initrd.postDeviceCommands = lib.mkIf (config.copper.feature.zfs.enable && !config.boot.initrd.systemd.enable) (lib.mkAfter ''
     zfs rollback -r rpool/local/root@blank && echo "Rollback complete!" || echo "Rollback failed!"
   '');
+
+  boot.initrd.systemd.services.rollback = lib.mkIf (config.copper.feature.zfs.enable && config.boot.initrd.systemd.enable) {
+    description = "Rollback ZFS datasets to a pristine state";
+    wantedBy = [
+      "initrd.target"
+    ]; 
+    after = [
+      "zfs-import-zroot.service"
+    ];
+    before = [ 
+      "sysroot.mount"
+    ];
+    path = with pkgs; [
+      zfs
+    ];
+    unitConfig.DefaultDependencies = "no";
+    serviceConfig.Type = "oneshot";
+    script = ''
+      zfs rollback -r rpool/local/root@blank && echo "Rollback complete!" || echo "Rollback failed!"
+    '';
+  };
 
   # Read from the persistent host key location directly, that fixes some
   # issues during install.

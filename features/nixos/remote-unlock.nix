@@ -5,6 +5,19 @@
   ...
 }: let
   cfg = config.copper.feature.remote-unlock;
+
+  zfsUnlockScript = ''
+    if pgrep -x "zfs" > /dev/null
+    then
+      if zfs load-key -a; then
+        killall zfs
+      else
+        echo "zfs passphrase invalid. Please try again."
+      fi
+    else
+      echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
+    fi
+  '';
 in {
   imports = [
     inputs.agenix.nixosModules.age
@@ -41,21 +54,14 @@ in {
             lib.concatMap (user: config.users.users.${user}.openssh.authorizedKeys.keys) wheels;
         };
 
-        postCommands = lib.mkIf config.copper.feature.zfs.enable ''
+        postCommands = lib.mkIf (config.copper.feature.zfs.enable && !config.boot.initrd.systemd.enable) ''
           cat <<EOF > /root/.profile
-          if pgrep -x "zfs" > /dev/null
-          then
-            if zfs load-key -a; then
-              killall zfs
-            else
-              echo "zfs passphrase invalid. Please try again."
-            fi
-          else
-            echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
-          fi
+          ${zfsUnlockScript}
           EOF
         '';
       };
+
+      systemd.contents."/root/.profile".text = lib.mkIf (config.copper.feature.zfs.enable && config.boot.initrd.systemd.enable) zfsUnlockScript;
     };
 
     age.secrets."initrd_host_ed25519_key" = {
