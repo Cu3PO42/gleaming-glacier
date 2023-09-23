@@ -8,6 +8,7 @@
     "google-chrome"
     "iterm2"
     "jetbrains-toolbox"
+    "launchcontrol"
     "orbstack"
     "tailscale"
     "utm"
