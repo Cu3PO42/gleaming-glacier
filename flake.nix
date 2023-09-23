@@ -37,6 +37,7 @@
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
     };
 
     # Support for erasing / on every boot
@@ -89,6 +90,11 @@
 
     flake-utils = {
       url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
+
+    systems = {
+      url = "github:nix-systems/default";
     };
   };
 
