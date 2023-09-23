@@ -25,7 +25,8 @@ in {
   options = {
     copper.plate = {
       target = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
+        default = null;
         example = "1.2.3.4";
         description = ''
           The host that should be installed and updated. Can be referred to by
@@ -56,8 +57,8 @@ in {
       };
 
       initrdPublicKey = mkOption {
-        type = types.path;
-        default = null;
+        type = types.nullOr types.path;
+	default = null;
         example = ./initrd_host_ed25519_key.pub;
         description = ''
           The location of the public host key that will be used by the initrd
@@ -93,9 +94,10 @@ in {
   };
 
   config = {
+    # need to be specified: target
     assertions = [
       {
-        assertion = (cfg.diskEncryptionKey != null) || (cfg.initrdPublicKey != null);
+        assertion = (cfg.diskEncryptionKey != null) == (cfg.initrdPublicKey != null);
         message = "Specifying an initrd public host key doesn't make sense if FDE isn't enabled.";
       }
     ];
