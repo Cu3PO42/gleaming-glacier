@@ -1,5 +1,5 @@
 # This module allows for completely silent boot
-{inputs, ...}: {
+{pkgs, ...}: {
   boot.kernelParams = [
     # Silences boot messages
     "quiet"
@@ -9,7 +9,7 @@
     "rd.udev.log_level=3"
     # Silence systemd version number
     "udev.log_priority=3"
-    # If booting fails drop is into a shell where we can investigate
+    # If booting fails drop us into a shell where we can investigate
     "boot.shell_on_fail"
     # Show a splash screen
     "splash"
@@ -25,6 +25,6 @@
   in {
     enable = true;
     inherit theme;
-    themePackages = [(inputs.nixpkgs.legacyPackages.x86_64-linux.adi1090x-plymouth-themes.override {selected_themes = [theme];})];
+    themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = [theme];})];
   };
 }
