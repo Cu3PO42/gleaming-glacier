@@ -11,6 +11,8 @@ pkgs.writeShellApplication {
     nixos-rebuild
     inputs.nixos-anywhere.packages.${pkgs.system}.default
     jq
+    gnused
+    gawk
   ];
   text = builtins.readFile ./plate.sh;
 }

@@ -161,9 +161,15 @@ unlock() {
         shift
     done
 
+    # The initrd uses a different host key, so we need to construct an appropriate
+    # known_hosts file. Since the connection may be configured using a jump host,
+    # which also needs to have its key validated, we start with the original
+    # known_hosts file, patching only the line for the target host.
     TEMP=$(mktemp)
     trap 'rm -f "$TEMP"' EXIT
-    echo "$TARGET $(cat "$INITRD_PUBLIC_KEY")" > "$TEMP"
+    REAL_HOSTNAME=$(ssh -G "$TARGET" | awk '$1 == "hostname" { print $2 }')
+    sed "/^$REAL_HOSTNAME/d" ~/.ssh/known_hosts > "$TEMP"
+    echo "$REAL_HOSTNAME $(cat "$INITRD_PUBLIC_KEY")" >> "$TEMP"
 
     SSH_COMMAND=( ssh "root@$TARGET" -T -o "UserKnownHostsFile=$TEMP" -o StrictHostKeyChecking=yes )
 
