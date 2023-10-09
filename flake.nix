@@ -148,6 +148,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
+      specialArgs ? specialArgs,
     }:
       loadDir dir ({
         path,
@@ -185,6 +186,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
+      specialArgs ? specialArgs,
     }:
       loadDir dir ({
         path,
