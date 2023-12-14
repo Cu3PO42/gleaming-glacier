@@ -39,7 +39,7 @@ with lib; let
   luaPackages = cfg.finalPackage.unwrapped.lua.pkgs;
   resolvedExtraLuaPackages = cfg.extraLuaPackages luaPackages;
 
-  extraMakeWrapperArgs = ''--suffix PATH : "${lib.makeBinPath (with pkgs; [git ripgrep fd (tree-sitter.withPlugins builtins.attrValues)] ++ cfg.extraPackages)}"'';
+  extraMakeWrapperArgs = ''--suffix PATH : "${lib.makeBinPath (with pkgs; [git ripgrep fd gcc (tree-sitter.withPlugins builtins.attrValues)] ++ cfg.extraPackages)}"'';
   extraMakeWrapperLuaCArgs = lib.optionalString (resolvedExtraLuaPackages != []) ''
     --suffix LUA_CPATH ";" "${
       lib.concatMapStringsSep ";" luaPackages.getLuaCPath
