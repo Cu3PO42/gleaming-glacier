@@ -1,0 +1,1 @@
+The included file `theming_patch.diff` is taken from the AUR repository [libadwaita-without-adwaita-git](https://aur.archlinux.org/cgit/aur.git/?h=libadwaita-without-adwaita-git) and is available under the terms of LGPL-2.1+.
