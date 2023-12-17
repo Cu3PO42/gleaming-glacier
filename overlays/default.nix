@@ -4,6 +4,8 @@
 }: {
   additions = final: prev: import ../packages (inputs // {pkgs = final;});
 
+  themes = final: prev: {chromaThemes = import ../themes {pkgs = final;};};
+
   # Inspired by github.com/Misterio77/nix-config:
   # For every flake input, aliases 'pkgs.inputs.${flake}' to
   # 'inputs.${flake}.packages.${pkgs.system}' or
