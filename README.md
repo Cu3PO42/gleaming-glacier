@@ -587,6 +587,7 @@ By contributing to this repository, you also agree to license your code under th
 This repository also contains bits and pieces of configuration from other people's dotfiles that they have shared on GitHub.
 Such code is marked either by a comment in the file itself or an accompanying `LICENSE` file, describing the license that the relevant code is available under.
 
+Some of this code was shared by the authors without a specified license.
 I do include this code here, because I believe it is in the spirit of these dotfile repositories to share and learn from each other.
 (And - legally - the GitHub Terms of Service permit other users to share code that was released as part of a public repository on GitHub.)
 If, however, you are the author or otherwise have claims on one such piece of code contained in this repository, please contact me and I will remove it.
@@ -602,6 +603,7 @@ In particular, configuration from the following repositories was used:
 * [khaneliman's dotfiles](https://github.com/khaneliman/dotfiles) from where I took some sketchybar configuration
 * [yuanw's nix-home](https://github.com/yuanw/nix-home) which is the origin of my icalBuddy derivation
 * [EphraimSiegfried's Calendar plugin for Sketchybar](https://github.com/FelixKratz/SketchyBar/discussions/12#discussioncomment-4730516)
+* [Prasanthrangan's Hyprdots](https://github.com/prasanthrangan/hyprdots/) which is the origin for many of my Hyprland-related configurations licensed under the trems of GPLv3
 
 Additionally, I learned a lot from these repositories, listed in no particular order:
 

@@ -1,0 +1,10 @@
+    "custom/wbar": {
+        "format": "{}", //    //
+        "exec": "echo ; echo  switch menubar //  dock",
+        "on-click": "waybar-confgen-hyprdots n",
+        "on-click-right": "waybar-confgen-hyprdots p",
+        "on-click-middle": "quickapps.sh kitty firefox code dolphin",
+        "interval" : 86400,
+        "tooltip": true
+    },
+

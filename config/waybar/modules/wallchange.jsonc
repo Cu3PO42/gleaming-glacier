@@ -1,0 +1,10 @@
+    "custom/wallchange": {
+        "format": "{}",
+        "exec": "echo ; echo 󰆊 switch wallpaper",
+        "on-click": "swimctl next",
+        "on-click-right": "swimctl previous",
+        "on-click-middle": "swwwallselect.sh",
+        "interval" : 86400, // once every day
+        "tooltip": true
+    },
+

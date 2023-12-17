@@ -40,6 +40,11 @@
       inputs.systems.follows = "systems";
     };
 
+    hypr-contrib = {
+      url = "github:hyprwm/contrib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Support for erasing / on every boot
     impermanence.url = "github:nix-community/impermanence";
 
@@ -55,6 +60,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
+    };
+
+    # Loading of 'normal' binaries
+    nix-ld-rs = {
+      url = "github:nix-community/nix-ld-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.flake-compat.follows = "flake-compat";
     };
 
     # Provides a pre-built index database describing which binaries are
@@ -115,13 +128,13 @@
           config.allowUnfree = true;
         }));
 
-    specialArgs = {
+    specialArgs_ = {
       inherit inputs;
       inherit (self) outputs;
     };
 
     loadModules = base: name:
-      nixpkgs.lib.mapAttrs (_: injectArgs specialArgs) (
+      nixpkgs.lib.mapAttrs (_: injectArgs specialArgs_) (
         loadDirRec (base + "/modules/common") ({path, ...}: import path)
         // loadDirRec (base + "/modules/${name}") ({path, ...}: import path)
         # TODO: consider moving this to modules/feature subdirectory;
@@ -148,7 +161,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
-      specialArgs ? specialArgs,
+      specialArgs ? specialArgs_,
     }:
       loadDir dir ({
         path,
@@ -186,7 +199,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
-      specialArgs ? specialArgs,
+      specialArgs ? specialArgs_,
     }:
       loadDir dir ({
         path,
@@ -246,5 +259,8 @@
     nixosConfigurations = loadNixos {dir = ./hosts/nixos;};
     homeConfigurations = loadHome {dir = ./users;};
     darwinConfigurations = loadDarwin {dir = ./hosts/darwin;};
+
+    # Non-standard outputs
+    chromaThemes = forAllSystems (pkgs: import ./themes {inherit pkgs;});
   };
 }

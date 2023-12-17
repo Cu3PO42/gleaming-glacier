@@ -1,10 +1,34 @@
-{config, inputs, ...}: {
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     inputs.hyprland.nixosModules.default
   ];
 
   programs.hyprland = {
     enable = true;
-    nvidiaPatches = config.copper.feature.nvidia.enable;
+    enableNvidiaPatches = config.copper.feature.nvidia.enable;
   };
+  # xdg-desktop-portal-hyprland is implicitly included by the Hyprland module
+  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
+
+  programs.dconf.enable = true;
+
+  services.blueman.enable = true;
+
+  services.xserver.displayManager.sddm = {
+    theme = "corners";
+    # This is a fix for a huge onscreen keyboard appearing and hiding everything.
+    settings.General.InputMethod = "";
+  };
+  environment.systemPackages = with pkgs; [
+    sddm-theme-corners
+    nerdfonts
+  ];
+
+  # Required to allow swaylock to unlock.
+  security.pam.services.swaylock = {};
 }

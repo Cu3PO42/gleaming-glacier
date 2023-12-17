@@ -1,0 +1,10 @@
+    "custom/mode": {
+        "format": "{}",
+        "exec": "echo ; echo 󰟡 switch mode",
+        "on-click": "chromactl next-theme",
+        "on-click-right": "chormactl previous-theme",
+        "on-click-middle": "themeselect.sh",
+        "interval" : 86400, // once every day
+        "tooltip": true
+    },
+
