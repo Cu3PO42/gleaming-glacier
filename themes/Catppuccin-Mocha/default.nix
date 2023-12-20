@@ -26,7 +26,7 @@
     theme.package = (pkgs.catppuccin-gtk.override {variant = "mocha";}).overrideAttrs (prev: { propagatedUserEnvPkgs = prev.propagatedUserEnvPkgs ++ [ pkgs.gnome.gnome-themes-extra ];});
     theme.name = "Catppuccin-Mocha-Standard-Blue-Dark";
     documentFont = desktop.font;
-    colorScheme = "dark";
+    colorScheme = "prefer-dark";
   };
 
   qt = {

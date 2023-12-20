@@ -26,7 +26,7 @@
     theme.package = (pkgs.catppuccin-gtk.override {variant = "latte";}).overrideAttrs (prev: { propagatedUserEnvPkgs = prev.propagatedUserEnvPkgs ++ [ pkgs.gnome.gnome-themes-extra ];});
     theme.name = "Catppuccin-Latte-Standard-Blue-Light";
     documentFont = desktop.font;
-    colorScheme = "light";
+    colorScheme = "prefer-light";
   };
 
   qt = {

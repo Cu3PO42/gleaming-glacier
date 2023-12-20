@@ -170,7 +170,7 @@ in {
       themeOptions = {
         theme = options.gtk.theme;
         colorScheme = mkOption {
-          type = types.enum ["default" "light" "dark"];
+          type = types.enum ["default" "prefer-light" "prefer-dark"];
           default = "default";
           example = "dark";
           description = ''
@@ -223,6 +223,9 @@ in {
         files."dconf.ini" = pkgs.writeText "dconf.ini" (toDconfIni {
           "/" =
             dconfBaseSettings
+            // {
+              color-scheme = config.colorScheme;
+            }
             // optionalAttrs (opts.desktop.font != null) {
               font-name = toFontString opts.desktop.font;
             }
