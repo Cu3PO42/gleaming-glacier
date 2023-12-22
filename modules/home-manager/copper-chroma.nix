@@ -60,7 +60,7 @@ with lib; let
         }
         // programOpts.themeOptions;
 
-      config = programOpts.themeConfig {inherit config;};
+      config = programOpts.themeConfig {inherit config; opts = cfg.themes.${config.themeName}; };
       /*
         config = {
         # TODO: verify all required paths are present
