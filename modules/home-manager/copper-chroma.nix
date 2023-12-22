@@ -3,6 +3,7 @@
   config,
   pkgs,
   options,
+  modulesPath,
   ...
 }:
 with lib; let
@@ -178,6 +179,15 @@ with lib; let
           program.
         '';
       };
+      
+      specializedConfig = mkOption {
+        type = with types; nullOr (functionTo anything);
+        default = null;
+        description = ''
+          A function that is is called with the theme options that returns
+          options to be used is a specialized, theme-specific config.
+        '';
+      };
     };
   };
 
@@ -293,6 +303,44 @@ in {
         default = mapAttrs buildTheme cfg.finalThemes;
         description = ''
           The compiled theme packages for all given themes.
+        '';
+      };
+
+      themeSpecializations = mkOption {
+        type = with types; attrsOf (nullOr (submoduleWith {
+          description = "Chroma theme specialization";
+          specialArgs = {
+            inherit lib modulesPath;
+          };
+          modules = [({
+            imports = import modulesPath + "/modules.nix" {
+              inherit pkgs lib;
+              # Use the same nixpkgs as the main config.
+              useNixpkgsModule = false;
+            };
+
+            config = {
+              # Pretend we will install packages, but we won't actually do it.
+              submoduleSupport.enable = true;
+              submoduleSupport.externalPackageInstall = true;
+
+              home.userhame = config.home.username;
+              home.homeDirectory = config.home.homeDirectory;
+
+              nix.package = config.nix.package;
+            };
+          })];
+        }));
+        readOnly = true;
+        default = let
+          specializationRequired = any (program: program.specializedConfig != null) (attrValues cfg.programs);
+        in mapAttrs (name: theme: if specializationRequired then {
+          imports = filter (v: v != null) (mapAttrsToList (_: program: program.specializedConfig theme) cfg.programs);
+        } else null) cfg.themes;
+        description = ''
+          A specialized config that is built, but never to be activated. It
+          only exists to copy configuration files or similar to our main
+          config.
         '';
       };
 
