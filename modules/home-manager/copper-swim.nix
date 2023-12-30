@@ -96,6 +96,8 @@ in {
         '';
       };
     };
+
+    copper.chroma.swim.enable = mkEnableOption "Chroma integration for Swim" // { readonly = true; default = config.copper.swim.chromaIntegration.enable; };
   };
 
   config = mkIf cfg.enable {

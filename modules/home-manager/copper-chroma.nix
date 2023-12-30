@@ -225,7 +225,7 @@ with lib; let
     // mapAttrs getProgramOpts cfg.programs;
 
   buildTheme = _: opts: let
-    programThemes = mapAttrs (programName: buildThemeApplication opts.${programName} programName) cfg.programs;
+    programThemes = mapAttrs (programName: buildThemeApplication opts.${programName} programName) (filterAttrs (name: _: cfg.${name}.enable) cfg.programs);
     joinScripts = scriptName: extraText: ''
       cp ${pkgs.writeShellScript scriptName (concatStringsSep "\n" (mapAttrsToList (_: value: "${value}/${scriptName}") programThemes) + "\n" + extraText)} ${scriptName}
     '';
