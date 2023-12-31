@@ -8,7 +8,7 @@ with lib; {
   options = {
     copper.chroma.dunst.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = config.services.dunst.enable;
       example = false;
       description = ''
         Whether to enable Dunst theming as part of Chroma.
@@ -40,6 +40,14 @@ with lib; {
 
   imports = [
     (mkIf (config.copper.chroma.enable && config.copper.chroma.dunst.enable) {
+      assertions = [
+        {
+          assertion = config.copper.chroma.desktop.enable;
+          message = "Chroma's desktop module is required for the Dunst module.";
+        }
+      ];
+      copper.chroma.desktop.enable = true;
+
       xdg.configFile."dunst/dunstrc.d/50-chroma".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/dunst/dunstrc";
     })
   ];

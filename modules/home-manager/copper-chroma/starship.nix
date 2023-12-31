@@ -4,7 +4,7 @@
   tomlFormat = pkgs.formats.toml {};
 in {
   options = {
-    copper.chroma.starship.enable = mkEnableOption "Chroma integration for starship" // { default = true; };
+    copper.chroma.starship.enable = mkEnableOption "Chroma integration for starship" // { default = config.programs.starship.enable; };
   };
 
   config = mkMerge [

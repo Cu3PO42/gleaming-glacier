@@ -10,7 +10,7 @@ in {
   options = {
     copper.chroma.waybar.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.waybar.enable;
       example = false;
       description = ''
         Whether to enable waybar theming as part of Chroma.
@@ -19,6 +19,13 @@ in {
   };
 
   config = {
+    assertions = [
+      {
+        assertion = !(cfg.enable && cfg.waybar.enable) || config.programs.waybar.enable;
+        message = "Chroma integration for Waybar requires base waybar module.";
+      }
+    ];
+
     copper.chroma.programs.waybar = {
       reloadCommand = ''
         ${pkgs.procps}/bin/pkill -u $USER -USR2 waybar || true
@@ -27,7 +34,6 @@ in {
 
     programs.waybar.style = mkIf (cfg.enable && cfg.waybar.enable) ''
       @import "${config.copper.chroma.themeFolder}/active/waybar/theme.css";
-      @import "${config.xdg.configHome}/waybar/style.mine.css";
     '';
   };
 }

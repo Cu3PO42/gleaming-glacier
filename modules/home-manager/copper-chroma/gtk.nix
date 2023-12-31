@@ -95,7 +95,7 @@ in {
     copper.chroma.gtk = {
       enable = mkOption {
         type = types.bool;
-        default = true;
+        default = false;
         description = ''
           Whether to enable Gtk2/3/4 theming via Chroma.
         '';

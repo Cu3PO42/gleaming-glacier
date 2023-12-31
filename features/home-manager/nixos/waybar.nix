@@ -16,5 +16,9 @@
 
   home.packages = [pkgs.waybar-confgen-hyprdots];
 
+  programs.waybar.style = ''
+      @import "${config.xdg.configHome}/waybar/style.mine.css";
+  '';
+
   copper.file.config = lib.genAttrs ["waybar/modules" "waybar/config.ctl"] (n: "config/${n}");
 }

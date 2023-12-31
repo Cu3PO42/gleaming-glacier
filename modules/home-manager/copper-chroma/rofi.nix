@@ -10,7 +10,7 @@ in {
   options = {
     copper.chroma.rofi.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.rofi.enable;
       example = false;
       description = ''
         Whether to enable rofi theming as part of Chroma.
@@ -19,6 +19,13 @@ in {
   };
 
   config = {
+    assertions = [
+      {
+        assertion = !(cfg.enable && cfg.rofi.enable) || config.programs.rofi.enable;
+        message = "Rofi Chroma integration only works when the base Rofi module is enabled.";
+      }
+    ];
+
     copper.chroma.programs.rofi = {
       requiredFiles = ["theme.rasi"];
     };

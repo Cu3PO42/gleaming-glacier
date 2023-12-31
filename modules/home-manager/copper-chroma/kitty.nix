@@ -10,7 +10,7 @@ in {
   options = {
     copper.chroma.kitty.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = config.programs.kitty.enable;
       example = false;
       description = ''
         Whether to enable Kitty theming as part of Chroma.
@@ -19,6 +19,13 @@ in {
   };
 
   config = {
+    assertions = [
+      {
+        assertion = !(cfg.enable && cfg.kitty.enable) || config.programs.kitty.enable;
+        message = "Chroma Kitty theming requires Kitty to be enabled.";
+      }
+    ];
+
     copper.chroma.programs.kitty = {
       reloadCommand = "${pkgs.procps}/bin/pkill -USR1 -u $USER kitty || true";
     };

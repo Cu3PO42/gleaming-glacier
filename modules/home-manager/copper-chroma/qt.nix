@@ -10,7 +10,7 @@ in {
   options = {
     copper.chroma.qt.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       example = false;
       description = ''
         Whether to enable QT theming via Kvantum as part of Chroma.
@@ -105,6 +105,7 @@ in {
 
   imports = [
     (mkIf (cfg.enable && cfg.qt.enable) {
+      # TODO: other modules assert that the base module is enabled; handle it in a unified way
       qt = {
         enable = true;
         platformTheme = "qtct";

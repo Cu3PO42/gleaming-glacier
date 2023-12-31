@@ -8,7 +8,7 @@ with lib; {
   options = {
     copper.chroma.hyprland.enable = mkOption {
       type = types.bool;
-      default = true;
+      default = config.wayland.windowManager.hyprland.enable;
       example = false;
       description = ''
         Whether to enable Hyprland theming as part of Chroma.
@@ -17,6 +17,17 @@ with lib; {
   };
 
   config = {
+    assertions = [
+      {
+        assertion = !(config.copper.chroma.enable && config.copper.chroma.hyprland.enable) || config.wayland.windowManager.hyprland.enable;
+        message = "Chroma's Hyprland integration only works when the Hyprland module is enabled";
+      }
+      {
+        assertion = !(config.copper.chroma.enable && config.copper.chroma.hyprland.enable) || config.copper.chroma.desktop.enable;
+        message = "Chroma's desktop module is required for the Hyprland module.";
+      }
+    ];
+
     copper.chroma.programs.hyprland = {
       activationCommand = {
         name,

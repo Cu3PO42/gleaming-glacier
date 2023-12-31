@@ -19,7 +19,7 @@
 in {
   options = {
     copper.chroma.bat = {
-      enable = mkEnableOption "Bat theming" // { default = true; };
+      enable = mkEnableOption "Bat theming" // { default = config.programs.bat.enable; };
     };
   };
 
@@ -49,6 +49,10 @@ in {
     })
     (mkIf (cfg.enable && cfg.bat.enable) {
       assertions = [
+        {
+          assertion = config.programs.bat.enable;
+          message = "The bat module is required for Chroma's bat integration.";
+        }
         {
           assertion = !(config.home.sessionVariables ? BAT_THEME || config.programs.bat.config ? theme);
           message = "When using Chroma's bat integration, do not configure a theme via other means.";
