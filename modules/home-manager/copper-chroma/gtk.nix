@@ -47,20 +47,6 @@ with lib; let
       else toString v;
   in "${escape ["="] n} = ${v'}";
 
-  # TODO: make these configurable elsewhere
-  gtkBaseSettings = {
-    gtk-toolbar-style = mkIntConstant "GTK_TOOLBAR_ICONS";
-    gtk-toolbar-icon-size = mkIntConstant "GTK_ICON_SIZE_LARGE_TOOLBAR";
-    gtk-button-images = 0;
-    gtk-menu-images = 0;
-    gtk-enable-event-sounds = 1;
-    gtk-enable-input-feedback-sounds = 0;
-    gtk-xft-antialias = 1;
-    gtk-xft-hinting = 1;
-    gtk-xft-hintstyle = "hintfull";
-    gtk-xft-rgba = "rgb";
-  };
-
   dconfBaseSettings = {
     font-antialiasing = "rgba";
     font-hinting = "full";
@@ -71,8 +57,8 @@ with lib; let
   in
     "${font.name}" + fontSize;
 
-  gtkIniForTheme = theme:
-    gtkBaseSettings
+  gtkIniForTheme = base: theme:
+    base
     // optionalAttrs (theme.font != null) {
       gtk-font-name = toFontString theme.font;
     }
@@ -99,6 +85,74 @@ in {
         description = ''
           Whether to enable Gtk2/3/4 theming via Chroma.
         '';
+      };
+
+      gtk2.extraConfig = mkOption {
+        type = with types; attrsOf (oneOf [bool int str (submodule { options.constant = mkOption {
+          type = types.str;
+          example = "GTK_TOOLBAR_ICONS";
+          description = ''
+            A constant to be used as the value of this option.
+            It is not quoted and needs to be defined in GTK.
+          '';
+        }; })]);
+        # TODO: move the default settings elsewhere
+        default = options.copper.chroma.gtk.gtk3.extraConfig.default // {
+          gtk-toolbar-style = mkIntConstant "GTK_TOOLBAR_ICONS";
+          gtk-toolbar-icon-size = mkIntConstant "GTK_ICON_SIZE_LARGE_TOOLBAR";
+          gtk-button-images = 0;
+          gtk-menu-images = 0;
+        };
+        example = {
+          gtk-can-change-accels = 1;
+        };
+        description = ''
+          Extra configuration options to add to
+          {file}`$XDG_CONFIG_HOME/gtk-2.0/gtkrc`.
+        '';
+      };
+
+      gtk3.extraConfig = mkOption {
+        type = options.copper.chroma.gtk.gtk2.extraConfig.type;
+        # TODO: move the default settings elsewhere
+        default = {
+          gtk-enable-event-sounds = 1;
+          gtk-enable-input-feedback-sounds = 0;
+          gtk-xft-antialias = 1;
+          gtk-xft-hinting = 1;
+          gtk-xft-hintstyle = "hintfull";
+          gtk-xft-rgba = "rgb";
+        };
+        example = {
+          gtk-cursor-blink = false;
+          gtk-recent-files-limit = 20;
+        };
+        description = options.gtk.gtk3.extraConfig.description;
+      };
+
+      gtk4 = {
+        libadwaitaSupport = mkOption {
+          type = types.enum ["off" "import" "patch-overlay" "patch-binary"];
+          default = "off";
+          example = "patch-binary";
+          description = ''
+            By default, libadwaita does not support any non-adwaita themes.
+            This can be worked around by either patching libadwaita or by
+            creating additional CSS imports.
+
+            While CSS imports will work for most applications, they may break
+            hot theme reloading. Patching libadwaita is recommended for dynamic
+            theme switching, but will only work for apps installed via
+            Home-Manager. You can either use an overlay, which causes a lot of
+            rebuilds or binary patching, which is recommended while not
+            supported by upstream Home-Manager. The latter might also miss a
+            package in rare circumstances.
+          '';
+        };
+
+        extraConfig = options.copper.chroma.gtk.gtk3.extraConfig // {
+          description = options.gtk.gtk4.extraConfig.description;
+        };
       };
 
       flatpak.enable = mkOption {
@@ -151,13 +205,23 @@ in {
         name,
         opts,
       }:
-        toGtk3Ini {Settings = gtkIniForTheme opts // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
+        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk3.extraConfig opts // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
+
+      templates."gtk-4.0/settings.ini" = {
+        name,
+        opts,
+      }:
+        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk4.extraConfig opts // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
+
+      templates."gtk-4.0/gtk.css" = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "import") ({ name, opts }: ''
+        @import url("file://${opts.theme.package}/share/themes/${opts.theme.name}/gtk-4.0/gtk.css");
+      '');
 
       templates."gtk-2.0/gtkrc" = {
         name,
         opts,
       }:
-        concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme opts));
+        concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme cfg.gtk.gtk2.extraConfig opts));
 
       themeConfig = {config, ...}: {
         files."dconf.ini" = pkgs.writeText "dconf.ini" (toDconfIni {
@@ -199,12 +263,27 @@ in {
 
       xdg.configFile."gtk-2.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-2.0";
       xdg.configFile."gtk-3.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-3.0";
-      # TODO: according to the Arch wiki, this may not be sufficient for GTK4, we may also need to set GTK_THEME
-      xdg.configFile."gtk-4.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-3.0";
+      xdg.configFile."gtk-4.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-4.0";
 
       home.sessionVariables.GTK2_RC_FILES = "${config.xdg.configHome}/gtk-2.0/gtkrc";
 
       home.packages = concatLists (mapAttrsToList (name: opts: with opts.gtk; concatMap optionalPackage [theme iconTheme cursorTheme font monospaceFont documentFont]) cfg.themes);
+
+      nixpkgs.overlays = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "patch-overlay") [
+        (final: prev: {
+          # We cannot use libadwaita-without-adwaita that is added via the
+          # overlay, as that package itself relies on libadwaita, which would
+          # cause an inifinite recursion here.
+          libadwaita = pkgs.callPackage ../../../packages/libadwaita-without-adwaita {libadwaita = prev.libadwaita;};
+        })
+      ];
+
+      home.replaceRuntimeDependencies = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "patch-binary") [
+        {
+          original = pkgs.libadwaita;
+          replacement = pkgs.libadwaita-without-adwaita;
+        }
+      ];
     })
   ];
 
