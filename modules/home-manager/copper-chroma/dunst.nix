@@ -22,7 +22,7 @@ with lib; {
         name,
         opts,
       }: let
-        gtkOpts = config.copper.chroma.finalThemes.${name}.gtk;
+        desktopOpts = config.copper.chroma.finalThemes.${name}.desktop;
       in ''
         [global]
             ### Icons ###
@@ -33,7 +33,7 @@ with lib; {
 
             # Set icon theme (only used for recursive icon lookup)
             # You can also set multiple icon themes, with the leftmost one being used first.
-            icon_theme = ${gtkOpts.iconTheme.name}
+            icon_theme = ${desktopOpts.iconTheme.name}
       '';
     };
   };

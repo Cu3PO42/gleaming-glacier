@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, ...}: rec {
   hyprland = {
     files."theme.conf" = ./hyprland.conf;
   };
@@ -7,9 +7,7 @@
     files."theme.css" = ./waybar.css;
   };
 
-  gtk = rec {
-    theme.package = pkgs.catppuccin-gtk.override {variant = "mocha";};
-    theme.name = "Catppuccin-Mocha-Standard-Blue-Dark";
+  desktop = {
     # Note: this propagatedInputs override should be upstreamed to nixpkgs
     iconTheme.package = pkgs.tela-icon-theme.overrideAttrs (final: prev: {propagatedBuildInputs = prev.propagatedBuildInputs ++ [pkgs.gnome.adwaita-icon-theme pkgs.libsForQt5.breeze-icons];});
     iconTheme.name = "Tela-dracula";
@@ -19,10 +17,15 @@
     font.name = "Cantarell";
     font.size = 10;
     font.package = pkgs.cantarell-fonts;
-    documentFont = font;
     monospaceFont.name = "CaskaydiaCove Nerd Font Mono";
     monospaceFont.size = 9;
     monospaceFont.package = pkgs.nerdfonts;
+  };
+
+  gtk = {
+    theme.package = pkgs.catppuccin-gtk.override {variant = "mocha";};
+    theme.name = "Catppuccin-Mocha-Standard-Blue-Dark";
+    documentFont = desktop.font;
     colorScheme = "dark";
   };
 

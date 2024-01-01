@@ -62,21 +62,21 @@ in {
         };
       };
 
-      # TODO: configure font, icon theme, ...
+      # The font format is documented at: https://doc.qt.io/qt-6/qfont.html#toString
       templates."qt5ct.conf" = {
         name,
         opts,
-      }: ''
+      }: let desktop = cfg.themes.${name}.desktop; in ''
         [Appearance]
         color_scheme_path=${opts.qtct.package}/share/qt5ct/colors/${opts.qtct.name}.conf
         custom_palette=true
-        icon_theme=Tela-circle-dracula
+        icon_theme=${desktop.iconTheme.name}
         standard_dialogs=default
         style=kvantum
 
         [Fonts]
-        fixed="CaskaydiaCove Nerd Font Mono,9,-1,5,50,0,0,0,0,0,Regular"
-        general="Cantarell,10,-1,5,50,0,0,0,0,0,Regular"
+        fixed="${desktop.font.name},${toString desktop.font.size},-1,5,50,0,0,0,0,0,Regular"
+        general="${desktop.monospaceFont.name},${toString desktop.monospaceFont.size},-1,5,50,0,0,0,0,0,Regular"
 
         [Interface]
         activate_item_on_single_click=1
@@ -105,15 +105,23 @@ in {
 
   imports = [
     (mkIf (cfg.enable && cfg.qt.enable) {
+      assertions = [
+        {
+          assertion = cfg.desktop.enable;
+          message = "Chroma's desktop module must be enabled to use the Qt module.";
+        }
+      ];
+      copper.chroma.desktop.enable = true;
+
       # TODO: other modules assert that the base module is enabled; handle it in a unified way
       qt = {
         enable = true;
         platformTheme = "qtct";
+        # TODO: is this needed if we use qtct to set kvantum?
         style.name = "kvantum";
       };
 
       xdg.configFile."qt5ct/qt5ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/qt/qt5ct.conf";
-      # TODO: is this the right format for qt6ct? does everything work for Qt5/Qt6
       xdg.configFile."qt6ct/qt6ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/qt/qt5ct.conf";
 
       home.packages = concatLists (mapAttrsToList (name: opts: with opts.qt; [qtct.package kvantum.package]) cfg.themes);

@@ -25,6 +25,7 @@ in {
         message = "Chroma Kitty theming requires Kitty to be enabled.";
       }
     ];
+    # TODO: set the font to the monospace font?
 
     copper.chroma.programs.kitty = {
       reloadCommand = "${pkgs.procps}/bin/pkill -USR1 -u $USER kitty || true";

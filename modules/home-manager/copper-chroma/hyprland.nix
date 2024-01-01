@@ -33,7 +33,7 @@ with lib; {
         name,
         opts,
       }: let
-        cursor = config.copper.chroma.themes.${name}.gtk.cursorTheme;
+        cursor = config.copper.chroma.themes.${name}.desktop.cursorTheme;
       in
         optionalString (cursor != null) ''
           ${config.wayland.windowManager.hyprland.package}/bin/hyprctl setcursor ${cursor.name} ${toString cursor.size}

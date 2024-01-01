@@ -169,8 +169,6 @@ in {
     copper.chroma.programs.gtk = {
       themeOptions = {
         theme = options.gtk.theme;
-        iconTheme = options.gtk.iconTheme;
-        cursorTheme = options.gtk.cursorTheme;
         colorScheme = mkOption {
           type = types.enum ["default" "light" "dark"];
           default = "default";
@@ -179,8 +177,6 @@ in {
             Whether applications should default to a light or dark theme.
           '';
         };
-        font = options.gtk.font;
-        monospaceFont = options.gtk.font;
         documentFont = options.gtk.font;
       };
       activationCommand = {
@@ -205,13 +201,13 @@ in {
         name,
         opts,
       }:
-        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk3.extraConfig opts // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
+        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk3.extraConfig (opts // cfg.themes.${name}.desktop) // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
 
       templates."gtk-4.0/settings.ini" = {
         name,
         opts,
       }:
-        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk4.extraConfig opts // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
+        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk4.extraConfig (opts // cfg.themes.${name}.desktop) // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
 
       templates."gtk-4.0/gtk.css" = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "import") ({ name, opts }: ''
         @import url("file://${opts.theme.package}/share/themes/${opts.theme.name}/gtk-4.0/gtk.css");
@@ -221,31 +217,31 @@ in {
         name,
         opts,
       }:
-        concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme cfg.gtk.gtk2.extraConfig opts));
+        concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme cfg.gtk.gtk2.extraConfig (opts // cfg.themes.${name}.desktop)));
 
-      themeConfig = {config, ...}: {
+      themeConfig = {config, opts, ...}: {
         files."dconf.ini" = pkgs.writeText "dconf.ini" (toDconfIni {
           "/" =
             dconfBaseSettings
-            // optionalAttrs (config.font != null) {
-              font-name = toFontString config.font;
+            // optionalAttrs (opts.desktop.font != null) {
+              font-name = toFontString opts.desktop.font;
             }
-            // optionalAttrs (config.monospaceFont != null) {
-              monospace-font-name = toFontString config.monospaceFont;
+            // optionalAttrs (opts.desktop.monospaceFont != null) {
+              monospace-font-name = toFontString opts.desktop.monospaceFont;
             }
             // optionalAttrs (config.documentFont != null) {
               monospace-font-name = toFontString config.documentFont;
             }
             // optionalAttrs (config.theme != null) {gtk-theme = config.theme.name;}
-            // optionalAttrs (config.iconTheme != null) {
-              icon-theme = config.iconTheme.name;
+            // optionalAttrs (opts.desktop.iconTheme != null) {
+              icon-theme = opts.desktop.iconTheme.name;
             }
-            // optionalAttrs (config.cursorTheme != null) {
-              cursor-theme = config.cursorTheme.name;
+            // optionalAttrs (opts.desktop.cursorTheme != null) {
+              cursor-theme = opts.desktop.cursorTheme.name;
             }
             // optionalAttrs
-            (config.cursorTheme != null && config.cursorTheme.size != null) {
-              cursor-size = config.cursorTheme.size;
+            (opts.desktop.cursorTheme != null && opts.desktop.cursorTheme.size != null) {
+              cursor-size = opts.desktop.cursorTheme.size;
             };
         });
       };
@@ -259,7 +255,13 @@ in {
           assertion = !config.gtk.enable;
           message = "Chroma's GTK theming is mutually exclusive with the normal GTK module.";
         }
+        {
+          assertion = cfg.desktop.enable;
+          message = "Chroma's desktop module is required for the GTK module.";
+        }
       ];
+
+      copper.chroma.desktop.enable = true;
 
       xdg.configFile."gtk-2.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-2.0";
       xdg.configFile."gtk-3.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-3.0";
@@ -267,7 +269,7 @@ in {
 
       home.sessionVariables.GTK2_RC_FILES = "${config.xdg.configHome}/gtk-2.0/gtkrc";
 
-      home.packages = concatLists (mapAttrsToList (name: opts: with opts.gtk; concatMap optionalPackage [theme iconTheme cursorTheme font monospaceFont documentFont]) cfg.themes);
+      home.packages = concatLists (mapAttrsToList (name: opts: with opts.gtk; concatMap optionalPackage [theme documentFont]) cfg.themes);
 
       nixpkgs.overlays = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "patch-overlay") [
         (final: prev: {
