@@ -43,7 +43,7 @@ rec {
             path = dir + "/${file.name}";
           };
         }) (files ++ res.right);
-        loadedDirs = concatMap (next: impl "${dir}/${next.name}" "${prefix}${next.name}/") res.wrong;
+        loadedDirs = concatMap (next: impl (dir + "/${next.name}") "${prefix}${next.name}/") res.wrong;
       in
         loadedFiles ++ loadedDirs;
 
