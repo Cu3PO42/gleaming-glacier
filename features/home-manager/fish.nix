@@ -110,4 +110,9 @@ in {
       }
     ];
   };
+
+  home.packages = [
+    # Used by forgit plugin.
+    pkgs.gawk
+  ];
 }
