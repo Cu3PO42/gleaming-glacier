@@ -4,7 +4,7 @@
 ConfDir="${XDG_CONFIG_HOME:-$HOME/.config}/rofi"
 RofiConf="$ConfDir/themeselect.rasi"
 RofiStyle="$ConfDir/styles"
-Rofilaunch="$ConfDir/config.rasi"
+Rofilaunch="$ConfDir/config.style.rasi"
 
 
 # scale for monitor x res

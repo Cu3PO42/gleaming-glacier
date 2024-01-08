@@ -8,15 +8,15 @@
     enable = true;
     package = pkgs.rofi-wayland;
     terminal = "${pkgs.kitty}/bin/kitty";
+    font = "JetBrainsMono Nerd Font 10";
+    # FIXME: by default location, xoffset, yoffset are set; we probably don't want these set here
+    imports = ["${config.xdg.configHome}/rofi/config.style.rasi"];
   };
-
-  # We disable writing of the config file as determined by Home-Manager, because we want to manage it ourselves.
-  home.file."${config.programs.rofi.configPath}".enable = false;
 
   copper.file.config = lib.genAttrs ["rofi/clipboard.rasi" "rofi/quickapps.rasi" "rofi/themeselect.rasi" "rofi/styles"] (i: "config/${i}");
   home.activation.linkRofiDefaultStyle = lib.hm.dag.entryAfter ["write-boundary"] ''
-    if ! [ -e "${config.xdg.configHome}/rofi/config.rasi" ]; then
-      ln -s "${config.xdg.configHome}/rofi/styles/style_1.rasi" "${config.xdg.configHome}/rofi/config.rasi"
+    if ! [ -e "${config.xdg.configHome}/rofi/config.style.rasi" ]; then
+      ln -s "${config.xdg.configHome}/rofi/styles/style_1.rasi" "${config.xdg.configHome}/rofi/config.style.rasi"
     fi
   '';
 
