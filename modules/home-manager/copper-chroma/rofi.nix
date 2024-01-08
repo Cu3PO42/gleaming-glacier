@@ -24,16 +24,28 @@ in {
         assertion = !(cfg.enable && cfg.rofi.enable) || config.programs.rofi.enable;
         message = "Rofi Chroma integration only works when the base Rofi module is enabled.";
       }
+      {
+        assertion = !(cfg.enable && cfg.rofi.enable) || cfg.desktop.enable;
+        message = "Rofi Chroma integration requires the desktop module";
+      }
     ];
 
     copper.chroma.programs.rofi = {
       requiredFiles = ["theme.rasi"];
+      templates."config.rasi" = { name, opts }: ''
+        configuration {
+          icon-theme: "${cfg.themes.${name}.desktop.iconTheme.name}";
+        }
+      '';
     };
   };
 
   imports = [
     (mkIf (cfg.enable && cfg.rofi.enable) {
+      copper.chroma.desktop.enable = true;
+
       programs.rofi.theme = "${cfg.themeFolder}/active/rofi/theme.rasi";
+      programs.rofi.imports = ["${cfg.themeFolder}/active/rofi/config.rasi"];
     })
   ];
 }
