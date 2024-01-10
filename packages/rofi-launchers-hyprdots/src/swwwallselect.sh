@@ -2,6 +2,7 @@
 
 # set variables
 RofiConf="${XDG_CONFIG_HOME:-$HOME/.config}/rofi/themeselect.rasi"
+SWIM_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/swim"
 
 
 # scale for monitor x res
@@ -21,7 +22,7 @@ CACHE_DIR="$(nailgun thumbnails-for-theme "$WALLPAPER_DIR")"
 RofiSel=$( find "$CACHE_DIR" -type l -printf "%P\n" | sort | while read rfile
 do
     echo -en "$rfile\x00icon\x1f${CACHE_DIR}/${rfile}/thumb\n"
-done | rofi -dmenu -theme-str "${r_override}" -config "${RofiConf}")
+done | rofi -dmenu -theme-str "${r_override}" -config "${RofiConf}" -select "$(basename "$(readlink "$SWIM_STATE_DIR/active/wallpaper")")"
 
 
 # apply wallpaper

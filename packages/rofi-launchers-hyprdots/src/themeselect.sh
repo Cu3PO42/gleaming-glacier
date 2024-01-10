@@ -32,7 +32,7 @@ do
     CACHE_DIR="$(nailgun thumbnail-for-wp "$WP")"
 
     echo -en "$THEME\x00icon\x1f$CACHE_DIR/thumb\n"
-done | rofi -dmenu -theme-str "${r_override}" -config $RofiConf)
+done | rofi -dmenu -theme-str "${r_override}" -config $RofiConf -select "$(jq -r ".name" "$CONF/chroma/active/info.json")")
 
 
 # apply theme
