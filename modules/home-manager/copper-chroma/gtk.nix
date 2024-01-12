@@ -196,6 +196,8 @@ in {
           ${pkgs.flatpak}/bin/flatpak --user override --env=GTK_THEME="${opts.theme.name}"
           ${pkgs.flatpak}/bin/flatpak --user override --env=ICON_THEME="${opts.iconTheme.name}"
         '';
+      
+      reloadCommand = "${lib.getExe pkgs.gtkrc-reload}";
 
       templates."gtk-3.0/settings.ini" = {
         name,
