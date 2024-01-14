@@ -66,7 +66,7 @@
 
     Service = {
       Type = "oneshot";
-      ExecStart = "${config.copper.chroma.themeDirectory}/activate";
+      ExecStart = "${config.copper.chroma.themeDirectory}/active/activate";
       Restart = "always";
     };
 
