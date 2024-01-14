@@ -65,7 +65,7 @@ in {
         themes = mapAttrs' (name: value: { name = "_chroma_${name}"; value = value.bat.theme; }) cfg.themes;
       };
 
-      xdg.configFile."bat/config".source = mkOverride 1 (config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/bat/config");
+      xdg.configFile."bat/config".source = mkOverride 1 (config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeDirectory}/active/bat/config");
     })
   ];
 }

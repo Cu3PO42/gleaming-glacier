@@ -31,6 +31,6 @@ in {
       reloadCommand = "${pkgs.procps}/bin/pkill -USR1 -u $USER kitty || true";
     };
 
-    programs.kitty.settings.include = mkIf (cfg.enable && cfg.kitty.enable) "${config.copper.chroma.themeFolder}/active/kitty/theme.conf";
+    programs.kitty.settings.include = mkIf (cfg.enable && cfg.kitty.enable) "${config.copper.chroma.themeDirectory}/active/kitty/theme.conf";
   };
 }

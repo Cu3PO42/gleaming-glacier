@@ -285,8 +285,9 @@ in {
         '';
       };
 
-      themeFolder = mkOption {
+      themeDirectory = mkOption {
         type = types.str;
+        readOnly = true;
         default = "${config.xdg.configHome}/chroma";
         description = ''
           The location at which the theme data is constructed.
@@ -402,20 +403,20 @@ in {
         theme.fallbacks)
       cfg.themes);
 
-    home.file."${cfg.themeFolder}/themes".source = symlinkJoinInFolder {
+    home.file."${cfg.themeDirectory}/themes".source = symlinkJoinInFolder {
       name = "chroma-themes";
       drvs = cfg.themePackages;
     };
-    home.file."${cfg.themeFolder}/themes.json".text = builtins.toJSON (builtins.attrNames cfg.themes);
+    home.file."${cfg.themeDirectory}/themes.json".text = builtins.toJSON (builtins.attrNames cfg.themes);
     home.activation.activateChroma = lib.hm.dag.entryAfter ["linkGeneration" "installPackages"] ''
       # If no theme is currently active, activate the default theme.
-      mkdir -p ${cfg.themeFolder}
-      if ! [ -d "${cfg.themeFolder}/active" ]; then
-        ln -s "${cfg.themeFolder}/themes/${cfg.initialTheme}" "${cfg.themeFolder}/active"
+      mkdir -p ${cfg.themeDirectory}
+      if ! [ -d "${cfg.themeDirectory}/active" ]; then
+        ln -s "${cfg.themeDirectory}/themes/${cfg.initialTheme}" "${cfg.themeDirectory}/active"
       fi
 
-      ${cfg.themeFolder}/active/reload
-      ${cfg.themeFolder}/active/activate
+      ${cfg.themeDirectory}/active/reload
+      ${cfg.themeDirectory}/active/activate
     '';
 
     home.packages = [pkgs.chromactl];

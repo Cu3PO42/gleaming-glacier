@@ -120,8 +120,8 @@ in {
         style.name = "kvantum";
       };
 
-      xdg.configFile."qt5ct/qt5ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/qt/qt5ct.conf";
-      xdg.configFile."qt6ct/qt6ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/qt/qt5ct.conf";
+      xdg.configFile."qt5ct/qt5ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeDirectory}/active/qt/qt5ct.conf";
+      xdg.configFile."qt6ct/qt6ct.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeDirectory}/active/qt/qt5ct.conf";
 
       home.packages = concatLists (mapAttrsToList (name: opts: with opts.qt; [qtct.package kvantum.package]) cfg.themes);
     })

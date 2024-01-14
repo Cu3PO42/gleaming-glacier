@@ -45,7 +45,7 @@ with lib; {
       ];
       copper.chroma.desktop.enable = true;
 
-      xdg.configFile."dunst/dunstrc.d/50-chroma".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeFolder}/active/dunst/dunstrc";
+      xdg.configFile."dunst/dunstrc.d/50-chroma".source = config.lib.file.mkOutOfStoreSymlink "${config.copper.chroma.themeDirectory}/active/dunst/dunstrc";
     })
   ];
 }

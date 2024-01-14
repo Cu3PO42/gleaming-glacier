@@ -259,9 +259,9 @@ in {
 
       copper.chroma.desktop.enable = true;
 
-      xdg.configFile."gtk-2.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-2.0";
-      xdg.configFile."gtk-3.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-3.0";
-      xdg.configFile."gtk-4.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/gtk/gtk-4.0";
+      xdg.configFile."gtk-2.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeDirectory}/active/gtk/gtk-2.0";
+      xdg.configFile."gtk-3.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeDirectory}/active/gtk/gtk-3.0";
+      xdg.configFile."gtk-4.0".source = config.lib.file.mkOutOfStoreSymlink "${cfg.themeDirectory}/active/gtk/gtk-4.0";
 
       home.sessionVariables.GTK2_RC_FILES = "${config.xdg.configHome}/gtk-2.0/gtkrc";
 

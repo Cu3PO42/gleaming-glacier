@@ -45,7 +45,7 @@ with lib; {
 
     wayland.windowManager.hyprland = mkIf (config.copper.chroma.enable && config.copper.chroma.hyprland.enable) {
       settings = {
-        source = ["${config.copper.chroma.themeFolder}/active/hyprland/theme.conf"];
+        source = ["${config.copper.chroma.themeDirectory}/active/hyprland/theme.conf"];
       };
     };
   };

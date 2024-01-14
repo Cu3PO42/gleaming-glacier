@@ -24,7 +24,7 @@
   # TODO: icon theme, maybe font and such should be configured dynamically as well.
 
   copper.chroma.extraActivationCommands = theme: ''
-    ${lib.getExe pkgs.nailgun} thumbnails-for-theme "${config.copper.chroma.themeFolder}/active/swim/wallpapers" >/dev/null &
+    ${lib.getExe pkgs.nailgun} thumbnails-for-theme "${config.copper.chroma.themeDirectory}/active/swim/wallpapers" >/dev/null &
   '';
 
   copper.swim.wallpaperActivationCommands = ''

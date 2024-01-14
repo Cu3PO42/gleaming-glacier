@@ -9,7 +9,7 @@ with lib; let
 
   wallpaperDir =
     if cfg.chromaIntegration.enable
-    then "${config.copper.chroma.themeFolder}/active/swim/wallpapers"
+    then "${config.copper.chroma.themeDirectory}/active/swim/wallpapers"
     else cfg.wallpaperDirectory;
 
   mkSwimActivation = {name}: ''
@@ -136,7 +136,7 @@ in {
       inherit (cfg) extraSwwwArgs;
       wallpaperDirectory =
         if cfg.chromaIntegration.enable
-        then "${config.copper.chroma.themeFolder}/active/swim/wallpapers"
+        then "${config.copper.chroma.themeDirectory}/active/swim/wallpapers"
         else cfg.wallpaperDirectory;
     };
 

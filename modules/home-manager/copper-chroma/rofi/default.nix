@@ -47,8 +47,8 @@ in {
     (mkIf (cfg.enable && cfg.rofi.enable) {
       copper.chroma.desktop.enable = true;
 
-      programs.rofi.theme = "${cfg.themeFolder}/active/rofi/theme.rasi";
-      programs.rofi.imports = ["${cfg.themeFolder}/active/rofi/config.rasi"];
+      programs.rofi.theme = "${cfg.themeDirectory}/active/rofi/theme.rasi";
+      programs.rofi.imports = ["${cfg.themeDirectory}/active/rofi/config.rasi"];
     })
   ];
 }

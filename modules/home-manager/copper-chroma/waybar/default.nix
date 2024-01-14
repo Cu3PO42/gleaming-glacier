@@ -33,7 +33,7 @@ in {
     };
 
     programs.waybar.style = mkIf (cfg.enable && cfg.waybar.enable) ''
-      @import "${config.copper.chroma.themeFolder}/active/waybar/theme.css";
+      @import "${config.copper.chroma.themeDirectory}/active/waybar/theme.css";
     '';
   };
 }

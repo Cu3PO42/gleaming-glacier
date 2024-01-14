@@ -41,7 +41,7 @@ in {
     })
     (mkIf (cfg.enable && cfg.starship.enable) {
       # IDEA: add functionality to Chroma to generate these symlinks from there?
-      xdg.configFile."starship.toml".source = mkForce (config.lib.file.mkOutOfStoreSymlink "${cfg.themeFolder}/active/starship/starship.toml");
+      xdg.configFile."starship.toml".source = mkForce (config.lib.file.mkOutOfStoreSymlink "${cfg.themeDirectory}/active/starship/starship.toml");
     })
   ];
 }
