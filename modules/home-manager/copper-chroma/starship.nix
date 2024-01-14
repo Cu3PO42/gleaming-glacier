@@ -33,7 +33,7 @@ in {
         };
 
         themeConfig = { opts, ... }: {
-          files."starship.toml" = tomlFormat.generate "starship-chroma-config" (config.programs.starship.settings // {
+          file."starship.toml".source = tomlFormat.generate "starship-chroma-config" (config.programs.starship.settings // {
             palette = opts.starship.palette.name;
           } // builtins.fromTOML (builtins.readFile (opts.starship.palette.file)));
         };

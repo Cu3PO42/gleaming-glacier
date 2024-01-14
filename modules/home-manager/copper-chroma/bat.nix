@@ -44,7 +44,9 @@ in {
           };
         };
 
-        templates."config" = { name, opts }: toConfigFile (config.programs.bat.config // { theme = "_chroma_${name}"; });
+        themeConfig = args: {
+          file."config".text = toConfigFile (config.programs.bat.config // { theme = "_chroma_${args.config.themeName}"; });
+        };
       };
     })
     (mkIf (cfg.enable && cfg.bat.enable) {

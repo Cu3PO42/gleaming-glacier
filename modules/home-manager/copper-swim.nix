@@ -122,7 +122,7 @@ in {
       };
 
       themeConfig = {config, ...}: {
-        files."wallpapers" = config.wallpaperDirectory;
+        file."wallpapers".source = config.wallpaperDirectory;
       };
 
       activationCommand = {

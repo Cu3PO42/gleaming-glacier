@@ -23,6 +23,35 @@ with lib; let
       '';
     };
 
+  fileType = types.submodule ({ name, config, ... }: {
+    options = {
+      source = mkOption {
+        type = with types; nullOr path;
+        default = null;
+        example = literalExpression "./theme.conf";
+        description = ''
+          The path to the file that will be linked.
+        '';
+      };
+
+      text = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        description = ''
+          The text that will be written to the file.
+        '';
+      };
+
+    };
+
+    config = {
+      source = mkIf (config.text != null) (mkDefault (pkgs.writeTextFile {
+        inherit (config) text;
+        name = hm.strings.storeFileName name;
+      }));
+    };
+  });
+
   themeForProgramType = programOpts:
     types.submodule ({config, ...}: {
       options =
@@ -39,8 +68,8 @@ with lib; let
             '';
           };
 
-          files = mkOption {
-            type = types.attrsOf types.path;
+          file = mkOption {
+            type = types.attrsOf fileType;
             default = {};
             example = literalExpression ''{ "theme.conf".source = ./themes/Catppuccin-Latte/kitty/theme.conf; }'';
             description = ''
@@ -49,6 +78,7 @@ with lib; let
               program makes sure that these files are included.
             '';
           };
+
           extraActivationCommands = mkOption {
             type = types.str;
             default = "";
@@ -148,20 +178,8 @@ with lib; let
         '';
       };
 
-      templates = mkOption {
-        type = types.attrsOf (types.functionTo types.str);
-        default = {};
-        example = literalExpression ''
-          { ".gtk-2.0" = { name, opts }: "gtk-theme = ''${opts.name}"; }
-        '';
-        description = ''
-          A set of templates that are used to generate config files for this
-          particular theme.
-        '';
-      };
-
       themeOptions = mkOption {
-        # FIXME: what is the type for this;, something like subtreeOF types.optionType
+        # FIXME: what is the type for this;, something like subtreeOF types.optionType; maybe apply in themeConfig, too
         type = types.anything;
         default = {};
         description = ''
@@ -173,7 +191,7 @@ with lib; let
       themeConfig = mkOption {
         type = with types; functionTo anything;
         default = {...}: {};
-        example = literalExpression ''{ config, ... }: { files."wallpapers" = config.wallpaperDirectory; }'';
+        example = literalExpression ''{ config, ... }: { file."wallpapers".source = config.wallpaperDirectory; }'';
         description = ''
           Default settings that are to be constructed for a theme for this
           program.
@@ -206,12 +224,7 @@ with lib; let
         }
 
         # First, link all the specified files
-        ${concatStringsSep "\n" (mapAttrsToList (name: path: ''lnmkdir "${path}" "$out/${name}"'') theme.files)}
-        # Then, generate and link all templates
-        ${concatStringsSep "\n" (mapAttrsToList (name: gen: ''lnmkdir "${pkgs.writeText name (gen {
-            name = theme.themeName;
-            opts = theme;
-          })}" "$out/${name}"'') programOpts.templates)}
+        ${concatStringsSep "\n" (mapAttrsToList (name: path: ''lnmkdir "${path.source}" "$out/${name}"'') (filterAttrs (n: v: v.source != null) theme.file))}
 
         # Write reload and activation scripts.
         cp ${pkgs.writeShellScript "reload" programOpts.reloadCommand} "$out/reload"

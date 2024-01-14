@@ -18,23 +18,20 @@ with lib; {
 
   config = {
     copper.chroma.programs.dunst = {
-      templates."dunstrc" = {
-        name,
-        opts,
-      }: let
-        desktopOpts = config.copper.chroma.finalThemes.${name}.desktop;
-      in ''
-        [global]
-            ### Icons ###
+      themeConfig = {opts, ...}: {
+        file."dunstrc".text = ''
+          [global]
+              ### Icons ###
 
-            # Recursive icon lookup. You can set a single theme, instead of having to
-            # define all lookup paths.
-            enable_recursive_icon_lookup = true
+              # Recursive icon lookup. You can set a single theme, instead of having to
+              # define all lookup paths.
+              enable_recursive_icon_lookup = true
 
-            # Set icon theme (only used for recursive icon lookup)
-            # You can also set multiple icon themes, with the leftmost one being used first.
-            icon_theme = ${desktopOpts.iconTheme.name}
-      '';
+              # Set icon theme (only used for recursive icon lookup)
+              # You can also set multiple icon themes, with the leftmost one being used first.
+              icon_theme = ${opts.desktop.iconTheme.name}
+        '';
+      };
     };
   };
 

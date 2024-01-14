@@ -32,11 +32,14 @@ in {
 
     copper.chroma.programs.rofi = {
       requiredFiles = ["theme.rasi"];
-      templates."config.rasi" = { name, opts }: ''
-        configuration {
-          icon-theme: "${cfg.themes.${name}.desktop.iconTheme.name}";
-        }
-      '';
+
+      themeConfig = {opts, ...}: {
+        file."config.rasi".text = ''
+          configuration {
+            icon-theme: "${opts.desktop.iconTheme.name}";
+          }
+        '';
+      };
     };
   };
 

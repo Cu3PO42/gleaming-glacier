@@ -184,7 +184,7 @@ in {
         opts,
       }:
         ''
-          ${pkgs.dconf}/bin/dconf load /org/gnome/desktop/interface/ < ${opts.files."dconf.ini"}
+          ${pkgs.dconf}/bin/dconf load /org/gnome/desktop/interface/ < ${opts.file."dconf.ini".source}
         ''
         + optionalString cfg.gtk.flatpak.enable ''
           # TODO: this should autorevert, ideally
@@ -199,30 +199,21 @@ in {
       
       reloadCommand = "${lib.getExe pkgs.gtkrc-reload}";
 
-      templates."gtk-3.0/settings.ini" = {
-        name,
-        opts,
-      }:
-        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk3.extraConfig (opts // cfg.themes.${name}.desktop) // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
-
-      templates."gtk-4.0/settings.ini" = {
-        name,
-        opts,
-      }:
-        toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk4.extraConfig (opts // cfg.themes.${name}.desktop) // {gtk-application-prefer-dark-theme = opts.colorScheme == "dark";};};
-
-      templates."gtk-4.0/gtk.css" = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "import") ({ name, opts }: ''
-        @import url("file://${opts.theme.package}/share/themes/${opts.theme.name}/gtk-4.0/gtk.css");
-      '');
-
-      templates."gtk-2.0/gtkrc" = {
-        name,
-        opts,
-      }:
-        concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme cfg.gtk.gtk2.extraConfig (opts // cfg.themes.${name}.desktop)));
-
       themeConfig = {config, opts, ...}: {
-        files."dconf.ini" = pkgs.writeText "dconf.ini" (toDconfIni {
+        file."gtk-3.0/settings.ini".text =
+          toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk3.extraConfig (config // opts.desktop) // {gtk-application-prefer-dark-theme = config.colorScheme == "prefer-dark";};};
+
+        file."gtk-4.0/settings.ini".text =
+          toGtk3Ini {Settings = gtkIniForTheme cfg.gtk.gtk4.extraConfig (config // opts.desktop) // {gtk-application-prefer-dark-theme = config.colorScheme == "prefer-dark";};};
+
+        file."gtk-4.0/gtk.css".text = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "import") ''
+          @import url("file://${config.theme.package}/share/themes/${config.theme.name}/gtk-4.0/gtk.css");
+        '';
+
+        file."gtk-2.0/gtkrc".text =
+          concatMapStrings (l: l + "\n") (mapAttrsToList formatGtk2Option (gtkIniForTheme cfg.gtk.gtk2.extraConfig (config // opts.desktop)));
+
+        file."dconf.ini".text = toDconfIni {
           "/" =
             dconfBaseSettings
             // {
@@ -248,7 +239,7 @@ in {
             (opts.desktop.cursorTheme != null && opts.desktop.cursorTheme.size != null) {
               cursor-size = opts.desktop.cursorTheme.size;
             };
-        });
+        };
       };
     };
   };

@@ -1,10 +1,10 @@
 {pkgs, ...}: rec {
   hyprland = {
-    files."theme.conf" = ./hyprland.conf;
+    file."theme.conf".source = ./hyprland.conf;
   };
 
   waybar = {
-    files."theme.css" = ./waybar.css;
+    file."theme.css".source = ./waybar.css;
   };
 
   desktop = {
@@ -43,11 +43,11 @@
   };
 
   kitty = {
-    files."theme.conf" = "${pkgs.kitty-themes}/share/kitty-themes/themes/Catppuccin-Latte.conf";
+    file."theme.conf".source = "${pkgs.kitty-themes}/share/kitty-themes/themes/Catppuccin-Latte.conf";
   };
 
   rofi = {
-    files."theme.rasi" = ./rofi.rasi;
+    file."theme.rasi".source = ./rofi.rasi;
   };
 
   fish.theme = {

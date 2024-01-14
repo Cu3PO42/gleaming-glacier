@@ -62,44 +62,43 @@ in {
         };
       };
 
-      # The font format is documented at: https://doc.qt.io/qt-6/qfont.html#toString
-      templates."qt5ct.conf" = {
-        name,
-        opts,
-      }: let desktop = cfg.themes.${name}.desktop; in ''
-        [Appearance]
-        color_scheme_path=${opts.qtct.package}/share/qt5ct/colors/${opts.qtct.name}.conf
-        custom_palette=true
-        icon_theme=${desktop.iconTheme.name}
-        standard_dialogs=default
-        style=kvantum
+      themeConfig = {config, opts, ...}: {
+        # The font format is documented at: https://doc.qt.io/qt-6/qfont.html#toString
+        file."qt5ct.conf".text = let desktop = opts.desktop; in ''
+          [Appearance]
+          color_scheme_path=${config.qtct.package}/share/qt5ct/colors/${config.qtct.name}.conf
+          custom_palette=true
+          icon_theme=${desktop.iconTheme.name}
+          standard_dialogs=default
+          style=kvantum
 
-        [Fonts]
-        fixed="${desktop.font.name},${toString desktop.font.size},-1,5,50,0,0,0,0,0,Regular"
-        general="${desktop.monospaceFont.name},${toString desktop.monospaceFont.size},-1,5,50,0,0,0,0,0,Regular"
+          [Fonts]
+          fixed="${desktop.font.name},${toString desktop.font.size},-1,5,50,0,0,0,0,0,Regular"
+          general="${desktop.monospaceFont.name},${toString desktop.monospaceFont.size},-1,5,50,0,0,0,0,0,Regular"
 
-        [Interface]
-        activate_item_on_single_click=1
-        buttonbox_layout=0
-        cursor_flash_time=1000
-        dialog_buttons_have_icons=0
-        double_click_interval=400
-        gui_effects=General, AnimateMenu, AnimateCombo, AnimateTooltip, AnimateToolBox
-        keyboard_scheme=2
-        menus_have_icons=false
-        show_shortcuts_in_context_menus=true
-        stylesheets=@Invalid()
-        toolbutton_style=4
-        underline_shortcut=2
-        wheel_scroll_lines=4
+          [Interface]
+          activate_item_on_single_click=1
+          buttonbox_layout=0
+          cursor_flash_time=1000
+          dialog_buttons_have_icons=0
+          double_click_interval=400
+          gui_effects=General, AnimateMenu, AnimateCombo, AnimateTooltip, AnimateToolBox
+          keyboard_scheme=2
+          menus_have_icons=false
+          show_shortcuts_in_context_menus=true
+          stylesheets=@Invalid()
+          toolbutton_style=4
+          underline_shortcut=2
+          wheel_scroll_lines=4
 
-        [SettingsWindow]
-        geometry=@ByteArray(\x1\xd9\xd0\xcb\0\x3\0\0\0\0\0\0\0\0\0\0\0\0\x4\xf0\0\0\x4\a\0\0\0\0\0\0\0\0\0\0\x2\xde\0\0\x2\xfa\0\0\0\0\x2\0\0\0\n\0\0\0\0\0\0\0\0\0\0\0\x4\xf0\0\0\x4\a)
+          [SettingsWindow]
+          geometry=@ByteArray(\x1\xd9\xd0\xcb\0\x3\0\0\0\0\0\0\0\0\0\0\0\0\x4\xf0\0\0\x4\a\0\0\0\0\0\0\0\0\0\0\x2\xde\0\0\x2\xfa\0\0\0\0\x2\0\0\0\n\0\0\0\0\0\0\0\0\0\0\0\x4\xf0\0\0\x4\a)
 
-        [Troubleshooting]
-        force_raster_widgets=1
-        ignored_applications=@Invalid()
-      '';
+          [Troubleshooting]
+          force_raster_widgets=1
+          ignored_applications=@Invalid()
+        '';
+      };
     };
   };
 
