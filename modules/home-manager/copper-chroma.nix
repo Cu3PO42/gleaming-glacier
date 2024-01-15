@@ -42,6 +42,14 @@ with lib; let
         '';
       };
 
+      required = mkOption {
+        type = types.bool;
+        default = false;
+        example = true;
+        description = ''
+          Whether this file is required for the theme to be considered valid.
+        '';
+      };
     };
 
     config = {
@@ -92,12 +100,6 @@ with lib; let
         // programOpts.themeOptions;
 
       config = programOpts.themeConfig {inherit config; opts = cfg.themes.${config.themeName}; };
-      /*
-        config = {
-        # TODO: verify all required paths are present
-        assertions = [];
-      };
-      */
     });
 
   themeType = types.submodule ({
@@ -166,15 +168,6 @@ with lib; let
           application. For example, by editing dbus settings. These commands
           are executed when the theme is first activated and every subsequent
           restart.
-        '';
-      };
-
-      requiredFiles = mkOption {
-        type = types.listOf types.str;
-        default = [];
-        example = literalExpression ''[ "theme.conf" ]'';
-        description = ''
-          A set of files that must be provided by a theme for this application.
         '';
       };
 
@@ -400,7 +393,11 @@ in {
           assertion = cfg.themes ? fallback;
           message = "The theme ${fallback} used as a fallback for ${name} must be defined.";
         })
-        theme.fallbacks)
+        theme.fallbacks
+        ++ flatten (map (prog: mapAttrsToList (fileName: val: {
+          assertion = !val.required || val.source != null;
+          message = "The file ${fileName} needs to be defined for ${prog} in theme ${name}.";
+        }) theme.${prog}.file) (filter (prog: cfg.${prog}.enable) (attrNames cfg.programs))))
       cfg.themes);
 
     home.file."${cfg.themeDirectory}/themes".source = symlinkJoinInFolder {

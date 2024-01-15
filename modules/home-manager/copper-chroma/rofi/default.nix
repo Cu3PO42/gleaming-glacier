@@ -31,9 +31,9 @@ in {
     ];
 
     copper.chroma.programs.rofi = {
-      requiredFiles = ["theme.rasi"];
-
       themeConfig = {opts, ...}: {
+        file."theme.rasi".required = true;
+
         file."config.rasi".text = ''
           configuration {
             icon-theme: "${opts.desktop.iconTheme.name}";
