@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   Catppuccin-Latte = pkgs.callPackage ./catppuccin.nix {
     variant = "latte";
+    accent = "rosewater";
 
     hyprlandOverrides = palette: {
       active1 = palette.accents.rosewater;

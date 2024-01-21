@@ -92,7 +92,7 @@ in rec {
   };
 
   gtk = {
-    theme.package = (pkgs.catppuccin-gtk.override {inherit variant;}).overrideAttrs (prev: { propagatedUserEnvPkgs = prev.propagatedUserEnvPkgs ++ [ pkgs.gnome.gnome-themes-extra ];});
+    theme.package = (pkgs.catppuccin-gtk.override {inherit variant; accents = [accent];}).overrideAttrs (prev: { propagatedUserEnvPkgs = prev.propagatedUserEnvPkgs ++ [ pkgs.gnome.gnome-themes-extra ];});
     theme.name = "Catppuccin-${Variant}-Standard-${Accent}-${Luminance}";
     documentFont = desktop.font;
     colorScheme = "prefer-${luminance}";
