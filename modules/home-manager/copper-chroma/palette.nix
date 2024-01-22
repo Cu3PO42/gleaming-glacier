@@ -1,9 +1,7 @@
 {config, pkgs, lib, ...}: with lib; let
   cfg = config.copper.chroma;
 
-  colorType = types.str // {
-    check = s: types.str.check s && (builtins.match "^[0-9a-fA-F]{6}$" s != null);
-  };
+  inherit (import ../../../lib/types.nix {inherit lib;}) colorType;
 
   mkColorOption = name: mkOption {
     type = colorType;
@@ -32,7 +30,7 @@ in {
       copper.chroma.programs.palette = {
         themeOptions = {
           generateDynamic = mkOption {
-            type = with types; functionTo str;
+            type = with types; functionTo path;
             readOnly = true;
             description = ''
               Generates a theme file based on the given template and palette.
@@ -61,7 +59,7 @@ in {
           };
 
           # Arbitrary accent colors?
-          accent = mkOption {
+          accents = mkOption {
             type = with types; attrsOf colorType;
             default = {};
             description = ''
@@ -84,14 +82,18 @@ in {
 
         themeConfig = {config, opts, ...}: {
           generateDynamic = { template, paletteOverrides }: with lib; let
-            name = substring 0 (length template - 4) template;
+            templateName = baseNameOf (toString template);
+            name = substring 0 (stringLength templateName - 4) templateName;
             palette = config.file."palette.json".source;
-            overrides = concatMapStringsSep " " (k: v: "--override ${k}=${v}") (attrsToList paletteOverrides);
+            overrides = concatStringsSep " " (mapAttrsToList (k: v: "--override ${k}=${v}") paletteOverrides);
           in pkgs.runCommand name {} ''
+            echo "${template}"
+            echo "${palette}"
+            echo "${overrides}"
             ${lib.getExe pkgs.dynachrome} "${template}" "${palette}" ${overrides} > $out
           '';
 
-          file."palette.json".source = builtins.toJSON { inherit (config) semantic colors accent; };
+          file."palette.json".text = builtins.toJSON { inherit (config) semantic colors accents; };
         };
       };
     }

@@ -1,10 +1,13 @@
 {
   config,
+  options,
   pkgs,
   lib,
   ...
 }:
-with lib; {
+with lib; let
+  inherit (import ../../../../lib/types.nix {inherit lib;}) colorType;
+in {
   options = {
     copper.chroma.hyprland.enable = mkOption {
       type = types.bool;
@@ -38,9 +41,31 @@ with lib; {
         optionalString (cursor != null) ''
           ${config.wayland.windowManager.hyprland.package}/bin/hyprctl setcursor ${cursor.name} ${toString cursor.size}
         '';
+
       reloadCommand = ''
         ( ${config.xdg.configFile."hypr/hyprland.conf".onChange} ) >/dev/null 2>&1
       '';
+
+      themeOptions = {
+        colorOverrides = mkOption {
+          type = with types; attrsOf colorType;
+          default = {};
+          description = ''
+            Color overrides to apply to the palette-generated theme.
+          '';
+        };
+      };
+
+      themeConfig = {config, opts, ...}: {
+        file."theme.conf" = {
+          required = true;
+
+          source = mkDefault (opts.palette.generateDynamic {
+            template = ./theme.conf.dyn;
+            paletteOverrides = config.colorOverrides;
+          });
+        };
+      };
     };
 
     wayland.windowManager.hyprland = mkIf (config.copper.chroma.enable && config.copper.chroma.hyprland.enable) {

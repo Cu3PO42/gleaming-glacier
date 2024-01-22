@@ -1,0 +1,18 @@
+---
+defines:
+    main-background: overlay
+    active-highlight: text1
+    active-text: background
+    hover-highlight: accent1
+    hover-text: background
+---
+@define-color bar-bg rgba(0, 0, 0, 0);
+
+@define-color main-bg #⟨main-background:hex⟩;
+@define-color main-fg #⟨text:hex⟩;
+
+@define-color wb-act-bg #⟨active-highlight:hex⟩;
+@define-color wb-act-fg #⟨active-text:hex⟩;
+
+@define-color wb-hvr-bg #⟨hover-highlight:hex⟩;
+@define-color wb-hvr-fg #⟨hover-text:hex⟩;

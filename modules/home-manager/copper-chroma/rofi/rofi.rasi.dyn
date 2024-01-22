@@ -1,0 +1,16 @@
+---
+defines:
+    main-background: background
+    border: overlay
+    highlight: accent1
+    highlight-text: surface
+---
+* {
+    main-bg:            #⟨main-background:hex⟩e6;
+    main-fg:            #⟨text:hex⟩;
+    main-br:            #⟨border:hex⟩ff;
+    select-bg:          #⟨highlight:hex⟩ff;
+    select-fg:          #⟨highlight-text:hex⟩ff;
+    separatorcolor:     transparent;
+    border-color:       transparent;
+}

@@ -6,6 +6,8 @@
 }:
 with lib; let
   cfg = config.copper.chroma;
+  
+  inherit (import ../../../../lib/types.nix {inherit lib;}) colorType;
 in {
   options = {
     copper.chroma.waybar.enable = mkOption {
@@ -30,6 +32,27 @@ in {
       reloadCommand = ''
         ${pkgs.procps}/bin/pkill -u $USER -USR2 waybar || true
       '';
+
+      themeOptions = {
+        colorOverrides = mkOption {
+          type = with types; attrsOf colorType;
+          default = {};
+          description = ''
+            Color overrides to apply to the palette-generated theme.
+          '';
+        };
+      };
+
+      themeConfig = {config, opts, ...}: {
+        file."theme.css" = {
+          required = true;
+
+          source = mkDefault (opts.palette.generateDynamic {
+            template = ./waybar.css.dyn;
+            paletteOverrides = config.colorOverrides;
+          });
+        };
+      };
     };
 
     programs.waybar.style = mkIf (cfg.enable && cfg.waybar.enable) ''

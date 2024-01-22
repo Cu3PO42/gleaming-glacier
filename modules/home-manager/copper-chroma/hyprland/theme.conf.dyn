@@ -1,0 +1,39 @@
+---
+defines:
+    active1: accent1
+    active2: accent1
+    inactive1: accent2
+    inactive2: accent2
+---
+general {
+    gaps_in = 3
+    gaps_out = 8
+    border_size = 2
+    col.active_border = rgba(⟨active1:hex⟩ff) rgba(⟨active2:hex⟩ff) 45deg
+    col.inactive_border = rgba(⟨inactive1:hex⟩cc) rgba(⟨inactive2:hex⟩cc) 45deg
+    layout = dwindle
+    resize_on_border = true
+}
+
+group {
+    col.border_active = rgba(⟨active1:hex⟩ff) rgba(⟨active2:hex⟩ff) 45deg
+    col.border_inactive = rgba(⟨inactive1:hex⟩cc) rgba(⟨inactive2:hex⟩cc) 45deg
+    col.border_locked_active = rgba(⟨active1:hex⟩ff) rgba(⟨active2:hex⟩ff) 45deg
+    col.border_locked_inactive = rgba(⟨inactive1:hex⟩cc) rgba(⟨inactive2:hex⟩cc) 45deg
+}
+
+decoration {
+    rounding = 10
+    drop_shadow = false
+
+    blur {
+        enabled = yes
+        size = 6
+        passes = 3
+        new_optimizations = on
+        ignore_opacity = on
+        xray = false
+    }
+}
+
+layerrule = blur,waybar
