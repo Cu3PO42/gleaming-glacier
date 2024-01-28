@@ -91,11 +91,12 @@
       inputs.nix-darwin.follows = "nix-darwin";
     };
 
-    # Only for deduplication of other transitive dependencies
+    # To create re-usable Flake logic
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
     };
 
+    # Only for deduplication of other transitive dependencies
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
@@ -116,17 +117,13 @@
     nixpkgs,
     home-manager,
     nix-darwin,
+    flake-parts,
     ...
   } @ inputs: let
     lib = import ./lib inputs;
     inherit (lib) loadDir loadDirRec mkFeatureModule injectArgs;
 
-    forAllSystems = f:
-      nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] (s:
-        f (import nixpkgs {
-          system = s;
-          config.allowUnfree = true;
-        }));
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
 
     specialArgs_ = {
       inherit inputs;
@@ -228,39 +225,51 @@
           inherit modules;
           extraSpecialArgs = specialArgs;
         });
-  in {
-    lib =
-      lib
-      // {
-        # TODO: move these defintions from flake.nix into a lib file
-        inherit loadNixos loadHome loadDarwin loadModules;
+  in flake-parts.lib.mkFlake {inherit inputs;} {
+    flake = {
+      lib =
+        lib
+        // {
+          # TODO: move these defintions from flake.nix into a lib file
+          inherit loadNixos loadHome loadDarwin loadModules;
+        };
+
+      overlays = import ./overlays {
+        inherit inputs;
+        inherit (self) outputs;
       };
 
-    # Shell for bootstrapping either a NixOS or Home-Manager config
-    devShells = forAllSystems (pkgs: import ./shell.nix {inherit pkgs;});
+      templates = import ./templates;
 
-    # Required to make nix fmt work
-    formatter = forAllSystems (pkgs: pkgs.alejandra);
+      nixosModules = loadModules ./. "nixos";
+      homeModules = loadModules ./. "home-manager";
+      darwinModules = loadModules ./. "darwin";
 
-    apps = forAllSystems (pkgs: import ./apps (inputs // {inherit pkgs;}));
-    packages = forAllSystems (pkgs: pkgs.lib.filterAttrs (n: v: v != null) (import ./packages (inputs // {inherit pkgs;})));
-
-    overlays = import ./overlays {
-      inherit inputs;
-      inherit (self) outputs;
+      nixosConfigurations = loadNixos {dir = ./hosts/nixos;};
+      homeConfigurations = loadHome {dir = ./users;};
+      darwinConfigurations = loadDarwin {dir = ./hosts/darwin;};
     };
 
-    templates = import ./templates;
+    inherit systems;
 
-    nixosModules = loadModules ./. "nixos";
-    homeModules = loadModules ./. "home-manager";
-    darwinModules = loadModules ./. "darwin";
+    perSystem = {system, pkgs, ...}: {
+      # Allow unfree packages
+      _module.args.pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
 
-    nixosConfigurations = loadNixos {dir = ./hosts/nixos;};
-    homeConfigurations = loadHome {dir = ./users;};
-    darwinConfigurations = loadDarwin {dir = ./hosts/darwin;};
+      # Shell for bootstrapping either a NixOS or Home-Manager config
+      devShells = import ./shell.nix {inherit pkgs;};
 
-    # Non-standard outputs
-    chromaThemes = forAllSystems (pkgs: import ./themes {inherit pkgs;});
+      # Required to make nix fmt work
+      formatter = pkgs.alejandra;
+
+      apps = import ./apps (inputs // {inherit pkgs;});
+      packages = pkgs.lib.filterAttrs (n: v: v != null) (import ./packages (inputs // {inherit pkgs;}));
+
+      # Non-standard outputs
+      #chromaThemes = import ./themes {inherit pkgs;};
+    };
   };
 }
