@@ -225,7 +225,16 @@
           inherit modules;
           extraSpecialArgs = specialArgs;
         });
-  in flake-parts.lib.mkFlake {inherit inputs;} {
+
+    autoload = import ./modules/flake/autoload.nix;
+
+  in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
+    imports = [
+      autoload
+    ];
+
+    copper.autoload.base = ./.;
+
     flake = {
       lib =
         lib
@@ -241,6 +250,8 @@
 
       templates = import ./templates;
 
+      flakeModules = { inherit autoload; };
+
       nixosModules = loadModules ./. "nixos";
       homeModules = loadModules ./. "home-manager";
       darwinModules = loadModules ./. "darwin";
@@ -253,7 +264,8 @@
     inherit systems;
 
     perSystem = {system, pkgs, ...}: {
-      # Allow unfree packages
+      # Allow unfree packages; required because some of our own packages have
+      # unfree dependencies.
       _module.args.pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -267,11 +279,11 @@
       # Required to make nix fmt work
       formatter = pkgs.alejandra;
 
-      apps = import ./apps (inputs // {inherit pkgs;});
+      #apps = import ./apps (inputs // {inherit pkgs;});
       packages = pkgs.lib.filterAttrs (n: v: v != null) (import ./packages (inputs // {inherit pkgs;}));
 
       # Non-standard outputs
       #chromaThemes = import ./themes {inherit pkgs;};
     };
-  };
+  });
 }
