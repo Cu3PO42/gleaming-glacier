@@ -259,8 +259,10 @@
         config.allowUnfree = true;
       };
 
-      # Shell for bootstrapping either a NixOS or Home-Manager config
-      devShells = import ./shell.nix {inherit pkgs;};
+      devShells = {
+        # Shell for bootstrapping either a NixOS or Home-Manager config
+        default = import ./shell.nix {inherit pkgs;};
+      };
 
       # Required to make nix fmt work
       formatter = pkgs.alejandra;
