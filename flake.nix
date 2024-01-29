@@ -114,9 +114,6 @@
 
   outputs = {
     self,
-    nixpkgs,
-    home-manager,
-    nix-darwin,
     flake-parts,
     ...
   } @ inputs: let
