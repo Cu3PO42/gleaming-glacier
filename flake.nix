@@ -121,35 +121,15 @@
     ...
   } @ inputs: let
     lib = import ./lib inputs;
-    inherit (lib) loadDir loadDirRec mkFeatureModule injectArgs;
+    inherit (lib) loadDir loadDirRec;
 
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
 
+
     specialArgs_ = {
       inherit inputs;
-      inherit (self) outputs;
+      inherit (inputs.self) outputs;
     };
-
-    loadModules = base: name:
-      nixpkgs.lib.mapAttrs (_: injectArgs specialArgs_) (
-        loadDirRec (base + "/modules/common") ({path, ...}: import path)
-        // loadDirRec (base + "/modules/${name}") ({path, ...}: import path)
-        # TODO: consider moving this to modules/feature subdirectory;
-        // nixpkgs.lib.mapAttrs' (name: value: {
-          name = "feature/${name}";
-          inherit value;
-        }) (loadDirRec (base + "/features/${name}") (
-          {
-            name,
-            path,
-            ...
-          }:
-            mkFeatureModule {
-              name = builtins.replaceStrings ["/"] ["."] name;
-              cfg = import path;
-            }
-        ))
-      );
 
     loadSystems = {
       constructor,
@@ -242,9 +222,10 @@
         lib
         // {
           # TODO: move these defintions from flake.nix into a lib file
-          inherit loadNixos loadHome loadDarwin loadModules;
+          inherit loadNixos loadHome loadDarwin;
         };
 
+      # FIXME: overlays are broken since package rewrite
       overlays = import ./overlays {
         inherit inputs;
         inherit (self) outputs;
@@ -253,10 +234,6 @@
       templates = import ./templates;
 
       inherit flakeModules;
-
-      nixosModules = loadModules ./. "nixos";
-      homeModules = loadModules ./. "home-manager";
-      darwinModules = loadModules ./. "darwin";
 
       nixosConfigurations = loadNixos {dir = ./hosts/nixos;};
       homeConfigurations = loadHome {dir = ./users;};
