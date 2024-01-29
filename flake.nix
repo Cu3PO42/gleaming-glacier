@@ -226,11 +226,10 @@
           extraSpecialArgs = specialArgs;
         });
 
-    autoload = import ./modules/flake/autoload.nix;
-
+    flakeModules = loadDirRec ./modules/flake ({path, ...}: import path);
   in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
     imports = [
-      autoload
+      flakeModules.autoload
     ];
 
     copper.autoload.base = ./.;
@@ -250,7 +249,7 @@
 
       templates = import ./templates;
 
-      flakeModules = { inherit autoload; };
+      inherit flakeModules;
 
       nixosModules = loadModules ./. "nixos";
       homeModules = loadModules ./. "home-manager";
@@ -278,9 +277,6 @@
 
       # Required to make nix fmt work
       formatter = pkgs.alejandra;
-
-      #apps = import ./apps (inputs // {inherit pkgs;});
-      packages = pkgs.lib.filterAttrs (n: v: v != null) (import ./packages (inputs // {inherit pkgs;}));
 
       # Non-standard outputs
       #chromaThemes = import ./themes {inherit pkgs;};
