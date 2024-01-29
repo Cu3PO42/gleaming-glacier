@@ -1,4 +1,4 @@
-{nixpkgs, ...}@inputs: let
+{nixpkgs, home-manager, ...}@inputs: let
   inherit (import ./modules.nix inputs) mkFeatureModule injectArgs;
 in rec {
   loadDir = with nixpkgs.lib;
@@ -100,4 +100,41 @@ in rec {
         constructor {
           inherit modules specialArgs;
         });
+
+  loadHome = {
+    specialArgs_,
+    copperModules
+  }: {
+    dir,
+    extraModules ? [],
+    withCopperModules ? true,
+    specialArgs ? specialArgs_,
+  }:
+    loadDir dir ({
+      path,
+      name,
+      ...
+    }: let
+      user = import path;
+      username = builtins.elemAt (nixpkgs.lib.splitString "@" name) 0;
+      modules =
+        (nixpkgs.lib.optionals withCopperModules (copperModules
+          ++ [
+            ({lib, ...}: {
+              copper.feature.standaloneBase.enable = lib.mkDefault true;
+            })
+          ]))
+        ++ extraModules
+        ++ [
+          ({lib, ...}: {
+            home.username = lib.mkDefault username;
+          })
+        ]
+        ++ user.modules or [];
+    in
+      home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${user.system};
+        inherit modules;
+        extraSpecialArgs = specialArgs;
+      });
 }

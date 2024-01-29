@@ -121,49 +121,9 @@
     ...
   } @ inputs: let
     lib = import ./lib inputs;
-    inherit (lib) loadDir loadDirRec;
+    inherit (lib) loadDirRec;
 
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-
-
-    specialArgs_ = {
-      inherit inputs;
-      inherit (inputs.self) outputs;
-    };
-
-    loadHome = {
-      dir,
-      extraModules ? [],
-      withCopperModules ? true,
-      specialArgs ? specialArgs_,
-    }:
-      loadDir dir ({
-        path,
-        name,
-        ...
-      }: let
-        user = import path;
-        username = builtins.elemAt (nixpkgs.lib.splitString "@" name) 0;
-        modules =
-          (nixpkgs.lib.optionals withCopperModules (nixpkgs.lib.attrValues self.outputs.homeModules
-            ++ [
-              ({lib, ...}: {
-                copper.feature.standaloneBase.enable = lib.mkDefault true;
-              })
-            ]))
-          ++ extraModules
-          ++ [
-            ({lib, ...}: {
-              home.username = lib.mkDefault username;
-            })
-          ]
-          ++ user.modules or [];
-      in
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${user.system};
-          inherit modules;
-          extraSpecialArgs = specialArgs;
-        });
 
     flakeModules = loadDirRec ./modules/flake ({path, ...}: import path);
   in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
@@ -178,12 +138,7 @@
 
     flake = {
       # FIXME: readd loadNixos, loadDarwin to export?
-      lib =
-        lib
-        // {
-          # TODO: move these defintions from flake.nix into a lib file
-          inherit loadHome;
-        };
+      inherit lib;
 
       overlays = import ./overlays {
         inherit inputs;
@@ -193,8 +148,6 @@
       templates = import ./templates;
 
       inherit flakeModules;
-
-      homeConfigurations = loadHome {dir = ./users;};
     };
 
     inherit systems;

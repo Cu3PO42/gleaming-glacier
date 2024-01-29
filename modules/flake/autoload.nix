@@ -17,15 +17,20 @@
   # TODO: probably also move these to lib
   loadNixos = loadSystems {
     specialArgs_ = specialArgs;
-    constructor = nixpkgs.lib.nixosSystem;
-    copperModules = nixpkgs.lib.attrValues self.outputs.nixosModules;
-  };
-  loadDarwin = loadSystems {
-    specialArgs_ = specialArgs;
-    constructor = nix-darwin.lib.darwinSystem;
-    copperModules = nixpkgs.lib.attrValues self.outputs.darwinModules;
+    constructor = inputs.nixpkgs.lib.nixosSystem;
+    copperModules = lib.attrValues self.outputs.nixosModules;
   };
 
+  loadDarwin = loadSystems {
+    specialArgs_ = specialArgs;
+    constructor = inputs.nix-darwin.lib.darwinSystem;
+    copperModules = lib.attrValues self.outputs.darwinModules;
+  };
+
+  loadHome = self.lib.loadHome {
+    specialArgs_ = specialArgs;
+    copperModules = lib.attrValues self.outputs.homeModules;
+  };
 in {
   options = {
     copper.autoload.base = mkOption {
@@ -43,6 +48,7 @@ in {
       darwinModules = self.lib.loadModules specialArgs cfg.base "darwin";
 
       nixosConfigurations = loadNixos {dir = cfg.base + "/hosts/nixos";};
+      homeConfigurations = loadHome {dir = cfg.base + "/users";};
       darwinConfigurations = loadDarwin {dir = cfg.base + "/hosts/darwin";};
     };
 
