@@ -41,6 +41,12 @@ in rec {
     in
       listToAttrs nnFiles;
 
+  loadPackages' = path: pkgs: loadDir path ({path, ...}: pkgs.callPackage path {inherit inputs;});
+
+  loadPackages = path: pkgs: pkgs.lib.filterAttrs (_: pkgs.lib.meta.availableOn pkgs.hostPlatform) (
+    loadPackages' path pkgs
+  );
+
   loadModules = specialArgs: base: name:
     nixpkgs.lib.mapAttrs (_: injectArgs specialArgs) (
       loadDirRec (base + "/modules/common") ({path, ...}: import path)

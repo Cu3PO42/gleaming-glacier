@@ -185,7 +185,6 @@
           inherit loadHome;
         };
 
-      # FIXME: overlays are broken since package rewrite
       overlays = import ./overlays {
         inherit inputs;
         inherit (self) outputs;

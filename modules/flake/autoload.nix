@@ -7,16 +7,12 @@
     program = pkgs.lib.getExe (pkgs.callPackage path {inherit inputs;});
   });
 
-  loadPackages = path: pkgs: lib.filterAttrs (_: pkgs.lib.meta.availableOn pkgs.hostPlatform) (
-    self.lib.loadDir path ({path, ...}: pkgs.callPackage path {inherit inputs;})
-  );
-
   specialArgs = {
     inherit inputs;
     inherit (inputs.self) outputs;
   };
 
-  inherit (self.lib) loadSystems;
+  inherit (self.lib) loadSystems loadPackages;
 
   # TODO: probably also move these to lib
   loadNixos = loadSystems {
