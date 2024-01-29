@@ -61,4 +61,37 @@ in rec {
       ))
     );
 
+    loadSystems = {
+      constructor,
+      copperModules,
+      specialArgs_,
+    }: {
+      dir,
+      extraModules ? [],
+      withCopperModules ? true,
+      specialArgs ? specialArgs_,
+    }:
+      loadDir dir ({
+        path,
+        name,
+        ...
+      }: let
+        modules =
+          [
+            (import path)
+            ({lib, ...}: {
+              networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
+            })
+          ]
+          ++ nixpkgs.lib.optionals withCopperModules (copperModules
+            ++ [
+              ({lib, ...}: {
+                copper.feature.base.enable = lib.mkDefault true;
+              })
+            ])
+          ++ extraModules;
+      in
+        constructor {
+          inherit modules specialArgs;
+        });
 }

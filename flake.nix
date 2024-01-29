@@ -131,47 +131,6 @@
       inherit (inputs.self) outputs;
     };
 
-    loadSystems = {
-      constructor,
-      copperModules,
-    }: {
-      dir,
-      extraModules ? [],
-      withCopperModules ? true,
-      specialArgs ? specialArgs_,
-    }:
-      loadDir dir ({
-        path,
-        name,
-        ...
-      }: let
-        modules =
-          [
-            (import path)
-            ({lib, ...}: {
-              networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
-            })
-          ]
-          ++ nixpkgs.lib.optionals withCopperModules (copperModules
-            ++ [
-              ({lib, ...}: {
-                copper.feature.base.enable = lib.mkDefault true;
-              })
-            ])
-          ++ extraModules;
-      in
-        constructor {
-          inherit modules specialArgs;
-        });
-    loadNixos = loadSystems {
-      constructor = nixpkgs.lib.nixosSystem;
-      copperModules = nixpkgs.lib.attrValues self.outputs.nixosModules;
-    };
-    loadDarwin = loadSystems {
-      constructor = nix-darwin.lib.darwinSystem;
-      copperModules = nixpkgs.lib.attrValues self.outputs.darwinModules;
-    };
-
     loadHome = {
       dir,
       extraModules ? [],
@@ -218,11 +177,12 @@
     copper.autoload.base = ./.;
 
     flake = {
+      # FIXME: readd loadNixos, loadDarwin to export?
       lib =
         lib
         // {
           # TODO: move these defintions from flake.nix into a lib file
-          inherit loadNixos loadHome loadDarwin;
+          inherit loadHome;
         };
 
       # FIXME: overlays are broken since package rewrite
@@ -235,9 +195,7 @@
 
       inherit flakeModules;
 
-      nixosConfigurations = loadNixos {dir = ./hosts/nixos;};
       homeConfigurations = loadHome {dir = ./users;};
-      darwinConfigurations = loadDarwin {dir = ./hosts/darwin;};
     };
 
     inherit systems;
@@ -251,6 +209,7 @@
       # Required to make nix fmt work
       formatter = pkgs.alejandra;
 
+      # TODO: re-add theme output, write flake schema for it?
       # Non-standard outputs
       #chromaThemes = import ./themes {inherit pkgs;};
     };
