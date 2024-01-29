@@ -7,8 +7,8 @@
     program = pkgs.lib.getExe (pkgs.callPackage path {inherit inputs;});
   });
 
-  loadPackages = base: pkgs: lib.filterAttrs (_: pkgs.lib.meta.availableOn pkgs.hostPlatform) (
-    self.lib.loadDir (base + "/packages") ({path, ...}: pkgs.callPackage path {inherit inputs;})
+  loadPackages = path: pkgs: lib.filterAttrs (_: pkgs.lib.meta.availableOn pkgs.hostPlatform) (
+    self.lib.loadDir path ({path, ...}: pkgs.callPackage path {inherit inputs;})
   );
 
   specialArgs = {
@@ -53,7 +53,8 @@ in {
     perSystem = {pkgs, ...}: {
       apps = loadApps cfg.base pkgs;
 
-      packages = loadPackages cfg.base pkgs;
+      packages = loadPackages (cfg.base + "/packages") pkgs;
+      legacyPackages = loadPackages (cfg.base + "/legacy-packages") pkgs;
     };
   };
 }
