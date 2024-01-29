@@ -230,6 +230,9 @@
   in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
     imports = [
       flakeModules.autoload
+      # Allow unfree packages; required because some of our own packages have
+      # unfree dependencies.
+      flakeModules.allow-unfree
     ];
 
     copper.autoload.base = ./.;
@@ -263,13 +266,6 @@
     inherit systems;
 
     perSystem = {system, pkgs, ...}: {
-      # Allow unfree packages; required because some of our own packages have
-      # unfree dependencies.
-      _module.args.pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
