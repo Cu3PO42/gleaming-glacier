@@ -120,11 +120,10 @@
     lib = import ./lib inputs;
     inherit (lib) loadDirRec;
 
-    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-
     flakeModules = loadDirRec ./modules/flake ({path, ...}: import path);
   in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
     imports = [
+      flakeModules.base
       flakeModules.autoload
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
@@ -147,16 +146,11 @@
       inherit flakeModules;
     };
 
-    inherit systems;
-
     perSystem = {system, pkgs, ...}: {
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
       };
-
-      # Required to make nix fmt work
-      formatter = pkgs.alejandra;
 
       # TODO: re-add theme output, write flake schema for it?
       # Non-standard outputs
