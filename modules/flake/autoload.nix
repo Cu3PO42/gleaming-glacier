@@ -42,6 +42,8 @@ in {
 
   config = {
     flake = {
+      templates = import (cfg.base + "/templates");
+
       # TODO: find a way to get rid of manual specialArgs_ passing; probably using something from flake-parts
       nixosModules = self.lib.loadModules specialArgs cfg.base "nixos";
       homeModules = self.lib.loadModules specialArgs cfg.base "home-manager";

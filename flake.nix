@@ -141,8 +141,6 @@
         inherit (self) outputs;
       };
 
-      templates = import ./templates;
-
       inherit flakeModules;
     };
 
