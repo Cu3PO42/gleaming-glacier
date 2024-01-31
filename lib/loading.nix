@@ -43,7 +43,7 @@ in rec {
 
   loadPackages' = path: pkgs: loadDir path ({path, ...}: pkgs.callPackage path {inherit inputs;});
 
-  loadPackages = path: pkgs: pkgs.lib.filterAttrs (_: pkgs.lib.meta.availableOn pkgs.hostPlatform) (
+  loadPackages = lib: system: path: pkgs: lib.filterAttrs (_: lib.meta.availableOn {inherit system;}) (
     loadPackages' path pkgs
   );
 

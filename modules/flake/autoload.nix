@@ -54,11 +54,11 @@ in {
       darwinConfigurations = loadDarwin {dir = cfg.base + "/hosts/darwin";};
     };
 
-    perSystem = {pkgs, ...}: {
+    perSystem = {pkgs, system, ...}: {
       apps = loadApps cfg.base pkgs;
 
-      packages = loadPackages (cfg.base + "/packages") pkgs;
-      legacyPackages = loadPackages (cfg.base + "/legacy-packages") pkgs;
+      packages = loadPackages lib system (cfg.base + "/packages") pkgs;
+      legacyPackages = loadPackages lib system (cfg.base + "/legacy-packages") pkgs;
 
       chromaThemes = mkIf (options ? perSystem.chromaThemes) import (cfg.base + "/themes") {inherit pkgs;};
     };
