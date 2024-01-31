@@ -128,6 +128,7 @@
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
       flakeModules.allow-unfree
+      flakeModules.copper-chroma
     ];
 
     copper.autoload.base = ./.;
@@ -149,10 +150,6 @@
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
       };
-
-      # TODO: re-add theme output, write flake schema for it?
-      # Non-standard outputs
-      #chromaThemes = import ./themes {inherit pkgs;};
     };
   });
 }

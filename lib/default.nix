@@ -3,4 +3,5 @@ let
   misc = import ./misc.nix inputs;
   modules = import ./modules.nix inputs;
   loading = import ./loading.nix inputs;
-in loading // modules // misc
+  strings = import ./strings.nix inputs;
+in loading // modules // misc // strings

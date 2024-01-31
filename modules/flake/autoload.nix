@@ -59,6 +59,8 @@ in {
 
       packages = loadPackages (cfg.base + "/packages") pkgs;
       legacyPackages = loadPackages (cfg.base + "/legacy-packages") pkgs;
+
+      chromaThemes = mkIf (options ? perSystem.chromaThemes) import (cfg.base + "/themes") {inherit pkgs;};
     };
   };
 }
