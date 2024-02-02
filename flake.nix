@@ -129,6 +129,7 @@
       # unfree dependencies.
       flakeModules.allow-unfree
       flakeModules.copper-chroma
+      flakeModules.default-overlays
     ];
 
     copper.autoload.base = ./.;
