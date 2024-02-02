@@ -72,11 +72,14 @@ in {
     # Since ZFS lives out of tree, we can't always run the latest kernel
     boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
-    copper.patches.fish = lib.mkIf config.programs.fish.enable [(pkgs.fetchpatch {
-      name = "fix-zfs-completion.path";
-      url = "https://github.com/fish-shell/fish-shell/commit/85504ca694ae099f023ae0febb363238d9c64e8d.patch";
-      sha256 = "sha256-lA0M7E/Z0NjuvppC7GZA5rWdL7c+5l+3SF5yUe7nEz8=";
-    })];
+    copper.patches.fish = [{
+      patch = pkgs.fetchpatch {
+        name = "fix-zfs-completion.patch";
+        url = "https://github.com/fish-shell/fish-shell/commit/85504ca694ae099f023ae0febb363238d9c64e8d.patch";
+        sha256 = "sha256-lA0M7E/Z0NjuvppC7GZA5rWdL7c+5l+3SF5yUe7nEz8=";
+      };
+      condition = fish: config.programs.fish.enable && ((builtins.compareVersions "3.7.0" fish.version) == 1);
+    }];
 
     # Relevant to support Linux 6.4 and newer on aarch64
     boot.zfs.removeLinuxDRM = true;
