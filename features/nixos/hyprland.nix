@@ -25,7 +25,7 @@
     settings.General.InputMethod = "";
   };
   environment.systemPackages = with pkgs; [
-    sddm-theme-corners
+    copper.sddm-theme-corners
     nerdfonts
   ];
 
