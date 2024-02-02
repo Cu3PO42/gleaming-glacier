@@ -48,7 +48,7 @@
     inputs.nix-search-cli
     nnn
     nurl
-    plate
+    copper.plate
     ranger
     ripgrep
     ripgrep-all

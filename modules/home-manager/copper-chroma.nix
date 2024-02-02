@@ -416,6 +416,6 @@ in {
       ${cfg.themeDirectory}/active/activate
     '';
 
-    home.packages = [pkgs.chromactl];
+    home.packages = [pkgs.copper.chromactl];
   };
 }

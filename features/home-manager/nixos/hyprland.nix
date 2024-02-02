@@ -23,7 +23,7 @@
     settings.source = lib.mkMerge [(lib.mkIf config.wayland.windowManager.hyprland.enableNvidiaPatches ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
   };
 
-  home.packages = [pkgs.systemctl-toggle pkgs.procps];
+  home.packages = [pkgs.copper.systemctl-toggle pkgs.procps];
 
   systemd.user.services.polkit-authentication-agent = {
     Unit = {
@@ -51,7 +51,7 @@
     };
 
     Service = {
-      ExecStart = "${pkgs.misc-scripts-hyprdots}/bin/batterynotify.sh";
+      ExecStart = "${pkgs.copper.misc-scripts-hyprdots}/bin/batterynotify.sh";
       Restart = "always";
     };
 

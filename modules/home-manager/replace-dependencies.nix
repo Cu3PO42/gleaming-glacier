@@ -18,7 +18,7 @@
     };
   };
 
-  patchedPath = pkgs.replace-dependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
+  patchedPath = pkgs.copper.replace-dependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
 in {
   options = {
     home.replaceRuntimeDependencies = mkOption {
@@ -40,7 +40,7 @@ in {
         [
           {
             original = pkgs.libadwaita;
-            replacement = pkgs.libadwaita-without-adwaita;
+            replacement = pkgs.copper.libadwaita-without-adwaita;
           }
         ]
       '';

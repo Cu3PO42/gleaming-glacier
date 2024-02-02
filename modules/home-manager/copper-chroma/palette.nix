@@ -90,7 +90,7 @@ in {
             echo "${template}"
             echo "${palette}"
             echo "${overrides}"
-            ${lib.getExe pkgs.dynachrome} "${template}" "${palette}" ${overrides} > $out
+            ${lib.getExe pkgs.copper.dynachrome} "${template}" "${palette}" ${overrides} > $out
           '';
 
           file."palette.json".text = builtins.toJSON { inherit (config) semantic colors accents; };

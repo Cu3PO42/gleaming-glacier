@@ -2,7 +2,7 @@
   inputs,
   outputs,
 }: {
-  additions = final: prev: outputs.lib.loadPackages' ../packages prev // outputs.lib.loadPackages' ../legacy-packages prev;
+  additions = final: prev: { copper = outputs.lib.loadPackages' ../packages prev // outputs.lib.loadPackages' ../legacy-packages prev; };
 
   themes = final: prev: {chromaThemes = import ../themes {pkgs = final;};};
 

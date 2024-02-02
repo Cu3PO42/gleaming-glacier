@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (lib) mkIf;
-  wslAgentScript = "source ${lib.getExe pkgs.wsl-ssh-agent}";
+  wslAgentScript = "source ${lib.getExe pkgs.copper.wsl-ssh-agent}";
 in {
   xdg.configFile."fish/conf.d/wsl_ssh_agent.fish" = mkIf config.copper.feature.fish.enable {
     text = ''replay "${wslAgentScript}"'';

@@ -1,5 +1,5 @@
 {pkgs, ...}: {
   programs.wlogout.enable = true;
-  home.packages = [pkgs.wlogout-launcher-hyprdots];
+  home.packages = [pkgs.copper.wlogout-launcher-hyprdots];
   copper.file.config."wlogout" = "config/wlogout";
 }

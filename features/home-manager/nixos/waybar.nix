@@ -11,10 +11,10 @@
   };
 
   home.activation.waybarConfigGeneration = lib.hm.dag.entryBetween ["reloadSystemd"] ["linkGeneration"] ''
-    ${lib.getExe pkgs.waybar-confgen-hyprdots}
+    ${lib.getExe pkgs.copper.waybar-confgen-hyprdots}
   '';
 
-  home.packages = [pkgs.waybar-confgen-hyprdots];
+  home.packages = [pkgs.copper.waybar-confgen-hyprdots];
 
   programs.waybar.style = ''
       @import "${config.xdg.configHome}/waybar/style.mine.css";

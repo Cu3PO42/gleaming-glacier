@@ -105,7 +105,7 @@ in rec {
     };
 
     qtct = {
-      package = pkgs.catppuccin-qt5ct;
+      package = pkgs.copper.catppuccin-qt5ct;
       name = "Catppuccin-${Variant}";
       # TODO: how is the accent color configured? (according to the GitHub for the style, it is configurable in qtct)
       # probably unlink the qtct config, copy, change it and see what happens
