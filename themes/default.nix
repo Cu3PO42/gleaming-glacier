@@ -1,5 +1,5 @@
-{pkgs, ...}: {
-  Catppuccin-Latte = pkgs.callPackage ./catppuccin.nix {
+{pkgs, extraArgs, ...}: {
+  Catppuccin-Latte = pkgs.callPackage ./catppuccin.nix (extraArgs // {
     variant = "latte";
     accent = "rosewater";
 
@@ -21,9 +21,9 @@
       hover-highlight = palette.accents.rosewater;
       hover-text = palette.all.crust;
     };
-  };
+  });
 
-  Catppuccin-Mocha = pkgs.callPackage ./catppuccin.nix {
+  Catppuccin-Mocha = pkgs.callPackage ./catppuccin.nix (extraArgs // {
     variant = "mocha";
 
     hyprlandOverrides = palette: {
@@ -50,5 +50,5 @@
       hover-highlight = palette.accents.pink;
       hover-text = "313244";
     };
-  };
+  });
 }

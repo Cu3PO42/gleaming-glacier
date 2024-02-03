@@ -65,7 +65,7 @@ in {
       packages = loadPackages lib system (cfg.base + "/packages") pkgs extraPkgArgs;
       legacyPackages = loadPackages lib system (cfg.base + "/legacy-packages") pkgs extraPkgArgs;
 
-      chromaThemes = mkIf (options ? perSystem.chromaThemes) import (cfg.base + "/themes") {inherit pkgs;};
+      chromaThemes = mkIf (options ? perSystem.chromaThemes) import (cfg.base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;};
     };
   };
 }
