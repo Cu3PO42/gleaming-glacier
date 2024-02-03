@@ -364,6 +364,7 @@ in {
 
       programs = mkOption {
         type = types.attrsOf programType;
+        default = {};
         description = ''
           Integrates programs with the theming system.
         '';
