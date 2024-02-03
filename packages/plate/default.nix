@@ -1,5 +1,6 @@
 {
   pkgs,
+  self,
   inputs,
   ...
 }:
@@ -7,9 +8,9 @@ pkgs.writeShellApplication {
   name = "plate";
   runtimeInputs = with pkgs; [
     openssh
-    inputs.self.outputs.packages.${pkgs.system}.op-wsl-proxy
+    self.op-wsl-proxy
     nixos-rebuild
-    inputs.nixos-anywhere.packages.${pkgs.system}.default
+    inputs.nixos-anywhere.packages.default
     jq
     gnused
     gawk

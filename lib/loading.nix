@@ -41,10 +41,10 @@ in rec {
     in
       listToAttrs nnFiles;
 
-  loadPackages' = path: pkgs: loadDir path ({path, ...}: pkgs.callPackage path {inherit inputs;});
+  loadPackages' = path: pkgs: extra: loadDir path ({path, ...}: pkgs.callPackage path extra);
 
-  loadPackages = lib: system: path: pkgs: lib.filterAttrs (_: lib.meta.availableOn {inherit system;}) (
-    loadPackages' path pkgs
+  loadPackages = lib: system: path: pkgs: extra: lib.filterAttrs (_: lib.meta.availableOn {inherit system;}) (
+    loadPackages' path pkgs extra
   );
 
   loadModules = specialArgs: base: name:

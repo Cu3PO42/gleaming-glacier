@@ -13,7 +13,6 @@
   procps,
   dbus,
   inputs,
-  pkgs,
   ...
 }:
 symlinkJoin {
@@ -29,7 +28,7 @@ symlinkJoin {
         gnused
         gawk
         pamixer
-        inputs.hypr-contrib.packages.${pkgs.system}.grimblast
+        inputs.hypr-contrib.packages.grimblast
         swappy
         procps
         libnotify

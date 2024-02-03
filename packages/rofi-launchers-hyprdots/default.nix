@@ -8,8 +8,7 @@
   dunst,
   dconf,
   cliphist,
-  inputs,
-  pkgs,
+  self,
   ...
 }:
 symlinkJoin {
@@ -25,9 +24,9 @@ symlinkJoin {
         dunst
         dconf
         cliphist
-        inputs.self.outputs.packages.${pkgs.system}.swimctl
-        inputs.self.outputs.packages.${pkgs.system}.chromactl
-        inputs.self.outputs.packages.${pkgs.system}.nailgun
+        self.swimctl
+        self.chromactl
+        self.nailgun
       ];
       checkPhase = "";
       text = builtins.readFile "${./src}/${f}";
