@@ -1,4 +1,4 @@
-{config, lib, inputs, self, ...}: with lib; let
+{config, lib, inputs, self, ...}@moduleArgs: with lib; let
   cfg = config.copper.autoload;
 
   # TODO: maybe find a way to add these to lib
@@ -43,6 +43,8 @@ in {
   config = {
     flake = {
       templates = import (cfg.base + "/templates");
+      overlays = import (cfg.base + "/overlays") moduleArgs;
+
 
       # TODO: find a way to get rid of manual specialArgs_ passing; probably using something from flake-parts
       nixosModules = self.lib.loadModules specialArgs cfg.base "nixos";
@@ -54,7 +56,7 @@ in {
       darwinConfigurations = loadDarwin {dir = cfg.base + "/hosts/darwin";};
     };
 
-    perSystem = {pkgs, system, config, inputs', ...}: let
+    perSystem = {pkgs, system, config, options, inputs', ...}: let
       extraPkgArgs = {
         self = config.packages // config.legacyPackages;
         inputs = inputs';
@@ -65,7 +67,7 @@ in {
       packages = loadPackages lib system (cfg.base + "/packages") pkgs extraPkgArgs;
       legacyPackages = loadPackages lib system (cfg.base + "/legacy-packages") pkgs extraPkgArgs;
 
-      chromaThemes = mkIf (options ? perSystem.chromaThemes) import (cfg.base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;};
+      chromaThemes = mkIf (options ? chromaThemes) (import (cfg.base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;});
     };
   };
 }

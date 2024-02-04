@@ -3,5 +3,5 @@
     enable = true;
     initialTheme = "Catppuccin-Latte";
   };
-  copper.chroma.themes = pkgs.chromaThemes;
+  copper.chroma.themes = pkgs.copper.chromaThemes;
 }

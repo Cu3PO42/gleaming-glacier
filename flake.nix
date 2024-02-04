@@ -138,11 +138,6 @@
       # FIXME: readd loadNixos, loadDarwin to export?
       inherit lib;
 
-      overlays = import ./overlays {
-        inherit inputs;
-        inherit (self) outputs;
-      };
-
       inherit flakeModules;
     };
 

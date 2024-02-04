@@ -26,7 +26,12 @@
                 _module.args.pkgs = lib.mkForce prev;
               }];
             }).config;
-          in { copper = perSys.packages // perSys.legacyPackages; };
+          in {
+            copper =
+              (perSys.packages or {})
+              // (perSys.legacyPackages or {})
+              // (if perSys ? chromaThemes then { inherit (perSys) chromaThemes; } else {});
+          };
 
         # Inspired by github.com/Misterio77/nix-config:
         # For every flake input, aliases 'pkgs.inputs.${flake}' to

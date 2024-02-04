@@ -1,12 +1,16 @@
-{config, lib, self, flake-parts-lib, ...}: with lib; flake-parts-lib.mkTransposedPerSystemModule {
+{config, lib, self, inputs, flake-parts-lib, ...}: with lib; flake-parts-lib.mkTransposedPerSystemModule {
   name = "chromaThemes";
   file = ./copper-chroma.nix;
   option = mkOption {
     type = (evalModules {
       # TODO: all module imports in this file must refer to root flake, not really self
-      modules = [self.homeModules.copper-chroma] ++ config.copper.chroma.modules;
-      # TODO: might be necessary to pass check = false if we get typing errors
-    }).options.copper.chroma.themes;
+      modules = [
+        self.homeModules.copper-chroma
+        { _module.check = false; }
+      ];
+      # TODO: we currently can't includee these modules because they refer to other home-manager modules, which aren't included above; maybe use fulll HM config, but make the check optional?
+      # ++ config.copper.chroma.modules;
+    }).options.copper.chroma.themes.type;
     default = {};
     description = ''
       A set of themes for the Chroma theming system.
