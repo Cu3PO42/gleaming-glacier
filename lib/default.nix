@@ -4,4 +4,5 @@ let
   modules = import ./modules.nix inputs;
   loading = import ./loading.nix inputs;
   strings = import ./strings.nix inputs;
-in loading // modules // misc // strings
+  flake = import ./flake.nix inputs;
+in loading // modules // misc // strings // flake

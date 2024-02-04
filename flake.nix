@@ -112,34 +112,14 @@
     };
   };
 
-  outputs = {
-    self,
-    flake-parts,
-    ...
-  } @ inputs: let
+  outputs = inputs: let
     lib = import ./lib inputs;
-    inherit (lib) loadDirRec;
-
-    flakeModules = loadDirRec ./modules/flake ({path, ...}: import path);
-  in flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
+  in lib.mkGleamingFlake inputs ./. (flakeModules: {
     imports = [
-      flakeModules.base
-      flakeModules.autoload
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
       flakeModules.allow-unfree
-      flakeModules.copper-chroma
-      flakeModules.default-overlays
     ];
-
-    copper.autoload.base = ./.;
-
-    flake = {
-      # FIXME: readd loadNixos, loadDarwin to export?
-      inherit lib;
-
-      inherit flakeModules;
-    };
 
     perSystem = {system, pkgs, ...}: {
       devShells = {

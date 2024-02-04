@@ -42,9 +42,11 @@ in {
 
   config = {
     flake = {
+      # FIXME: readd loadNixos, loadDarwin to export?
+      lib = import (cfg.base + "/lib") inputs;
+
       templates = import (cfg.base + "/templates");
       overlays = import (cfg.base + "/overlays") moduleArgs;
-
 
       # TODO: find a way to get rid of manual specialArgs_ passing; probably using something from flake-parts
       nixosModules = self.lib.loadModules specialArgs cfg.base "nixos";
