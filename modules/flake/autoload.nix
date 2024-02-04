@@ -1,5 +1,5 @@
 {config, lib, inputs, self, ...}@moduleArgs: with lib; let
-  cfg = config.copper.autoload;
+  base = config.gleaming.basepath;
 
   # TODO: maybe find a way to add these to lib
   loadApps = base: pkgs: self.lib.loadDir (base + "/apps") ({path, ...}: {
@@ -32,30 +32,24 @@
     copperModules = lib.attrValues self.outputs.homeModules;
   };
 in {
-  options = {
-    copper.autoload.base = mkOption {
-      type = types.path;
-      example = literalExpression "./.";
-      description = "The base path of the Flake from which to load all elmements.";
-    };
-  };
+  options = {};
 
   config = {
     flake = {
       # FIXME: readd loadNixos, loadDarwin to export?
-      lib = import (cfg.base + "/lib") inputs;
+      lib = import (base + "/lib") inputs;
 
-      templates = import (cfg.base + "/templates");
-      overlays = import (cfg.base + "/overlays") moduleArgs;
+      templates = import (base + "/templates");
+      overlays = import (base + "/overlays") moduleArgs;
 
       # TODO: find a way to get rid of manual specialArgs_ passing; probably using something from flake-parts
-      nixosModules = self.lib.loadModules specialArgs cfg.base "nixos";
-      homeModules = self.lib.loadModules specialArgs cfg.base "home-manager";
-      darwinModules = self.lib.loadModules specialArgs cfg.base "darwin";
+      nixosModules = self.lib.loadModules specialArgs config.gleaming.basename base "nixos";
+      homeModules = self.lib.loadModules specialArgs config.gleaming.basename base "home-manager";
+      darwinModules = self.lib.loadModules specialArgs config.gleaming.basename base "darwin";
 
-      nixosConfigurations = loadNixos {dir = cfg.base + "/hosts/nixos";};
-      homeConfigurations = loadHome {dir = cfg.base + "/users";};
-      darwinConfigurations = loadDarwin {dir = cfg.base + "/hosts/darwin";};
+      nixosConfigurations = loadNixos {dir = base + "/hosts/nixos";};
+      homeConfigurations = loadHome {dir = base + "/users";};
+      darwinConfigurations = loadDarwin {dir = base + "/hosts/darwin";};
     };
 
     perSystem = {pkgs, system, config, options, inputs', ...}: let
@@ -64,12 +58,12 @@ in {
         inputs = inputs';
       };
     in {
-      apps = loadApps cfg.base pkgs;
+      apps = loadApps base pkgs;
 
-      packages = loadPackages lib system (cfg.base + "/packages") pkgs extraPkgArgs;
-      legacyPackages = loadPackages lib system (cfg.base + "/legacy-packages") pkgs extraPkgArgs;
+      packages = loadPackages lib system (base + "/packages") pkgs extraPkgArgs;
+      legacyPackages = loadPackages lib system (base + "/legacy-packages") pkgs extraPkgArgs;
 
-      chromaThemes = mkIf (options ? chromaThemes) (import (cfg.base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;});
+      chromaThemes = mkIf (options ? chromaThemes) (import (base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;});
     };
   };
 }

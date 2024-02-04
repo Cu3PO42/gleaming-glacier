@@ -3,6 +3,7 @@
     name,
     cfg,
     description ? "",
+    prefix,
   }: let
     inherit (nixpkgs) lib;
     path = lib.splitString "." name;
@@ -13,7 +14,7 @@
         lib,
         ...
       } @ opts: let
-        enable = (lib.attrByPath path {} config.copper.feature).enable or false;
+        enable = (lib.attrByPath path {} config.${prefix}.feature).enable or false;
         baseConfig = cfg opts;
         hasOptions = baseConfig ? featureOptions;
         options =
@@ -33,7 +34,7 @@
         inherit imports;
 
         options = {
-          copper.feature = lib.setAttrByPath path ({
+          ${prefix}.feature = lib.setAttrByPath path ({
               enable = lib.mkOption {
                 type = lib.types.bool;
                 default = false;

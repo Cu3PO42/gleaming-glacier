@@ -10,7 +10,7 @@ in rec {
           path = dir + "/${name}";
         };
       })
-      (filterAttrs (name: typ: (hasSuffix ".nix" name && name != "default.nix") || typ == "directory") (builtins.readDir dir));
+      (filterAttrs (name: typ: (hasSuffix ".nix" name && name != "default.nix") || typ == "directory") (if builtins.pathExists dir then builtins.readDir dir else {}));
 
   loadDirRec = dir: f:
     with nixpkgs.lib; let
@@ -36,7 +36,7 @@ in rec {
       in
         loadedFiles ++ loadedDirs;
 
-      files = impl dir "";
+      files = if builtins.pathExists dir then impl dir "" else [];
       nnFiles = filter (v: v.value != null) files;
     in
       listToAttrs nnFiles;
@@ -47,7 +47,7 @@ in rec {
     loadPackages' path pkgs extra
   );
 
-  loadModules = specialArgs: base: name:
+  loadModules = specialArgs: prefix: base: name:
     nixpkgs.lib.mapAttrs (_: injectArgs specialArgs) (
       loadDirRec (base + "/modules/common") ({path, ...}: import path)
       // loadDirRec (base + "/modules/${name}") ({path, ...}: import path)
@@ -63,6 +63,7 @@ in rec {
           mkFeatureModule {
             name = builtins.replaceStrings ["/"] ["."] name;
             cfg = import path;
+            inherit prefix;
           }
       ))
     );

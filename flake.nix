@@ -121,6 +121,9 @@
       flakeModules.allow-unfree
     ];
 
+    # TODO: handle this via one of the mkGleamingFlake arguments?
+    gleaming.basename = "copper";
+
     perSystem = {system, pkgs, ...}: {
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config

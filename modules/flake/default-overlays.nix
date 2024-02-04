@@ -1,4 +1,4 @@
-{inputs, getSystemIgnoreWarning, lib, flake-parts-lib, ...}: {
+{inputs, getSystemIgnoreWarning, lib, flake-parts-lib, config, ...}: {
   options = {
     # flake-parts only exposes the config value of the perSystem module.
     # However, we need access to its extendModules function for our overlay.
@@ -27,7 +27,7 @@
               }];
             }).config;
           in {
-            copper =
+            ${config.gleaming.basename} =
               (perSys.packages or {})
               // (perSys.legacyPackages or {})
               // (if perSys ? chromaThemes then { inherit (perSys) chromaThemes; } else {});
@@ -39,6 +39,7 @@
         # 'inputs.${flake}.legacyPackages.${pkgs.system}',
         # and also define 'pkgs.inputs.${flake}' as the default package
         flake-inputs = final: _: {
+          # TODO: rename to copper-inputs
           inputs =
             builtins.mapAttrs (
               _: flake: let

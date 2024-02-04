@@ -12,9 +12,11 @@
       copperModules.autoload
       copperModules.copper-chroma
       copperModules.default-overlays
+      copperModules.gleaming
+      copperModules.gleaming-modules
     ];
 
-    copper.autoload.base = base;
+    gleaming.basepath = base;
 
     flake = {
       inherit flakeModules;

@@ -1,10 +1,11 @@
 {
   config,
   lib,
+  gleaming,
   ...
 }:
 with lib; let
-  features = map (splitString "/") config.copper.features;
+  features = map (splitString "/") config.${gleaming.basename}.features;
 
   enableOrStep = v: let
     empty = partition (e: length e == 0) v;
@@ -21,19 +22,20 @@ with lib; let
     mapAttrs (_: enableOrStep) grouped;
 in {
   options = {
-    copper.features = mkOption {
+    ${gleaming.basename}.features = mkOption {
       type = with types; listOf str;
       default = [];
       example = ["cli" "rust" "fish"];
       description = ''
         This is simply a convenience option to enable a number of features
-        from Copper's config. For every element `mod` that is inculded here,
-        the option `copper.features.${mod}.enable = true`; will be set.
+        from a Gleaming Glacier-based config. For every element `mod` that
+        is inculded here, the option
+        `${gleaming.basename}.features.''${mod}.enable = true`; will be set.
       '';
     };
   };
 
   config = {
-    copper.feature = step features;
+    ${gleaming.basename}.feature = step features;
   };
 }

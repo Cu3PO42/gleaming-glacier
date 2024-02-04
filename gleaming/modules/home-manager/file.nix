@@ -1,12 +1,13 @@
 {
   config,
   lib,
+  gleaming,
   ...
 }:
 with lib; let
-  cfg = config.copper.file;
+  cfg = config.${gleaming.basename}.file;
 
-  copy = n: v: {source = ../.. + "/${v}";};
+  copy = n: v: {source = gleaming.basepath + "/${v}";};
   symlink = n: v: {source = config.lib.file.mkOutOfStoreSymlink "${cfg.symlink.base}/${v}";};
 
   mapFile =
@@ -15,7 +16,7 @@ with lib; let
     else copy;
 in {
   options = {
-    copper.file = {
+    ${gleaming.basename}.file = {
       symlink.enable = mkOption {
         type = types.bool;
         default = false;
@@ -25,7 +26,7 @@ in {
           copying them from the store. This makes it easier to edit those
           files, but harder to revert to a prior state. Due to the way Flakes
           work, you must hardcode the path to the flake by also setting
-          `copper.symlink.base` to the location where you cloned the flake.
+          `${gleaming.basename}.symlink.base` to the location where you cloned the flake.
         '';
       };
 
