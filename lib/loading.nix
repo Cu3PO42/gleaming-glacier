@@ -48,9 +48,9 @@ in rec {
   );
 
   loadModules = specialArgs: prefix: base: name:
-    nixpkgs.lib.mapAttrs (_: injectArgs specialArgs) (
-      loadDirRec (base + "/modules/common") ({path, ...}: import path)
-      // loadDirRec (base + "/modules/${name}") ({path, ...}: import path)
+    nixpkgs.lib.mapAttrs (_: value: nixpkgs.lib.setDefaultModuleLocation value.path (injectArgs specialArgs value.mod)) (
+      loadDirRec (base + "/modules/common") ({path, ...}: { inherit path; mod = import path; })
+      // loadDirRec (base + "/modules/${name}") ({path, ...}: { inherit path; mod = import path; })
       // nixpkgs.lib.mapAttrs' (name: value: {
         name = "feature/${name}";
         inherit value;
@@ -60,10 +60,13 @@ in rec {
           path,
           ...
         }:
-          mkFeatureModule {
-            name = builtins.replaceStrings ["/"] ["."] name;
-            cfg = import path;
-            inherit prefix;
+          {
+            inherit path;
+            mod = mkFeatureModule {
+              name = builtins.replaceStrings ["/"] ["."] name;
+              cfg = import path;
+              inherit prefix;
+            };
           }
       ))
     );
