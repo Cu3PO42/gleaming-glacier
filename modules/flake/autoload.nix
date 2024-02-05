@@ -1,8 +1,8 @@
-{config, lib, inputs, self, ...}@moduleArgs: with lib; let
+gg: {config, lib, inputs, ...}@moduleArgs: with lib; let
   base = config.gleaming.basepath;
 
   # TODO: maybe find a way to add these to lib
-  loadApps = base: pkgs: self.lib.loadDir (base + "/apps") ({path, ...}: {
+  loadApps = base: pkgs: gg.lib.loadDir (base + "/apps") ({path, ...}: {
     type = "app";
     program = pkgs.lib.getExe (pkgs.callPackage path {inherit inputs;});
   });
@@ -12,24 +12,24 @@
     inherit (inputs.self) outputs;
   };
 
-  inherit (self.lib) loadSystems loadPackages;
+  inherit (gg.lib) loadSystems loadPackages;
 
   # TODO: probably also move these to lib
   loadNixos = loadSystems {
     specialArgs_ = specialArgs;
     constructor = inputs.nixpkgs.lib.nixosSystem;
-    copperModules = lib.attrValues self.outputs.nixosModules;
+    copperModules = lib.attrValues gg.nixosModules;
   };
 
   loadDarwin = loadSystems {
     specialArgs_ = specialArgs;
     constructor = inputs.nix-darwin.lib.darwinSystem;
-    copperModules = lib.attrValues self.outputs.darwinModules;
+    copperModules = lib.attrValues gg.darwinModules;
   };
 
-  loadHome = self.lib.loadHome {
+  loadHome = gg.lib.loadHome {
     specialArgs_ = specialArgs;
-    copperModules = lib.attrValues self.outputs.homeModules;
+    copperModules = lib.attrValues gg.homeModules;
   };
 in {
   options = {};
@@ -43,9 +43,9 @@ in {
       overlays = import (base + "/overlays") moduleArgs;
 
       # TODO: find a way to get rid of manual specialArgs_ passing; probably using something from flake-parts
-      nixosModules = self.lib.loadModules specialArgs config.gleaming.basename base "nixos";
-      homeModules = self.lib.loadModules specialArgs config.gleaming.basename base "home-manager";
-      darwinModules = self.lib.loadModules specialArgs config.gleaming.basename base "darwin";
+      nixosModules = gg.lib.loadModules specialArgs config.gleaming.basename base "nixos";
+      homeModules = gg.lib.loadModules specialArgs config.gleaming.basename base "home-manager";
+      darwinModules = gg.lib.loadModules specialArgs config.gleaming.basename base "darwin";
 
       nixosConfigurations = loadNixos {dir = base + "/hosts/nixos";};
       homeConfigurations = loadHome {dir = base + "/users";};

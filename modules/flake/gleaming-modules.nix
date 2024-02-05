@@ -1,4 +1,4 @@
-{config, lib, flake-parts-lib, self, ...}: {
+gg: {config, lib, flake-parts-lib, ...}: {
   options = with lib; {
     flake = flake-parts-lib.mkSubmoduleOptions {
       # flake-parts only has built-in definitions for nixosModules, which is
@@ -27,8 +27,7 @@
 
   config = {
     flake = let
-      # FIXME: the reference to self here is not correct! it needs to always be the GG flake
-      load = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (self.lib.loadModules {inherit (config) gleaming;} config.gleaming.basename ../../gleaming kind);
+      load = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (gg.lib.loadModules {inherit (config) gleaming;} config.gleaming.basename ../../gleaming kind);
     in {
       nixosModules = load "nixos";
       homeModules = load "home-manager";
