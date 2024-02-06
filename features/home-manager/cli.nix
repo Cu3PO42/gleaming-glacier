@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   ...
 }: {
   programs.ssh.enable = true;
@@ -27,13 +28,13 @@
   programs.nix-index.enable = true;
   # Instead of manually building the database on every host, we grab a
   # pre-built one.
-  programs.nix-index.package = pkgs.inputs.nix-index-database.nix-index-with-db;
+  programs.nix-index.package = inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
 
   # Install extra packages
   home.packages = with pkgs; [
     alejandra
     bottom
-    inputs.nix-index-database.comma-with-db
+    inputs.nix-index-database.packages.${pkgs.system}.comma-with-db
     entr
     eza
     fd
@@ -43,7 +44,7 @@
     jq
     neofetch
     nil
-    inputs.nix-search-cli
+    inputs.nix-search-cli.packages.${pkgs.system}.default
     nnn
     nurl
     copper.plate

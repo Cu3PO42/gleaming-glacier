@@ -20,7 +20,7 @@
   # This modifies the packages that are available to install as part of this
   # system configuration only.
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = builtins.attrValues outputs.overlays;
+  nixpkgs.overlays = [outputs.overlays.additions];
 
   # command-not-found relies on a programs.sqlite database that is only
   # available from channels, but not importing nixpkgs in a flake.
@@ -33,7 +33,7 @@
   programs.nix-index.enable = true;
   # Instead of manually building the database on every host, we grab a
   # pre-built one.
-  programs.nix-index.package = pkgs.inputs.nix-index-database.nix-index-with-db;
+  programs.nix-index.package = inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

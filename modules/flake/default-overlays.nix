@@ -34,13 +34,12 @@ _: {inputs, getSystemIgnoreWarning, lib, flake-parts-lib, config, ...}: {
           };
 
         # Inspired by github.com/Misterio77/nix-config:
-        # For every flake input, aliases 'pkgs.inputs.${flake}' to
+        # For every flake input, aliases 'pkgs.${basename}-inputs.${flake}' to
         # 'inputs.${flake}.packages.${pkgs.system}' or
         # 'inputs.${flake}.legacyPackages.${pkgs.system}',
         # and also define 'pkgs.inputs.${flake}' as the default package
         flake-inputs = final: _: {
-          # TODO: rename to copper-inputs
-          inputs =
+          "${config.gleaming.basename}-inputs" =
             builtins.mapAttrs (
               _: flake: let
                 # The order of packages and legacyPackages is important:

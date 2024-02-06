@@ -34,7 +34,7 @@
   # Workaround for the above setting not working.
   nixpkgs.config.allowUnfreePredicate = _: true;
   # Add all of our own overlays
-  nixpkgs.overlays = builtins.attrValues outputs.overlays;
+  nixpkgs.overlays = [outputs.overlays.additions];
 
   # Persist Home Manager
   programs.home-manager.enable = true;
