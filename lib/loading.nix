@@ -47,14 +47,23 @@ in rec {
     loadPackages' path pkgs extra
   );
 
-  loadModules = specialArgs: prefix: base: name:
-    nixpkgs.lib.mapAttrs (_: value: nixpkgs.lib.setDefaultModuleLocation value.path (injectArgs specialArgs value.mod)) (
-      loadDirRec (base + "/modules/common") ({path, ...}: { inherit path; mod = import path; })
-      // loadDirRec (base + "/modules/${name}") ({path, ...}: { inherit path; mod = import path; })
+  loadApps = base: pkgs: loadDir (base + "/apps") ({path, ...}: {
+    type = "app";
+    program = pkgs.lib.getExe (pkgs.callPackage path {inherit inputs;});
+  });
+
+  loadModules = {
+    injectionArgs,
+    basename,
+    basepath,
+  }: kind:
+    nixpkgs.lib.mapAttrs (_: value: nixpkgs.lib.setDefaultModuleLocation value.path (injectArgs injectionArgs value.mod)) (
+      loadDirRec (basepath + "/modules/common") ({path, ...}: { inherit path; mod = import path; })
+      // loadDirRec (basepath + "/modules/${kind}") ({path, ...}: { inherit path; mod = import path; })
       // nixpkgs.lib.mapAttrs' (name: value: {
         name = "feature/${name}";
         inherit value;
-      }) (loadDirRec (base + "/features/${name}") (
+      }) (loadDirRec (basepath + "/features/${kind}") (
         {
           name,
           path,
@@ -65,54 +74,40 @@ in rec {
             mod = mkFeatureModule {
               name = builtins.replaceStrings ["/"] ["."] name;
               cfg = import path;
-              inherit prefix;
+              prefix = basename;
             };
           }
       ))
     );
 
-    loadSystems = {
-      constructor,
-      copperModules,
-      specialArgs_,
-    }: {
+    loadSystems = constructor: {
+      modules,
+      specialArgs,
       dir,
-      extraModules ? [],
-      withCopperModules ? true,
-      specialArgs ? specialArgs_,
     }:
       loadDir dir ({
         path,
         name,
         ...
       }: let
-        modules =
+        modules' =
           [
             (import path)
             ({lib, ...}: {
               networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
             })
           ]
-          ++ nixpkgs.lib.optionals withCopperModules (copperModules
-            ++ [
-              ({lib, ...}: {
-                copper.feature.base.enable = lib.mkDefault true;
-              })
-            ])
-          ++ extraModules;
+          ++ modules;
       in
         constructor {
-          inherit modules specialArgs;
+          modules = modules';
+          inherit specialArgs;
         });
 
   loadHome = {
-    specialArgs_,
-    copperModules
-  }: {
+    modules,
+    specialArgs,
     dir,
-    extraModules ? [],
-    withCopperModules ? true,
-    specialArgs ? specialArgs_,
   }:
     loadDir dir ({
       path,
@@ -121,14 +116,8 @@ in rec {
     }: let
       user = import path;
       username = builtins.elemAt (nixpkgs.lib.splitString "@" name) 0;
-      modules =
-        (nixpkgs.lib.optionals withCopperModules (copperModules
-          ++ [
-            ({lib, ...}: {
-              copper.feature.standaloneBase.enable = lib.mkDefault true;
-            })
-          ]))
-        ++ extraModules
+      modules' =
+        modules
         ++ [
           ({lib, ...}: {
             home.username = lib.mkDefault username;
@@ -138,7 +127,7 @@ in rec {
     in
       home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${user.system};
-        inherit modules;
+        modules = modules';
         extraSpecialArgs = specialArgs;
       });
 }

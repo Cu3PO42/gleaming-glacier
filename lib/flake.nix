@@ -15,6 +15,7 @@
         copperModules.default-overlays
         copperModules.gleaming
         copperModules.gleaming-modules
+        copperModules.inherit-copper
       ];
 
       gleaming.basepath = base;

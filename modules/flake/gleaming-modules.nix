@@ -27,11 +27,15 @@ gg: {config, lib, flake-parts-lib, ...}: {
 
   config = {
     flake = let
-      load = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (gg.lib.loadModules {inherit (config) gleaming;} config.gleaming.basename ../../gleaming kind);
+      loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (gg.lib.loadModules {
+        inherit (config.gleaming) basename;
+        basepath = ../../gleaming;
+        injectionArgs = { inherit (config) gleaming; };
+      } kind);
     in {
-      nixosModules = load "nixos";
-      homeModules = load "home-manager";
-      darwinModules = load "darwin";
+      nixosModules = loadModules' "nixos";
+      homeModules = loadModules' "home-manager";
+      darwinModules = loadModules' "darwin";
     };
   };
 }

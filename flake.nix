@@ -121,6 +121,10 @@
       flakeModules.allow-unfree
     ];
 
+    # We don't want to inherit our own modules!
+    # FIXME: without this, we don't have the default module enablement :-(, this needs to be added back?
+    copper.inheritModules = false;
+
     # TODO: handle this via one of the mkGleamingFlake arguments?
     gleaming.basename = "copper";
 

@@ -1,6 +1,8 @@
 {
+  lib,
   inputs,
-  outputs,
+  hmSpecialArgs,
+  hmBaseModules,
   ...
 }: {
   imports = [
@@ -11,13 +13,13 @@
   home-manager.useGlobalPkgs = false;
   # Store user packages in $HOME
   home-manager.useUserPackages = false;
-  home-manager.extraSpecialArgs = {
-    inherit inputs outputs;
-  };
+  # TODO: this is an extremely ad-hoc solution. could we inject the whole Flake config instead?
+  home-manager.extraSpecialArgs = hmSpecialArgs;
 
   home-manager.sharedModules =
-    builtins.attrValues outputs.homeModules
-    ++ [
-      {copper.feature.nixosBase.enable = true;}
-    ];
+    hmBaseModules
+    ++ [{
+      copper.feature.nixosBase.enable = lib.mkDefault true;
+      copper.feature.standaloneBase.enable = false;
+    }];
 }

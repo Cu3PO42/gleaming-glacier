@@ -1,7 +1,5 @@
 {
   pkgs,
-  config,
-  outputs,
   ...
 }: {
   programs.ssh.enable = true;
