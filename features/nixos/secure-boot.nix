@@ -2,11 +2,11 @@
 {
   lib,
   pkgs,
-  inputs,
+  origin,
   ...
 }: {
   imports = [
-    inputs.lanzaboote.nixosModules.lanzaboote
+    origin.inputs.lanzaboote.nixosModules.lanzaboote
   ];
 
   # Lanzaboote currently replaces systemd-boot, thus we must disable the old

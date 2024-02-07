@@ -1,11 +1,11 @@
 {
   config,
   lib,
-  inputs,
+  origin,
   ...
 }: {
   imports = [
-    inputs.nix-homebrew.darwinModules.nix-homebrew
+    origin.inputs.nix-homebrew.darwinModules.nix-homebrew
   ];
 
   nix-homebrew.enable = true;

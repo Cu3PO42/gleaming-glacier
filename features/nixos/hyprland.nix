@@ -1,11 +1,11 @@
 {
   config,
-  inputs,
+  origin,
   pkgs,
   ...
 }: {
   imports = [
-    inputs.hyprland.nixosModules.default
+    origin.inputs.hyprland.nixosModules.default
   ];
 
   programs.hyprland = {

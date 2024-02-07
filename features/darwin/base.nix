@@ -1,6 +1,5 @@
 {
-  inputs,
-  outputs,
+  origin,
   lib,
   ...
 }: {
@@ -26,19 +25,19 @@
       options = "--delete-older-than 30d";
     };
 
-    registry.nixpkgs.flake = inputs.nixpkgs;
+    registry.nixpkgs.flake = origin.inputs.nixpkgs;
     nixPath = [
       "nixpkgs=/etc/channels/nixpkgs"
     ];
   };
 
-  environment.etc."channels/nixpkgs".source = inputs.nixpkgs.outPath;
+  environment.etc."channels/nixpkgs".source = origin.inputs.nixpkgs.outPath;
 
   nixpkgs.config = {
     allowUnfree = true;
   };
   # Add all of our own overlays
-  nixpkgs.overlays = [outputs.overlays.additions];
+  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # Defines the version of Nix-Darwin at which point the config was created. DO NOT UPDATE.
   system.stateVersion = 4;

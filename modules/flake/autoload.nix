@@ -64,8 +64,7 @@ in {
       };
 
       moduleInjectionArgs = {
-        inputs = inputs;
-        outputs = inputs.self.outputs;
+        origin = moduleArgs;
       };
 
       specialArgs = moduleInjectionArgs;

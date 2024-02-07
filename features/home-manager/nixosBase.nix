@@ -1,11 +1,11 @@
-{outputs, pkgs, config, ...}: {
+{origin, pkgs, config, ...}: {
   home.stateVersion = "22.11";
   
   nixpkgs.config.allowUnfree = true;
   # Workaround for the above setting not working.
   nixpkgs.config.allowUnfreePredicate = _: true;
   # Add all of our own overlays
-  nixpkgs.overlays = [outputs.overlays.additions];
+  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # Persist Home Manager
   programs.home-manager.enable = true;

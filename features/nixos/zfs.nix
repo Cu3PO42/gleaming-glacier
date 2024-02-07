@@ -1,5 +1,5 @@
 {
-  inputs,
+  origin,
   config,
   lib,
   pkgs,
@@ -10,7 +10,7 @@
   hasDiskEncryption = true;
 in {
   imports = [
-    inputs.disko.nixosModules.disko
+    origin.inputs.disko.nixosModules.disko
   ];
 
   featureOptions = with lib; {

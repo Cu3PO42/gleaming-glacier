@@ -1,5 +1,5 @@
 {
-  inputs,
+  origin,
   config,
   lib,
   pkgs,
@@ -11,7 +11,7 @@
   '';
 in {
   imports = [
-    inputs.agenix.nixosModules.age
+    origin.inputs.agenix.nixosModules.age
   ];
 
   featureOptions = with lib; {

@@ -1,12 +1,12 @@
 {
   lib,
-  inputs,
+  origin,
   hmSpecialArgs,
   hmBaseModules,
   ...
 }: {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
+    origin.inputs.home-manager.nixosModules.home-manager
   ];
 
   # Use the same nixpkgs as the system config

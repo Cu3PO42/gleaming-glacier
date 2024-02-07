@@ -1,12 +1,12 @@
 {
-  inputs,
+  origin,
   config,
   lib,
   pkgs,
   ...
 }: {
   imports = [
-    inputs.impermanence.nixosModules.impermanence
+    origin.inputs.impermanence.nixosModules.impermanence
   ];
 
   environment.persistence."/persist" = {

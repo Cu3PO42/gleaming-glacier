@@ -1,9 +1,8 @@
 {
   pkgs,
   config,
-  inputs,
   options,
-  outputs,
+  origin,
   ...
 }: {
   # Reflects the version at the time of initial setup, do not update
@@ -16,7 +15,7 @@
         warn-dirty = false;
         experimental-features = "nix-command flakes repl-flake";
       };
-      registry.nixpkgs.flake = inputs.nixpkgs;
+      registry.nixpkgs.flake = origin.inputs.nixpkgs;
     }
     // (
       if options.nix ? nixPath
@@ -28,13 +27,13 @@
       }
       else {}
     );
-  xdg.configFile."channels/nixpkgs".source = inputs.nixpkgs.outPath;
+  xdg.configFile."channels/nixpkgs".source = origin.inputs.nixpkgs.outPath;
 
   nixpkgs.config.allowUnfree = true;
   # Workaround for the above setting not working.
   nixpkgs.config.allowUnfreePredicate = _: true;
   # Add all of our own overlays
-  nixpkgs.overlays = [outputs.overlays.additions];
+  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # Persist Home Manager
   programs.home-manager.enable = true;

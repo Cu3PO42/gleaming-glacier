@@ -1,6 +1,5 @@
 {
-  inputs,
-  outputs,
+  origin,
   config,
   pkgs,
   ...
@@ -11,16 +10,16 @@
   # Both in the Flake registry, so nixpkgs resolves to our version by default
   # and when used with a command such as `nix run nixpkgs#hello`, but also
   # create a channel pointing to the same version.
-  nix.registry.nixpkgs.flake = inputs.nixpkgs;
+  nix.registry.nixpkgs.flake = origin.inputs.nixpkgs;
   nix.nixPath = [
     "nixpkgs=/etc/channels/nixpkgs"
   ];
-  environment.etc."channels/nixpkgs".source = inputs.nixpkgs.outPath;
+  environment.etc."channels/nixpkgs".source = origin.inputs.nixpkgs.outPath;
 
   # This modifies the packages that are available to install as part of this
   # system configuration only.
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [outputs.overlays.additions];
+  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # command-not-found relies on a programs.sqlite database that is only
   # available from channels, but not importing nixpkgs in a flake.
@@ -33,7 +32,7 @@
   programs.nix-index.enable = true;
   # Instead of manually building the database on every host, we grab a
   # pre-built one.
-  programs.nix-index.package = inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
+  programs.nix-index.package = origin.inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
