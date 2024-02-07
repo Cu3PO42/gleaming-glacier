@@ -1,5 +1,5 @@
 {nixpkgs, home-manager, ...}@inputs: let
-  inherit (import ./modules.nix inputs) mkFeatureModule injectArgs;
+  inherit (import ./modules.nix inputs) mkFeatureModule injectArgs importInjectArgs;
 in rec {
   loadDir = with nixpkgs.lib;
     dir: f:
@@ -57,9 +57,8 @@ in rec {
     basename,
     basepath,
   }: kind:
-    nixpkgs.lib.mapAttrs (_: value: nixpkgs.lib.setDefaultModuleLocation value.path (injectArgs injectionArgs value.mod)) (
-      loadDirRec (basepath + "/modules/common") ({path, ...}: { inherit path; mod = import path; })
-      // loadDirRec (basepath + "/modules/${kind}") ({path, ...}: { inherit path; mod = import path; })
+      loadDirRec (basepath + "/modules/common") ({path, ...}: importInjectArgs injectionArgs path)
+      // loadDirRec (basepath + "/modules/${kind}") ({path, ...}: importInjectArgs injectionArgs path)
       // nixpkgs.lib.mapAttrs' (name: value: {
         name = "feature/${name}";
         inherit value;
@@ -69,16 +68,12 @@ in rec {
           path,
           ...
         }:
-          {
-            inherit path;
-            mod = mkFeatureModule {
-              name = builtins.replaceStrings ["/"] ["."] name;
-              cfg = import path;
-              prefix = basename;
-            };
-          }
-      ))
-    );
+          nixpkgs.lib.setDefaultModuleLocation path (injectArgs injectionArgs (mkFeatureModule {
+            name = builtins.replaceStrings ["/"] ["."] name;
+            cfg = import path;
+            prefix = basename;
+          }))
+      ));
 
     loadSystems = constructor: {
       modules,
