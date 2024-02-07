@@ -1,27 +1,12 @@
-{inputs, getSystemIgnoreWarning, lib, flake-parts-lib, config, ...}: {
-  options = {
-    # flake-parts only exposes the config value of the perSystem module.
-    # However, we need access to its extendModules function for our overlay.
-    # Thus, we add an internal option to pass that function to the outside.
-    perSystem = flake-parts-lib.mkPerSystemOption ({extendModules, ...}: {
-      _file = ./default-overlays.nix;
-      options = {
-        extendModules = lib.mkOption {
-          type = lib.types.raw;
-          default = extendModules;
-          internal = true;
-        };
-      };
-    });
-  };
-
+{inputs, getSystemIgnoreWarning, lib, config, ...}: {
   config = {
     flake = {
       overlays = {
         additions = final: prev:
           let
             sys = getSystemIgnoreWarning (prev.stdenv.hostPlatform.system or prev.system);
-            perSys = (sys.extendModules {
+            # allModuleArgs is injected via flake-parts' withSystem module
+            perSys = (sys.allModuleArgs.extendModules {
               modules = [{
                 _module.args.pkgs = lib.mkForce prev;
               }];
