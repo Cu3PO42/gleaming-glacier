@@ -40,6 +40,9 @@ in rec {
       nnFiles = filter (v: v.value != null) files;
     in
       listToAttrs nnFiles;
+  
+  importIfExists = path: nixpkgs.lib.mkIf (builtins.pathExists path) (import path);
+  importIfExistsApply = path: args: nixpkgs.lib.mkIf (builtins.pathExists path) (import path args);
 
   loadPackages' = path: pkgs: extra: loadDir path ({path, ...}: pkgs.callPackage path extra);
 

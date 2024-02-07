@@ -1,8 +1,9 @@
-{config, lib, inputs, origin, ...}@moduleArgs: with lib; let
+{config, lib, inputs, ...}@moduleArgs: with lib; let
   base = config.gleaming.basepath;
   cfg = config.gleaming.autoload;
 
-  inherit (origin.lib) loadSystems loadHome loadPackages loadApps loadModules;
+  # Do not refere origin.lib as that would cause infinite recursion.
+  inherit (import ../../lib/loading.nix inputs) loadSystems loadHome loadPackages loadApps loadModules importIfExists importIfExistsApply;
 
   loadNixos = loadSystems inputs.nixpkgs.lib.nixosSystem;
   loadDarwin = loadSystems inputs.nix-darwin.lib.darwinSystem;
@@ -71,10 +72,10 @@ in {
     };
 
     flake = {
-      lib = import (base + "/lib") inputs;
+      lib = importIfExistsApply (base + "/lib") inputs;
 
-      templates = import (base + "/templates");
-      overlays = import (base + "/overlays") moduleArgs;
+      templates = importIfExists (base + "/templates");
+      overlays = importIfExistsApply (base + "/overlays") moduleArgs;
 
       nixosModules = loadModules' "nixos";
       homeModules = loadModules' "home-manager";
@@ -111,7 +112,7 @@ in {
       packages = loadPackages lib system (base + "/packages") pkgs extraPkgArgs;
       legacyPackages = loadPackages lib system (base + "/legacy-packages") pkgs extraPkgArgs;
 
-      chromaThemes = mkIf (options ? chromaThemes) (import (base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;});
+      chromaThemes = mkIf (options ? chromaThemes) (importIfExistsApply (base + "/themes") {inherit pkgs;extraArgs = extraPkgArgs;});
     };
   };
 }
