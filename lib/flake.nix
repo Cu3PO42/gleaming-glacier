@@ -1,11 +1,12 @@
 {flake-parts, ...}@lib-inputs: {
   mkGleamingFlake = inputs: base: module: let
     inherit (import ./loading.nix lib-inputs) loadDirRec;
+    inherit (import ./modules.nix lib-inputs) importInjectArgs;
   
-    copperModules = loadDirRec ../modules/flake ({path, ...}: flake-parts.lib.importApply path lib-inputs.self.outputs);
+    copperModules = loadDirRec ../modules/flake ({path, ...}: importInjectArgs { origin = lib-inputs.self.outputs; } path);
 
   in flake-parts.lib.mkFlake {inherit inputs;} (args: let
-      flakeModules = loadDirRec (base + "/modules/flake") ({path, ...}: flake-parts.lib.importApply path args.self);
+      flakeModules = loadDirRec (base + "/modules/flake") ({path, ...}: importInjectArgs { origin = args.self; } path);
     in {
       imports = [
         (module flakeModules)

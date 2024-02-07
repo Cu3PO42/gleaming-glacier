@@ -1,4 +1,4 @@
-_: {lib, ...}: with lib; {
+{lib, ...}: with lib; {
   options = {
     gleaming.basename = mkOption {
       type = types.str;

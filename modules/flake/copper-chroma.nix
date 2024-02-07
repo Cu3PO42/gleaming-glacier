@@ -1,10 +1,10 @@
-gg: {config, lib, inputs, flake-parts-lib, ...}: with lib; flake-parts-lib.mkTransposedPerSystemModule {
+{config, lib, inputs, flake-parts-lib, origin, ...}: with lib; flake-parts-lib.mkTransposedPerSystemModule {
   name = "chromaThemes";
   file = ./copper-chroma.nix;
   option = mkOption {
     type = (evalModules {
       modules = [
-        gg.homeModules.copper-chroma
+        origin.homeModules.copper-chroma
         { _module.check = false; }
       ];
       # TODO: we currently can't includee these modules because they refer to other home-manager modules, which aren't included above; maybe use fulll HM config, but make the check optional?
@@ -29,7 +29,7 @@ gg: {config, lib, inputs, flake-parts-lib, ...}: with lib; flake-parts-lib.mkTra
     };
 
     config = {
-      copper.chroma.modules = lib.mkDefault (map ({value, ...}: value) (filter ({name, value}: gg.lib.startsWith "copper-chroma/" name) (attrsToList gg.homeModules)));
+      copper.chroma.modules = lib.mkDefault (map ({value, ...}: value) (filter ({name, value}: origin.lib.startsWith "copper-chroma/" name) (attrsToList origin.homeModules)));
     };
   }];
 }

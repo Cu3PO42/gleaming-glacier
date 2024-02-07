@@ -1,4 +1,4 @@
-gg: {config, lib, flake-parts-lib, ...}: {
+{config, lib, flake-parts-lib, origin, ...}: {
   options = with lib; {
     flake = flake-parts-lib.mkSubmoduleOptions {
       # flake-parts only has built-in definitions for nixosModules, which is
@@ -27,7 +27,7 @@ gg: {config, lib, flake-parts-lib, ...}: {
 
   config = {
     flake = let
-      loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (gg.lib.loadModules {
+      loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (origin.lib.loadModules {
         inherit (config.gleaming) basename;
         basepath = ../../gleaming;
         injectionArgs = { inherit (config) gleaming; };

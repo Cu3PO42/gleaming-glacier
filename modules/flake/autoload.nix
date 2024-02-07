@@ -1,8 +1,8 @@
-gg: {config, lib, inputs, ...}@moduleArgs: with lib; let
+{config, lib, inputs, origin, ...}@moduleArgs: with lib; let
   base = config.gleaming.basepath;
   cfg = config.gleaming.autoload;
 
-  inherit (gg.lib) loadSystems loadHome loadPackages loadApps loadModules;
+  inherit (origin.lib) loadSystems loadHome loadPackages loadApps loadModules;
 
   loadNixos = loadSystems inputs.nixpkgs.lib.nixosSystem;
   loadDarwin = loadSystems inputs.nix-darwin.lib.darwinSystem;

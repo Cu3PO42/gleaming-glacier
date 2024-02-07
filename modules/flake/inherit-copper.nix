@@ -1,4 +1,4 @@
-gg: {config, lib, ...}: with lib; {
+{config, lib, origin, ...}: with lib; {
   options = {
     copper.inheritModules = mkOption {
       type = types.bool;
@@ -23,9 +23,9 @@ gg: {config, lib, ...}: with lib; {
   config = {
     gleaming.autoload.baseModules = mkMerge [
       (mkIf config.copper.inheritModules {
-        nixos = attrValues gg.nixosModules;
-        home = attrValues gg.homeModules;
-        darwin = attrValues gg.darwinModules;
+        nixos = attrValues origin.nixosModules;
+        home = attrValues origin.homeModules;
+        darwin = attrValues origin.darwinModules;
       })
       (mkIf config.copper.base.enable {
         nixos = [{ copper.feature.base.enable = lib.mkDefault true; }];

@@ -1,4 +1,4 @@
-_: {inputs, getSystemIgnoreWarning, lib, flake-parts-lib, config, ...}: {
+{inputs, getSystemIgnoreWarning, lib, flake-parts-lib, config, ...}: {
   options = {
     # flake-parts only exposes the config value of the perSystem module.
     # However, we need access to its extendModules function for our overlay.

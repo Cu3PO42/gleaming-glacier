@@ -1,4 +1,4 @@
-{nixpkgs, ...}: {
+{nixpkgs, ...}: rec {
   mkFeatureModule = {
     name,
     cfg,
@@ -59,4 +59,8 @@
     newFun = opts: f (opts // requiredExtraArgs);
   in
     lib.setFunctionArgs newFun remainingArgs;
+
+  injectArgsOpt = args: module: if nixpkgs.lib.isFunction module then injectArgs args module else module;
+
+  importInjectArgs = args: path: nixpkgs.lib.setDefaultModuleLocation path (injectArgsOpt args (import path));
 }
