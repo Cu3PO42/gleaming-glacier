@@ -1,10 +1,11 @@
 {
   config,
   lib,
-  gleaming,
+  origin,
   ...
 }:
 with lib; let
+  inherit (origin.config) gleaming;
   features = map (splitString "/") config.${gleaming.basename}.features;
 
   enableOrStep = v: let

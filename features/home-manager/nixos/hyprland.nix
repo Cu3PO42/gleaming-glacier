@@ -4,6 +4,7 @@
   pkgs,
   origin,
   options,
+  copper,
   ...
 } @ opts: {
   copper.file.config = lib.genAttrs ["hypr/animations.conf" "hypr/entry.conf" "hypr/keybindings.conf" "hypr/nvidia.conf" "hypr/windowrules.conf"] (n: "config/${n}");
@@ -24,7 +25,7 @@
     settings.source = lib.mkMerge [(lib.mkIf config.wayland.windowManager.hyprland.enableNvidiaPatches ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
   };
 
-  home.packages = [pkgs.copper.systemctl-toggle pkgs.procps];
+  home.packages = [copper.packages.systemctl-toggle pkgs.procps];
 
   systemd.user.services.polkit-authentication-agent = {
     Unit = {
@@ -52,7 +53,7 @@
     };
 
     Service = {
-      ExecStart = "${pkgs.copper.misc-scripts-hyprdots}/bin/batterynotify.sh";
+      ExecStart = "${copper.packages.misc-scripts-hyprdots}/bin/batterynotify.sh";
       Restart = "always";
     };
 

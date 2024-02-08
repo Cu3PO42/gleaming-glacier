@@ -2,6 +2,7 @@
   config,
   origin,
   pkgs,
+  copper,
   ...
 }: {
   imports = [
@@ -25,7 +26,7 @@
     settings.General.InputMethod = "";
   };
   environment.systemPackages = with pkgs; [
-    copper.sddm-theme-corners
+    copper.packages.sddm-theme-corners
     nerdfonts
   ];
 

@@ -4,6 +4,7 @@
   pkgs,
   options,
   modulesPath,
+  copper,
   ...
 }:
 with lib; let
@@ -417,6 +418,6 @@ in {
       ${cfg.themeDirectory}/active/activate
     '';
 
-    home.packages = [pkgs.copper.chromactl];
+    home.packages = [copper.packages.chromactl];
   };
 }

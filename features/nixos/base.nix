@@ -19,7 +19,6 @@
   # This modifies the packages that are available to install as part of this
   # system configuration only.
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # command-not-found relies on a programs.sqlite database that is only
   # available from channels, but not importing nixpkgs in a flake.

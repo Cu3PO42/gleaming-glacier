@@ -1,4 +1,4 @@
-{config, pkgs, lib, ...}: with lib; let
+{config, pkgs, lib, copper, ...}: with lib; let
   cfg = config.copper.chroma;
 
   inherit (import ../../../lib/types.nix {inherit lib;}) colorType;
@@ -90,7 +90,7 @@ in {
             echo "${template}"
             echo "${palette}"
             echo "${overrides}"
-            ${lib.getExe pkgs.copper.dynachrome} "${template}" "${palette}" ${overrides} > $out
+            ${lib.getExe copper.packages.dynachrome} "${template}" "${palette}" ${overrides} > $out
           '';
 
           file."palette.json".text = builtins.toJSON { inherit (config) semantic colors accents; };

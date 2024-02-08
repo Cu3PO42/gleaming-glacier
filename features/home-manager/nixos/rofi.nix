@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  copper,
   ...
 }: {
   programs.rofi = {
@@ -20,14 +21,14 @@
     fi
   '';
 
-  home.packages = [pkgs.copper.rofi-launchers-hyprdots pkgs.copper.nailgun];
+  home.packages = [copper.packages.rofi-launchers-hyprdots copper.packages.nailgun];
   # TODO: icon theme, maybe font and such should be configured dynamically as well.
 
   copper.chroma.extraActivationCommands = theme: ''
-    ${lib.getExe pkgs.copper.nailgun} thumbnails-for-theme "${config.copper.chroma.themeDirectory}/active/swim/wallpapers" >/dev/null &
+    ${lib.getExe copper.packages.nailgun} thumbnails-for-theme "${config.copper.chroma.themeDirectory}/active/swim/wallpapers" >/dev/null &
   '';
 
   copper.swim.wallpaperActivationCommands = ''
-    ${lib.getExe pkgs.copper.nailgun} activate-wallpaper "$WALLPAPER" >/dev/null &
+    ${lib.getExe copper.packages.nailgun} activate-wallpaper "$WALLPAPER" >/dev/null &
   '';
 }

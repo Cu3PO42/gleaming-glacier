@@ -32,8 +32,6 @@
   nixpkgs.config.allowUnfree = true;
   # Workaround for the above setting not working.
   nixpkgs.config.allowUnfreePredicate = _: true;
-  # Add all of our own overlays
-  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # Persist Home Manager
   programs.home-manager.enable = true;

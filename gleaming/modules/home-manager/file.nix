@@ -1,10 +1,11 @@
 {
   config,
   lib,
-  gleaming,
+  origin,
   ...
 }:
 with lib; let
+  inherit (origin.config) gleaming;
   cfg = config.${gleaming.basename}.file;
 
   copy = n: v: {source = gleaming.basepath + "/${v}";};

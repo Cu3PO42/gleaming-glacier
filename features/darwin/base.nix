@@ -36,8 +36,6 @@
   nixpkgs.config = {
     allowUnfree = true;
   };
-  # Add all of our own overlays
-  nixpkgs.overlays = [origin.config.flake.overlays.additions];
 
   # Defines the version of Nix-Darwin at which point the config was created. DO NOT UPDATE.
   system.stateVersion = 4;

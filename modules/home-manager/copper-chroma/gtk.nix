@@ -6,6 +6,7 @@
   options,
   lib,
   pkgs,
+  copper,
   ...
 }:
 with lib; let
@@ -197,7 +198,7 @@ in {
           ${pkgs.flatpak}/bin/flatpak --user override --env=ICON_THEME="${opts.iconTheme.name}"
         '';
       
-      reloadCommand = "${lib.getExe pkgs.copper.gtkrc-reload}";
+      reloadCommand = "${lib.getExe copper.packages.gtkrc-reload}";
 
       themeConfig = {config, opts, ...}: {
         file."gtk-3.0/settings.ini".text =
@@ -279,7 +280,7 @@ in {
       home.replaceRuntimeDependencies = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "patch-binary") [
         {
           original = pkgs.libadwaita;
-          replacement = pkgs.copper.libadwaita-without-adwaita;
+          replacement = copper.packages.libadwaita-without-adwaita;
         }
       ];
     })

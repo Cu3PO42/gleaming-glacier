@@ -1,7 +1,7 @@
-{pkgs, ...}: {
+{pkgs, copper, ...}: {
   copper.chroma = {
     enable = true;
     initialTheme = "Catppuccin-Latte";
   };
-  copper.chroma.themes = pkgs.copper.chromaThemes;
+  copper.chroma.themes = copper.chromaThemes;
 }

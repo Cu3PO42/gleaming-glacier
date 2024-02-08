@@ -1,6 +1,6 @@
 # This module provides the equivalent of system.replaceRuntimeDependencies, but
 # for home-manager.
-{pkgs, lib, config, ...}: with lib; let
+{pkgs, lib, config, copper, ...}: with lib; let
   cfg = config.home;
 
   # This is copied from upstream home-manager/modules/home-environment.nix.
@@ -18,7 +18,7 @@
     };
   };
 
-  patchedPath = pkgs.copper.replace-dependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
+  patchedPath = copper.legacyPackages.replace-dependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
 in {
   options = {
     home.replaceRuntimeDependencies = mkOption {
@@ -40,7 +40,7 @@ in {
         [
           {
             original = pkgs.libadwaita;
-            replacement = pkgs.copper.libadwaita-without-adwaita;
+            replacement = copper.packages.libadwaita-without-adwaita;
           }
         ]
       '';

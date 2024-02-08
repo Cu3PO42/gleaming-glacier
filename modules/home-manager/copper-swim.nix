@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  copper,
   ...
 }:
 with lib; let
@@ -19,7 +20,7 @@ with lib; let
     if ! [ -e "$SWIM_STATE_DIR/active/wallpaper" ]; then
       ln -sfn "$(find "${wallpaperDir}/" -type f | head -1)" "$SWIM_STATE_DIR/active/wallpaper"
     fi
-    ${pkgs.copper.swimctl}/bin/swimctl activate
+    ${copper.packages.swimctl}/bin/swimctl activate
   '';
 in {
   options = {
@@ -148,7 +149,7 @@ in {
       executable = true;
     };
 
-    home.packages = [pkgs.copper.swimctl];
+    home.packages = [copper.packages.swimctl];
 
     home.activation.swim = mkIf (!cfg.chromaIntegration.enable) (lib.hm.dag.entryAfter ["writeBoundary"] (mkSwimActivation {name = "no-chroma";}));
 
@@ -161,7 +162,7 @@ in {
 
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.copper.swimctl}/bin/swimctl activate";
+        ExecStart = "${copper.packages.swimctl}/bin/swimctl activate";
       };
 
       Install.WantedBy = mkIf (cfg.systemd.installTarget != null) [cfg.systemd.installTarget];
