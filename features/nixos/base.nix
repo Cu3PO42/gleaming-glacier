@@ -2,6 +2,7 @@
   origin,
   config,
   pkgs,
+  copper,
   ...
 }: {
   # General Nix settings
@@ -31,7 +32,7 @@
   programs.nix-index.enable = true;
   # Instead of manually building the database on every host, we grab a
   # pre-built one.
-  programs.nix-index.package = origin.inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
+  programs.nix-index.package = copper.inputs.nix-index-database.nix-index-with-db;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

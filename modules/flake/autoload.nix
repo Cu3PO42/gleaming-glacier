@@ -1,4 +1,4 @@
-{config, lib, inputs, ...}@moduleArgs: with lib; let
+{config, options, specialArgs, lib, inputs, ...}: with lib; let
   base = config.gleaming.basepath;
   cfg = config.gleaming.autoload;
 
@@ -12,6 +12,8 @@
     inherit (config.gleaming) basename basepath;
     injectionArgs = cfg.moduleInjectionArgs;
   };
+
+  moduleArgs = config._module.args // specialArgs // { inherit config options; };
 in {
   options = {
     gleaming.autoload = {

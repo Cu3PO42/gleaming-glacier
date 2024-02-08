@@ -1,6 +1,7 @@
 {
   pkgs,
   origin,
+  copper,
   ...
 }: {
   programs.ssh.enable = true;
@@ -28,13 +29,13 @@
   programs.nix-index.enable = true;
   # Instead of manually building the database on every host, we grab a
   # pre-built one.
-  programs.nix-index.package = origin.inputs.nix-index-database.packages.${pkgs.system}.nix-index-with-db;
+  programs.nix-index.package = copper.inputs.nix-index-database.nix-index-with-db;
 
   # Install extra packages
   home.packages = with pkgs; [
     alejandra
     bottom
-    origin.inputs.nix-index-database.packages.${pkgs.system}.comma-with-db
+    copper.inputs.nix-index-database.comma-with-db
     entr
     eza
     fd
@@ -44,10 +45,10 @@
     jq
     neofetch
     nil
-    origin.inputs.nix-search-cli.packages.${pkgs.system}.default
+    copper.inputs.nix-search-cli
     nnn
     nurl
-    copper.plate
+    copper.packages.plate
     ranger
     ripgrep
     ripgrep-all

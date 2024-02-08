@@ -2,7 +2,6 @@
   lib,
   config,
   pkgs,
-  origin,
   options,
   copper,
   ...
@@ -11,7 +10,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     # TODO: this also installs a hyprland package, how does this conflict with the global install
-    package = origin.inputs.hyprland.packages.${pkgs.system}.default;
+    package = copper.inputs.hyprland;
     systemd.enable = true;
     # Needed so that waybar, etc. have a complete environment
     systemd.variables =

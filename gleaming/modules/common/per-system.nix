@@ -18,16 +18,23 @@ in {
 
   config = {
     _module.args.${gleaming.basename} = let
-      system = origin.getSystemIgnoreWarning (pkgs.stdenv.hostPlatform.system or pkgs.system);
+      system = pkgs.stdenv.hostPlatform.system or pkgs.system;
+      perSystem = origin.getSystemIgnoreWarning (system);
       # This is included via flake-parts' withSystem
-      systemWithOurPkgs = sys.allModuleArgs.extendModules ({
+      perSystemWithOurPkgs = sys.allModuleArgs.extendModules ({
         modules = [{
           _module.args.pkgs = lib.mkForce pkgs;
         }];
       }).config;
-      selectedSystem = if config.${gleaming.basename}.perSystem.useConfigPkgs
-        then systemWithOurPkgs
-        else system;
-    in selectedSystem // { inherit (selectedSystem.allModuleArgs) inputs'; };
+      selectedPerSystem = if config.${gleaming.basename}.perSystem.useConfigPkgs
+        then perSystemWithOurPkgs
+        else perSystem;
+      inputs = mapAttrs (_: e:
+        let
+          select = e: prop: (e.${prop} or {}).${system} or {};
+          pkgs = select e "legacyPackages" // select e "packages";
+        in if pkgs ? default then pkgs.default // pkgs else pkgs
+      ) origin.inputs;
+    in selectedPerSystem // { inherit inputs; };
   };
 }

@@ -1,4 +1,4 @@
-{config, lib, flake-parts-lib, origin, getSystemIgnoreWarning, ...}@args: {
+{config, options, lib, flake-parts-lib, origin, specialArgs, ...}@args: {
   options = with lib; {
     flake = flake-parts-lib.mkSubmoduleOptions {
       # flake-parts only has built-in definitions for nixosModules, which is
@@ -30,8 +30,7 @@
       loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (origin.lib.loadModules {
         inherit (config.gleaming) basename;
         basepath = ../../gleaming;
-        # FIXME: we need to implement this similar to how moduleWithSystem does it; this way we only have what is specified above
-        injectionArgs = { origin = args; };
+        injectionArgs = { origin = config._module.args // specialArgs // { inherit config options; }; };
       } kind);
     in {
       nixosModules = loadModules' "nixos";
