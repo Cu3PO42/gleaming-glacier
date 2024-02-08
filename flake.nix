@@ -114,7 +114,7 @@
 
   outputs = inputs: let
     lib = import ./lib inputs;
-  in lib.mkGleamingFlake inputs ./. (flakeModules: {
+  in lib.mkGleamingFlake inputs ./. "copper" (flakeModules: {
     imports = [
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
@@ -122,11 +122,7 @@
     ];
 
     # We don't want to inherit our own modules!
-    # FIXME: without this, we don't have the default module enablement :-(, this needs to be added back?
     copper.inheritModules = false;
-
-    # TODO: handle this via one of the mkGleamingFlake arguments?
-    gleaming.basename = "copper";
 
     perSystem = {system, pkgs, ...}: {
       devShells = {
