@@ -1,15 +1,11 @@
 {
-  pkgs,
-  config,
   lib,
+  copper,
   ...
-}: let
-in {
+}: {
   copper.chroma = {
     enable = true;
-    themes.Catppuccin-Mocha = lib.mkDefault (import ../../themes/Catppuccin-Mocha/default.nix {
-      inherit pkgs config lib;
-    });
+    themes.Catppuccin-Mocha = copper.chromaThemes.Catppuccin-Mocha;
     initialTheme = lib.mkDefault "Catppuccin-Mocha";
   };
 }
