@@ -1,9 +1,9 @@
-{config, options, specialArgs, lib, inputs, ...}: with lib; let
+{config, options, specialArgs, lib, inputs, origin, ...}: with lib; let
   base = config.gleaming.basepath;
   cfg = config.gleaming.autoload;
 
   # Do not refere origin.lib as that would cause infinite recursion.
-  inherit (import ../../lib/loading.nix inputs) loadSystems loadHome loadPackages loadApps loadModules importIfExists importIfExistsApply;
+  inherit (import ../../lib/loading.nix origin.inputs) loadSystems loadHome loadPackages loadApps loadModules importIfExists importIfExistsApply;
 
   loadNixos = loadSystems inputs.nixpkgs.lib.nixosSystem;
   loadDarwin = loadSystems inputs.nix-darwin.lib.darwinSystem;
