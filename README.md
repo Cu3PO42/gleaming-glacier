@@ -8,6 +8,11 @@
 These are my dotfiles, i.e., the configurations for my systems and tools, structured as a Nix flake, which makes them easy to install and reproduce.
 > There are many like it, but these ones are mine.
 
+> **Info**
+> Please note that this Readme describes the state of the master branch.
+> The staging branch contains many changes, including a fundamental revamp of how the Flake is intended to be used.
+> The documentation will be updated before staging is merged.
+
 This README is fairly long and contains a lot of information, a lot of which you probably don't need.
 This overview should help you find what you need, in addition, links to other relevant sections are scattered throughout this README.
 
