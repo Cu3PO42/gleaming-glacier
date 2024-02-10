@@ -35,7 +35,7 @@
     };
 
     Service = {
-      ExecStart = "${pkgs.libsForQt5.polkit-kde-agent.out}/libexec/polkit-kde-authentication-agent-1";
+      ExecStart = "${pkgs.polkit_gnome.out}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "always";
       # TODO: dbus activation isn't working for the Gnome Agent for some reason
       #BusName = "org.freedesktop.PolicyKit1.AuthenticationAgent";
