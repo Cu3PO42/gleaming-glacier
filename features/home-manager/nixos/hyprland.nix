@@ -20,8 +20,8 @@
         "XDG_CONFIG_DIRS"
         "PATH"
       ];
-    enableNvidiaPatches = lib.mkDefault (opts ? osConfig && opts.osConfig.programs.hyprland.enableNvidiaPatches);
-    settings.source = lib.mkMerge [(lib.mkIf config.wayland.windowManager.hyprland.enableNvidiaPatches ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
+    # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
+    settings.source = lib.mkMerge [(lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
   };
 
   home.packages = [copper.packages.systemctl-toggle pkgs.procps];

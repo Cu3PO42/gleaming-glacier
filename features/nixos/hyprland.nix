@@ -11,7 +11,6 @@
 
   programs.hyprland = {
     enable = true;
-    enableNvidiaPatches = config.copper.feature.nvidia.enable;
   };
   # xdg-desktop-portal-hyprland is implicitly included by the Hyprland module
   xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
