@@ -8,6 +8,10 @@
 These are my dotfiles, i.e., the configurations for my systems and tools, structured as a Nix flake, which makes them easy to install and reproduce.
 > There are many like it, but these ones are mine.
 
+> **Info**
+> The `master` branch is not currently under development.
+> I am working on the [`next` branch](https://github.com/Cu3PO42/gleaming-glacier/tree/next) instead, where I have introduced a new theming system, have rewritten the Flake logic itself, and am working on many additional features.
+
 This README is fairly long and contains a lot of information, a lot of which you probably don't need.
 This overview should help you find what you need, in addition, links to other relevant sections are scattered throughout this README.
 
