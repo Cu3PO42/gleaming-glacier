@@ -115,13 +115,13 @@
           config.allowUnfree = true;
         }));
 
-    specialArgs = {
+    specialArgs_ = {
       inherit inputs;
       inherit (self) outputs;
     };
 
     loadModules = base: name:
-      nixpkgs.lib.mapAttrs (_: injectArgs specialArgs) (
+      nixpkgs.lib.mapAttrs (_: injectArgs specialArgs_) (
         loadDirRec (base + "/modules/common") ({path, ...}: import path)
         // loadDirRec (base + "/modules/${name}") ({path, ...}: import path)
         # TODO: consider moving this to modules/feature subdirectory;
@@ -148,7 +148,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
-      specialArgs ? specialArgs,
+      specialArgs ? specialArgs_,
     }:
       loadDir dir ({
         path,
@@ -186,7 +186,7 @@
       dir,
       extraModules ? [],
       withCopperModules ? true,
-      specialArgs ? specialArgs,
+      specialArgs ? specialArgs_,
     }:
       loadDir dir ({
         path,
