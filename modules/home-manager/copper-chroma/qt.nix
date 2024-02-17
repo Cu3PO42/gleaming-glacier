@@ -73,8 +73,8 @@ in {
           style=kvantum
 
           [Fonts]
-          fixed="${desktop.font.name},${toString desktop.font.size},-1,5,50,0,0,0,0,0,Regular"
-          general="${desktop.monospaceFont.name},${toString desktop.monospaceFont.size},-1,5,50,0,0,0,0,0,Regular"
+          fixed="${desktop.monospaceFont.name},${toString desktop.monospaceFont.size},-1,5,50,0,0,0,0,0,Regular"
+          general="${desktop.font.name},${toString desktop.font.size},-1,5,50,0,0,0,0,0,Regular"
 
           [Interface]
           activate_item_on_single_click=1
