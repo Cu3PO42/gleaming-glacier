@@ -35,9 +35,9 @@
     };
 
     Service = {
-      ExecStart = "${pkgs.polkit_gnome.out}/libexec/polkit-gnome-authentication-agent-1";
+      ExecStart = "${pkgs.pantheon.pantheon-agent-polkit}/libexec/policykit-1-pantheon/io.elementary.desktop.agent-polkit";
       Restart = "always";
-      # TODO: dbus activation isn't working for the Gnome Agent for some reason
+      # TODO: dbus activation isn't working for the Gnome or Elementary (Pantheon) Agent for some reason
       #BusName = "org.freedesktop.PolicyKit1.AuthenticationAgent";
     };
 
