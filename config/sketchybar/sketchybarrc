@@ -19,17 +19,20 @@ sketchybar-helper $HELPER > /dev/null 2>&1 &
 launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /dev/null 2>&1 &
 
 # Setting up the general bar appearance of the bar
+HEIGHT=30
+GROUP_PADDING=15
+
 bar=(
-  height=45
-  color=$BAR_COLOR
-  blur_radius=10
-  border_width=2
+  height=$HEIGHT
+  color=0x00000000
+  blur_radius=0
+  border_width=0
   border_color=$BAR_BORDER_COLOR
   shadow=off
   position=top
   sticky=on
-  padding_right=10
-  padding_left=10
+  padding_right=0
+  padding_left=0
   y_offset=10
   margin=10
   corner_radius=9
@@ -61,10 +64,33 @@ defaults=(
   popup.background.shadow.drawing=on
 )
 
+bracket_defaults=(
+  background.height=$HEIGHT
+  background.color=$GROUP_BACKGROUND
+  background.border_color=$BACKGROUND_2
+  background.corner_radius=20
+  blur_radius=5
+)
+
+sep_defaults=(
+  background.border_width=0
+  background.padding_left=0
+  background.padding_right=5
+  label.padding_left=0
+  label.padding_right=0
+  icon.padding_left=0
+  icon.padding_right=0
+)
+
 sketchybar --default "${defaults[@]}"
 
 # Left
 source "$ITEM_DIR/apple.sh"
+
+sketchybar --add bracket appleg apple.logo --set appleg "${bracket_defaults[@]}" background.color=$NIX_LIGHTBLUE background.border_width=0
+
+sketchybar --add item sep.3 left --set sep.3 "${sep_defaults[@]}"
+
 source "$ITEM_DIR/spaces.sh"
 source "$ITEM_DIR/yabai.sh"
 source "$ITEM_DIR/front_app.sh"
@@ -73,16 +99,26 @@ source "$ITEM_DIR/front_app.sh"
 #source "$ITEM_DIR/spotify.sh"
 source "$ITEM_DIR/applemusic.sh"
 
+sketchybar --add bracket applemusicg applemusic.anchor --set applemusicg "${bracket_defaults[@]}"
+
 # Right
 source "$ITEM_DIR/calendar.sh"
 source "$ITEM_DIR/ical.sh"
-#source "$ITEM_DIR/brew.sh"
-#source "$ITEM_DIR/github.sh"
-source "$ITEM_DIR/battery.sh"
+
+sketchybar --add bracket calg ical calendar --set calg "${bracket_defaults[@]}"
+sketchybar --add item sep.1 right --set sep.1 "${sep_defaults[@]}"
+
 source "$ITEM_DIR/mic.sh"
 source "$ITEM_DIR/volume.sh"
-#source "$ITEM_DIR/cpu.sh"
+
+sketchybar --add bracket sound mic volume volume_icon --set sound "${bracket_defaults[@]}"
+sketchybar --add item sep.2 right --set sep.2 "${sep_defaults[@]}"
+
+sketchybar --add item sep.4 right --set sep.4 "${sep_defaults[@]}" background.padding_right=$GROUP_PADDING
+source "$ITEM_DIR/battery.sh"
 source "$PLUGIN_DIR/stats/item.sh"
+
+sketchybar --add bracket statsg battery cpu.percent memory network.down network.up sep.4 --set statsg "${bracket_defaults[@]}"
 
 # Forcing all item scripts to run (never do this outside of sketchybarrc)
 sketchybar --update

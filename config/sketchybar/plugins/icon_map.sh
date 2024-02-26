@@ -252,7 +252,7 @@ function __icon_map() {
    "Microsoft PowerPoint")
         icon_result=":microsoft_power_point:"
         ;;
-   "Microsoft Teams" | "Microsoft Teams (work or school)")
+   "Microsoft Teams" | "Microsoft Teams (work or school)" | "Microsoft Teams classic")
         icon_result=":microsoft_teams:"
         ;;
    "Microsoft Word")

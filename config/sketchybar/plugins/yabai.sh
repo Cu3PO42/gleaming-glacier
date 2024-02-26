@@ -41,8 +41,8 @@ window_state() {
 windows_on_spaces () {
   CURRENT_SPACES="$(yabai -m query --displays | jq -r '.[].spaces | @sh')"
 
-  args=(--set spaces_bracket drawing=off
-        --set '/space\..*/' background.drawing=on
+  args=(--set spaces_bracket drawing=on
+        --set '/space\..*/' background.drawing=off
         --animate sin 10)
 
   while read -r line

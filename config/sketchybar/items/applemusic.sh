@@ -8,11 +8,12 @@ sketchybar --add       event           applemusic_change $APPLE_MUSIC_EVENT     
                                        popup.horizontal=on                      \
                                        popup.align=center                       \
                                        popup.height=120                         \
-                                       icon=􁁒                                   \
-                                       icon.font="$FONT:Regular:25.0"           \
+                                       icon=                                   \
+                                       icon.font="$NERD_FONT:Regular:16.0"           \
+                                       padding_left=10 padding_right=10        \
                                        label.drawing=off                        \
                                        drawing=on                               \
-                                       y_offset=2                               \
+                                       y_offset=0                               \
            --subscribe applemusic.anchor  mouse.entered mouse.exited            \
                                        mouse.exited.global                      \
                                                                                 \

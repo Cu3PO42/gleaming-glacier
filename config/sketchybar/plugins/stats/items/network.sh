@@ -24,6 +24,7 @@ network_up=(
 	icon.color="$GREEN"
 	icon.highlight_color="$BLUE"
 	update_freq=1
+	padding_left=$GROUP_PADDING
 	script="$PLUGIN_DIR/stats/scripts/network.sh"
 )
 

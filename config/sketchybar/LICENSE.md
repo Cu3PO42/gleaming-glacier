@@ -1,4 +1,4 @@
-This config was modified by me, but originally written by [FelixKratz](https://github.com/FelixKratz/dotfiles/), who made their code available under the terms of the GPLv3.
+This config was heavily modified by me, but originally written by [FelixKratz](https://github.com/FelixKratz/dotfiles/), who made their code available under the terms of the GPLv3.
 
 Additionally, the following files where derived from other repositories:
 

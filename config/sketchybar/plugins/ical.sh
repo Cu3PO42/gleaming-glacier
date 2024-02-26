@@ -43,8 +43,8 @@ list_events() {
                 icon="$time"            \
                 icon.color=$YELLOW \
                 click_script="sketchybar --set $NAME popup.drawing=off" \
-                position=popup.ical
-        drawing=on)
+                position=popup.ical \
+                drawing=on)
     done <<< "$(echo "$EVENTS")"
 }
 
@@ -62,6 +62,7 @@ mouse_clicked() {
     fi
     list_events $DAY_COUNT args
     sketchybar -m "${args[@]}" > /dev/null
+    popup on
 }
 
 

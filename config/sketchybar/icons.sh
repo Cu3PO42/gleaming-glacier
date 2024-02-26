@@ -3,6 +3,7 @@
 # General Icons
 LOADING=􀖇
 APPLE=􀣺
+FLAKE=󱄅
 PREFERENCES=􀺽
 ACTIVITY=􀒓
 LOCK=􀒳

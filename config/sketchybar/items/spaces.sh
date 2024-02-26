@@ -15,13 +15,13 @@ do
     associated_space=$sid
     icon="${SPACE_ICONS[i]}"
     icon.padding_left=10
-    icon.padding_right=10
-    padding_left=2
-    padding_right=2
+    icon.padding_right=0
+    padding_left=0
+    padding_right=0
     label.padding_right=20
-    icon.highlight_color=$RED
+    icon.highlight_color=$HIGHLIHGT_COLOR
     label.color=$GREY
-    label.highlight_color=$WHITE
+    label.highlight_color=$HIGHLIHGT_COLOR
     label.font="sketchybar-app-font:Regular:16.0"
     label.y_offset=-1
     background.color=$BACKGROUND_1
@@ -54,7 +54,8 @@ separator=(
 )
 
 sketchybar --add bracket spaces_bracket '/space\..*/'  \
-           --set spaces_bracket "${spaces_bracket[@]}" \
-                                                       \
-           --add item separator left                   \
-           --set separator "${separator[@]}"
+           --set spaces_bracket "${bracket_defaults[@]}" \
+
+#                                                        \
+#            --add item separator left                   \
+#            --set separator "${separator[@]}"
