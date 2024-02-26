@@ -1,12 +1,13 @@
 {
   config,
+  origin,
   options,
   pkgs,
   lib,
   ...
 }:
 with lib; let
-  inherit (import ../../../../lib/types.nix {inherit lib;}) colorType;
+  inherit (origin.self.lib.types) colorType;
 in {
   options = {
     copper.chroma.hyprland.enable = mkOption {

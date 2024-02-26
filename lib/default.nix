@@ -5,4 +5,6 @@ let
   loading = import ./loading.nix inputs;
   strings = import ./strings.nix inputs;
   flake = import ./flake.nix inputs;
-in loading // modules // misc // strings // flake
+  keybinds = import ./keybinds.nix inputs;
+  types = import ./types.nix inputs;
+in loading // modules // misc // strings // flake // {inherit keybinds types;}

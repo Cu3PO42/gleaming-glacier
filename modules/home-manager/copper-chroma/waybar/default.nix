@@ -2,12 +2,13 @@
   config,
   lib,
   pkgs,
+  origin,
   ...
 }:
 with lib; let
   cfg = config.copper.chroma;
   
-  inherit (import ../../../../lib/types.nix {inherit lib;}) colorType;
+  inherit (origin.self.lib.types) colorType;
 in {
   options = {
     copper.chroma.waybar.enable = mkOption {

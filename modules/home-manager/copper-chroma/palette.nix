@@ -1,7 +1,7 @@
-{config, pkgs, lib, copper, ...}: with lib; let
+{config, pkgs, lib, copper, origin, ...}: with lib; let
   cfg = config.copper.chroma;
 
-  inherit (import ../../../lib/types.nix {inherit lib;}) colorType;
+  inherit (origin.self.lib.types) colorType;
 
   mkColorOption = name: mkOption {
     type = colorType;
