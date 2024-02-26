@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  copper,
   ...
 }:
 with lib; let
@@ -37,7 +38,9 @@ with lib; let
     usersWithNonDefaultShells = lib.filterAttrs (u: shell: !(builtins.elem shell defaultShells)) users;
     usersWithNormalizedShells = lib.mapAttrs (u: normalizeShellPath) usersWithNonDefaultShells;
   in
-    pkgs.callPackage ./wrapper.nix {users = usersWithNormalizedShells;};
+    # Use callPackage instead of a copper.packages references so this module
+    # is usable fully standalone.
+    pkgs.callPackage ../../packages/mac-shell-wrapper {users = usersWithNormalizedShells;};
 
   replaceWithWrapper = shell:
     if types.shellPackage.check shell

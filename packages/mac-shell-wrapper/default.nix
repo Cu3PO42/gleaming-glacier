@@ -1,10 +1,11 @@
 {
   stdenv,
   lib,
-  users,
+  users ? {},
+  ...
 }:
 stdenv.mkDerivation {
-  name = "shell-wrapper";
+  name = "macos-shell-wrapper";
   src = ./src;
   configurePhase = lib.concatStringsSep "\n" (lib.mapAttrsToList (user: shell: ''echo "case $(id -u ${user}): return \"${shell}\";" >> ./mappings'') users);
   buildPhase = "$CC wrapper.c -o shell-wrapper -O3";
