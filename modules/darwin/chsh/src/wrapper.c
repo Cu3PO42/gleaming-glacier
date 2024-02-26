@@ -39,9 +39,9 @@ int main(int argc, char **argv) {
             .ident = 0,
             .filter = EVFILT_FS,
             .flags = EV_ADD,
-            .fflags = NULL,
-            .data = NULL,
-            .udata = NULL,
+            .fflags = 0,
+            .data = 0,
+            .udata = 0,
         };
         if (kevent(kq, &kev, 1, NULL, 0, NULL) != 0) {
             return __LINE__;
