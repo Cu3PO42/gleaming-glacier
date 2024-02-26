@@ -174,6 +174,7 @@
       };
     };
   };
+  copper.file.config."borders" = "config/borders";
   copper.file.config."sketchybar" = "config/sketchybar";
   copper.file.config."yabai" = "config/yabai";
 }
