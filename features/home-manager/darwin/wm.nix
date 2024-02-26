@@ -41,10 +41,10 @@
         "m" = {
           name = "Move Current Window to Workspace";
           submap.binds = let
-            mv = n: ''SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ''${SPACES[$((${n} - 1))]} ]] && yabai -m window --space ''${SPACES[$((${n} - 1))]} && sketchybar --trigger windows_on_spaces'';
+            mv = n: ''SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ''${SPACES[$((${n} - 1))]} ]] && yabai -m window --space ''${SPACES[$((${n} - 1))]}'';
           in
             #gen1To10 "" (n: mkBind "Workspace ${n}" "movetoworkspace,${n}") //
-            gen1To10 "shift" (n: mkBind "Workspace ${n} (silent)" (mv n)) /*// {
+            gen1To10 "" (n: mkBind "Workspace ${n} (silent)" (mv n)) /*// {
               "t" = mkBind "Next Workspace" "movetoworkspace,r+1";
               "d" = mkBind "Previous Workspace" "movetoworkspace,r-1";
               "e" = mkBind "Empty Workspace" "movetoworkspace,empty";
@@ -72,10 +72,10 @@
         "shift m" = {
           name = "Move active window on workspace";
           submap.binds = genDirections "Move" "" mkBind {
-            up = "yabai -m window --warp north || $(yabai -m window --display north && sketchybar --trigger windows_on_spaces && yabai -m display --focus north) || yabai -m window --move rel:0:-10";
-            down = "yabai -m window --warp south || $(yabai -m window --display south && sketchybar --trigger windows_on_spaces && yabai -m display --focus south) || yabai -m window --move rel:0:10";
-            left = "yabai -m window --warp west || $(yabai -m window --display west && sketchybar --trigger windows_on_spaces && yabai -m display --focus west && yabai -m window --warp last) || yabai -m window --move rel:-10:0";
-            right = "yabai -m window --warp east || $(yabai -m window --display east && sketchybar --trigger windows_on_spaces && yabai -m display --focus east && yabai -m window --warp first) || yabai -m window --move rel:10:0";
+            up = "yabai -m window --warp north || $(yabai -m window --display north && yabai -m display --focus north) || yabai -m window --move rel:0:-10";
+            down = "yabai -m window --warp south || $(yabai -m window --display south && yabai -m display --focus south) || yabai -m window --move rel:0:10";
+            left = "yabai -m window --warp west || $(yabai -m window --display west && yabai -m display --focus west && yabai -m window --warp last) || yabai -m window --move rel:-10:0";
+            right = "yabai -m window --warp east || $(yabai -m window --display east && yabai -m display --focus east && yabai -m window --warp first) || yabai -m window --move rel:10:0";
           } // moveFocusBinds;
         };
         "t" = mkBind "Toggle Split Direction" "yabai -m window --toggle split";
