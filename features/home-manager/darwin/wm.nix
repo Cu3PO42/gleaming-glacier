@@ -124,7 +124,12 @@
           name = "Logout";
           submap.binds."y" = mkBind "Yes" "skhd -k 'cmd + shift + q'";
         };
-        #"shift p" = mkBind "Power Menu" "exec,wlogout-launcher-hyprland 1";
+        "shift p" = {
+          name = "Power Menu";
+          submap.binds = {
+            "s" = mkBind "sleep" "pmset sleepnow";
+          };
+        };
         #"p" = mkBind "Pin on all workspaces" "pin,active";
         # TODO: ideally start iterm if not already running
         "shift s" = mkBind "Toggle Scratchpad Terminal" "skhd -k 'cmd + shift + w'";
