@@ -41,6 +41,7 @@
     fd
     fzf
     lsd
+    htop
     httpie
     jq
     neofetch
