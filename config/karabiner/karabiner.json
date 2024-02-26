@@ -47,7 +47,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -101,7 +102,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -155,7 +157,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -209,7 +212,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -263,7 +267,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -317,7 +322,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -371,7 +377,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -425,7 +432,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -479,7 +487,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -533,7 +542,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -587,7 +597,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -641,7 +652,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -695,7 +707,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -749,7 +762,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -803,7 +817,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -857,7 +872,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -911,7 +927,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -965,7 +982,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1019,7 +1037,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1073,7 +1092,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1127,7 +1147,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1181,7 +1202,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1235,7 +1257,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1289,7 +1312,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1343,7 +1367,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1397,7 +1422,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1451,7 +1477,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1505,7 +1532,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1559,7 +1587,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1613,7 +1642,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1667,7 +1697,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -1721,7 +1752,8 @@
                                             "com.apple.Terminal",
                                             "org.gnu.Emacs",
                                             "com.googlecode.iterm2",
-                                            "dev.warp.Warp-Stable"
+                                            "dev.warp.Warp-Stable",
+                                            "com.github.wez.wezterm"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
