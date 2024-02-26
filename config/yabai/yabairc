@@ -6,14 +6,14 @@
 # We hanlle this with a launch agent. If the Dock is ever restarted, there
 # will be sudo-prompt, but that hardly ever happens and this way we don't
 # need to mess with the sudoers file.
-yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+#yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
-yabai -m signal --add event=display_added action="sleep 2 && $HOME/.config/yabai/create_spaces.sh"
-yabai -m signal --add event=display_removed action="sleep 1 && $HOME/.config/yabai/create_spaces.sh"
+#yabai -m signal --add event=display_added action="sleep 2 && $HOME/.config/yabai/create_spaces.sh"
+#yabai -m signal --add event=display_removed action="sleep 1 && $HOME/.config/yabai/create_spaces.sh"
 yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
 yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
 
-$HOME/.config/yabai/create_spaces.sh
+#$HOME/.config/yabai/create_spaces.sh
 
 BAR_HEIGHT=$(($(sketchybar -m --query bar | jq -r '.height')+10))
 
