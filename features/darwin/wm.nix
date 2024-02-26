@@ -94,6 +94,12 @@ in {
     lib.mkForce
     ((with pkgs; lib.strings.makeBinPath [config.services.yabai.package jq sketchybar]) + ":${config.environment.systemPath}");
 
+  
+  # enable system shortcuts for switching desktops via ctrl + 1-6 and others
+  system.activationScripts.userDefaults.text = ''
+    defaults import com.apple.symbolichotkeys ${../../config/hotkeys.plist}
+  '';
+
   services.skhd.enable = true;
   # We need some additional settings that aren't available directly on the service config
   launchd.user.agents.skhd = {
