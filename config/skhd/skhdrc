@@ -1,12 +1,12 @@
 ## Navigation (lalt - ...)
 # Space Navigation (four spaces per display): lalt - {1, 2, 3, 4}
-lalt - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[0]} ]] && yabai -m space --focus ${SPACES[0]}
-lalt - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[1]} ]] && yabai -m space --focus ${SPACES[1]}
-lalt - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[2]} ]] && yabai -m space --focus ${SPACES[2]}
-lalt - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[4]} ]] && yabai -m space --focus ${SPACES[4]}
-lalt - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[5]} ]] && yabai -m space --focus ${SPACES[5]}
-lalt - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[6]} ]] && yabai -m space --focus ${SPACES[6]}
-lalt - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[7]} ]] && yabai -m space --focus ${SPACES[7]}
+# lalt - 1 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[0]} ]] && yabai -m space --focus ${SPACES[0]}
+# lalt - 2 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[1]} ]] && yabai -m space --focus ${SPACES[1]}
+# lalt - 3 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[2]} ]] && yabai -m space --focus ${SPACES[2]}
+# lalt - 5 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[4]} ]] && yabai -m space --focus ${SPACES[4]}
+# lalt - 6 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[5]} ]] && yabai -m space --focus ${SPACES[5]}
+# lalt - 7 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[6]} ]] && yabai -m space --focus ${SPACES[6]}
+# lalt - 8 : SPACES=($(yabai -m query --displays --display | jq '.spaces[]')) && [[ -n ${SPACES[7]} ]] && yabai -m space --focus ${SPACES[7]}
 
 # Window Navigation (through display borders): lalt - {n, t, r, d}
 lalt - t    : yabai -m window --focus west  || yabai -m display --focus west

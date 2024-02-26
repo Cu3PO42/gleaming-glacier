@@ -48,7 +48,8 @@ separator=(
   padding_right=8
   label.drawing=off
   associated_display=active
-  click_script='yabai -m space --create && sketchybar --trigger space_change'
+  # Disabled because yabai extension is disabled
+  #click_script='yabai -m space --create && sketchybar --trigger space_change'
   icon.color=$WHITE
 )
 

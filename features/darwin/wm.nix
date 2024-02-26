@@ -114,6 +114,7 @@ in {
     toggleScratchpad
     # Used for sketchybar
     pkgs.glab
+    copper.packages.mac-wm-helpers
   ];
 
   services.sketchybar.enable = true;
@@ -124,7 +125,14 @@ in {
     copper.packages.ical-buddy
     copper.packages.ifstat
     copper.packages.sketchybar-helper
+    copper.packages.mac-wm-helpers
   ];
+
+  # Keep process logs for debugging
+  launchd.user.agents.sketchybar.serviceConfig = {
+    StandardOutPath = "/tmp/sketchybar.out.log";
+    StandardErrorPath = "/tmp/sketchybar.err.log";
+  };
 
   homebrew.brews = [
     # The following packages, installed through various means are all
