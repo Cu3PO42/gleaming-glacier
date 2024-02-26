@@ -115,8 +115,7 @@ shift + ctrl + lalt - s : yabai -m window --insert stack
 
 ## Misc
 # Open new iTerm2 window
-# TODO: check if iTerm2 is already running, if not launch it with open 
-lalt - c : printf "tell application \"iTerm2\"\n create window with default profile\n end tell" | osascript
+lalt - c : open-iterm-window
 # Scratchpad wwindow
 lalt - w : toggle-scratchpad
 
