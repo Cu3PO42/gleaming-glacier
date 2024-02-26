@@ -177,7 +177,7 @@
       key = mkDefault (parseKeys name);
       submap = mkIf (config.dispatch == null) {
         id = config.id;
-        parentId = prefix;
+        parentId = if isRoot then "$root" else prefix;
       };
     };
   });
