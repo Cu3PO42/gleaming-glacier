@@ -12,7 +12,8 @@
   # the module as well.
   launchd.user.agents.yabai.serviceConfig.EnvironmentVariables.PATH =
     lib.mkForce
-    ((with pkgs; lib.strings.makeBinPath [config.services.yabai.package jq sketchybar]) + ":${config.environment.systemPath}");
+    # Add the aarch64 Homebrew bin path, which is where we install borders. For x64, the path is /usr/local/bin, which is in the system path by default.
+    ((with pkgs; lib.strings.makeBinPath [config.services.yabai.package jq sketchybar]) + ":${config.environment.systemPath}:/opt/homebrew/bin");
 
   
   # enable system shortcuts for switching desktops via ctrl + 1-6 and others
@@ -54,10 +55,17 @@
     StandardErrorPath = "/tmp/sketchybar.err.log";
   };
 
+  homebrew.taps = [
+    # This is the source for borders
+    "felixkratz/formulae"
+  ];
   homebrew.brews = [
     # The following packages, installed through various means are all
-    # dependencies of the sketchybar config
+    # dependencies of the sketchybar or yabai config
     "switchaudio-osx"
+    # We cannot build this via Nix because it needs a newer SDK than is
+    # available. Also there are no prebuilt binaries available.
+    "borders"
   ];
   homebrew.casks = [
     "sf-symbols"
