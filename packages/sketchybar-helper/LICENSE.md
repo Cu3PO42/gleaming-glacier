@@ -1,0 +1,1 @@
+This tool is taken from [FelixKratz' dotfiles](https://github.com/FelixKratz/dotfiles) and is licensed under the terms of GPLv3.

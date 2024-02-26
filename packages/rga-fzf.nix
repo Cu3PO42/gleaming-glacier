@@ -2,12 +2,13 @@
   writeShellScriptBin,
   ripgrep-all,
   fzf,
+  lib,
   ...
 }:
 # This shell script is originally provided by the author of ripgrep-all in their wiki:
 # https://github.com/phiresky/ripgrep-all/wiki/fzf-Integration
 # This is available under the terms of the AGPLv3.
-writeShellScriptBin "rga-fzf" ''
+(writeShellScriptBin "rga-fzf" ''
   RG_PREFIX="${ripgrep-all}/bin/rga --files-with-matches"
   SHELL=bash
   file="$(
@@ -18,4 +19,11 @@ writeShellScriptBin "rga-fzf" ''
                           --preview-window="70%:wrap"
   )" &&
   xdg-open "$file"
-''
+'') // {
+  meta = with lib; {
+    description = "Integration of ripgrep-all and fzf.";
+    homepage = "https://github.com/phiresky/ripgrep-all";
+    license = licenses.agpl3;
+    maintainers = ["Cu3PO42"];
+  };
+}

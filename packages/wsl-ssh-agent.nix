@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, lib, ...}: let
   npiperelay = pkgs.stdenvNoCC.mkDerivation {
     name = "npiperelay";
     src = pkgs.fetchzip {
@@ -11,6 +11,14 @@
       mkdir -p $out/bin
       mv npiperelay.exe $out/bin
     '';
+
+    meta = with lib; {
+      description = "npiperelay is a tool that allows you to access a Windows named pipe via stdin/stdout.";
+      homepage = "https://github.com/jstarks/npiperelay";
+      maintainers = ["Cu3PO42"];
+      license = licenses.mit;
+      sourceProvenance = sourceTypes.binaryNativeCode;
+    };
   };
 
   # This approach is originally based on

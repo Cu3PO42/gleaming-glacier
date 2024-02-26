@@ -15,7 +15,11 @@ stdenv.mkDerivation {
     mv sketchybar-helper $out/bin/
   '';
 
-  meta = {
-    platforms = lib.platforms.darwin;
+  meta = with lib; {
+    description = "A helper tool to monitor CPU usage for Sketchybar.";
+    homepage = "https://github.com/FelixKratz/dotfiles/tree/master/.config/sketchybar/helper";
+    maintainers = ["Cu3PO42"];
+    license = licenses.gpl3Only;
+    platforms = platforms.darwin;
   };
 }

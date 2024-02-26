@@ -2,6 +2,7 @@
   stdenvNoCC,
   libsForQt5,
   fetchFromGitHub,
+  lib,
   ...
 }:
 stdenvNoCC.mkDerivation {
@@ -27,4 +28,11 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/sddm/themes
     mv ./corners $out/share/sddm/themes
   '';
+
+  meta = with lib; {
+    description = "A very customizable SDDM theme that places controls on your screen corners.";
+    homepage = "https://github.com/aczw/sddm-theme-corners";
+    maintainers = ["Cu3PO42"];
+    license = licenses.gpl3Only;
+  };
 }

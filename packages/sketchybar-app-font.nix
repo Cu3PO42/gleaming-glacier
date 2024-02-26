@@ -23,4 +23,11 @@ stdenvNoCC.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  meta = with lib; {
+    description = "A font of stylized icons of popular macOS applications.";
+    homepage = "https://github.com/kvndrsslr/sketchybar-app-font";
+    license = licenses.unlicense;
+    maintainers = ["Cu3PO42"];
+  };
 }

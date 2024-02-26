@@ -23,4 +23,10 @@ stdenvNoCC.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  meta = with lib; {
+    description = "Apple's San Frincisco Mono font with ligatures.";
+    homepage = "https://github.com/shaunsingh/SFMono-Nerd-Font-Ligaturized";
+    maintainers = ["Cu3PO42"];
+  };
 }

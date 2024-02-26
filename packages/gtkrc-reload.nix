@@ -2,7 +2,7 @@
 # It is originally found in the AUR at https://aur.archlinux.org/packages/gtkrc-reload
 # and is available under the terms of GPL3 or later.
 
-{stdenv, gtk2, pkg-config, fetchgit, ...}: stdenv.mkDerivation {
+{stdenv, gtk2, pkg-config, fetchgit, lib, ...}: stdenv.mkDerivation {
   name = "gtkrc-reload";
   src = fetchgit {
     url = "https://aur.archlinux.org/gtkrc-reload.git";
@@ -17,5 +17,11 @@
     make install PREFIX=$out
   '';
 
-  meta.mainProgram = "gtkrc-reload";
+  meta = with lib; {
+    description = "A tiny tool to reload the configuration of GTK2 applications.";
+    homepage  = "https://aur.archlinux.org/packages/gtkrc-reload";
+    license = licenses.gpl3Plus;
+    maintainers = ["Cu3PO42"];
+    mainProgram = "gtkrc-reload";
+  };
 }

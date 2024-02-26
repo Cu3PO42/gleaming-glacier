@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
   fetchFromGitHub,
+  lib,
   ...
 }:
 stdenvNoCC.mkDerivation {
@@ -16,4 +17,12 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/qt5ct/colors
     mv themes/* $out/share/qt5ct/colors
   '';
+
+  meta = with lib; {
+    description = "Catppuccin for the Qt5Ct configuration tool.";
+    homepage = "https://github.com/catppuccin/qt5ct";
+    license = licenses.mit;
+    maintainers = ["Cu3PO42"];
+    platforms = platforms.linux;
+  };
 }
