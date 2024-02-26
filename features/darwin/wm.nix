@@ -27,7 +27,12 @@
     # skhd executes everything in the user's login shell, but we want bash for portability
     environment.SHELL = "/bin/bash";
     # our config needs jq
-    path = with pkgs; [(lib.strings.makeBinPath [jq])];
+    path = with pkgs; [(lib.strings.makeBinPath [yabai jq sketchybar copper.packages.mac-wm-helpers skhd])];
+    # For debugging
+    serviceConfig = {
+      StandardOutPath = "/tmp/skhd.out.log";
+      StandardErrorPath = "/tmp/skhd.err.log";
+    };
   };
   # Add it to the path for easier config reloading
   environment.systemPackages = [

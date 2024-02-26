@@ -1,1 +1,0 @@
-The `skhdrc` was originally published by FelixKratz as part of their [dotfiles](https://github.com/FelixKratz/dotfiles/) and is available under the terms of the GPLv3.
