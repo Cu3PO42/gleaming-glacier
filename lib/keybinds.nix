@@ -178,6 +178,8 @@
       submap = mkIf (config.dispatch == null) {
         id = config.id;
         parentId = if isRoot then "$root" else prefix;
+        name = config.name;
+        description = config.description;
       };
     };
   });
@@ -199,6 +201,26 @@
           the bind that activated this one.
 
           If null, this keymap is the global one.
+        '';
+      };
+
+      name = mkOption {
+        type = types.str;
+        example = "Global";
+        description = ''
+          A short-form description of the keymap. Will be used for the keybind
+          helper menu and keybind search. It is set automatically by the keybind
+          module.
+        '';
+      };
+
+      description = mkOption {
+        type = types.str;
+        default = "";
+        description = ''
+          A longer description of the keymap's intent and functionality. For
+          submaps this is shown when its helper menu is open. It is set
+          automatically by the keybind module.
         '';
       };
 
@@ -227,7 +249,7 @@
 
   submapOptions = {
     # TODO: catch-all binds? see Hyprland#3405
-    infoPopupTimeout = mkOption {
+    helpTimeout = mkOption {
       type = types.ints.unsigned;
       default = 2;
       example = 1;
@@ -239,7 +261,7 @@
 
     timeout = mkOption {
       type = types.ints.positive;
-      default = 5;
+      default = 15;
       example = 10;
       description = ''
         Number of seconds that any submap should stay active before
@@ -275,6 +297,7 @@
       default = {};
       apply = binds: {
         id = "$root";
+        parentId = "";
         remain = true;
         name = "Root";
         description = ''
@@ -290,4 +313,22 @@
     enabledSubmapBinds = filter (bind: bind.enabled && bind.submap != null) binds;
     submaps = concatMap (bind: collectSubmaps bind.submap) enabledSubmapBinds;
   in [keymap] ++ submaps;
+
+  serializeMapInfo = keymap: let
+    normalizeBind = bind: {
+      inherit (bind) key passthrough global repeat remain activeWhileLocked name description;
+    };
+    normalizeMap = submap: let
+      bindList = mapAttrsToList (_: value: value) submap.binds;
+      enabledBinds = filter (bind: bind.enabled) bindList;
+      binds = map normalizeBind enabledBinds;
+    in {
+      inherit (submap) parentId name description;
+      inherit binds;
+    };
+    submaps = collectSubmaps keymap;
+    normalized = listToAttrs (map (submap: { name = submap.id; value = normalizeMap submap; }) submaps);
+  in builtins.toJSON {
+    maps = normalized;
+  };
 }

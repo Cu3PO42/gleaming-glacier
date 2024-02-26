@@ -1,0 +1,11 @@
+{
+  "name": "keybind-helper",
+  "module": "show-keybind-helper.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

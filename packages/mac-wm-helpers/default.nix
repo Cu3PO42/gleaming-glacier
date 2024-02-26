@@ -1,4 +1,4 @@
-{writeShellApplication, lib, symlinkJoin, ...}: let
+{writeShellApplication, lib, symlinkJoin, callPackage, ...}: let
   mkShellHelper = name: (writeShellApplication {
     inherit name;
     text = builtins.readFile ./${name}.sh;
@@ -12,5 +12,6 @@ in symlinkJoin {
   paths = [
     (mkShellHelper "spacectl")
     (mkShellHelper "open-iterm-window")
+    (callPackage ./keybind-helper {})
   ];
 }

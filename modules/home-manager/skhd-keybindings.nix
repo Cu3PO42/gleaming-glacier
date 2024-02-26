@@ -1,4 +1,4 @@
-{config, lib, origin, ...}: with lib; let
+{config, lib, pkgs, origin, copper, ...}: with lib; let
   cfg = config.programs.skhd;
   dispatchOption = mkOption {
     type = types.str;
@@ -8,7 +8,9 @@
     '';
   };
 
-  inherit (origin.self.lib.keybinds dispatchOption) keybindOptions collectSubmaps;
+  inherit (origin.self.lib.keybinds dispatchOption) keybindOptions collectSubmaps serializeMapInfo;
+
+  maestroctl = "${config.programs.maestro.package}/bin/maestro";
 
   skhdMods = {
     "ctrl" = "ctrl";
@@ -37,13 +39,17 @@
 
   renderBind = mode: bind: let
     passthrough = optionalString bind.passthrough "->";
-    reset = optionalString (!bind.remain) "skhd -k '${exitKey}'; ";
     submap = "; ${renderMapName bind.submap.id}";
-    dispatch = ": ${reset}${bind.dispatch}";
+    reset = optionalString (!bind.remain) "skhd -k '${exitKey}'; ";
+    maestro = optionalString (cfg.maestroIntegration && bind.remain) "${maestroctl} use; ";
+    dispatch = ": ${maestro}${reset}${bind.dispatch}";
     modePrefix = if bind.global then allMapNames else renderMapName mode;
   in "${modePrefix} < ${renderKey bind.key} ${passthrough} ${if bind.dispatch != null then dispatch else submap}";
 
-  renderSubmapDef = submap: '':: ${renderMapName submap.id} ${optionalString (submap.id != "$root") "@"}'';
+  renderSubmapDef = submap: let
+    maestro = optionalString (cfg.maestroIntegration) (": ${maestroctl} " + (if submap.id == "$root" then "exit" else "activate \"${submap.id}\""));
+    consume = optionalString (submap.id != "$root") "@";
+  in '':: ${renderMapName submap.id} ${consume} ${maestro}'';
   renderSubmap = submap: ''
     ${concatMapStringsSep "\n" (renderBind submap.id) (filter (b: b.enabled) (attrValues submap.binds))}
     ${optionalString (submap.id != "$root") ''
@@ -60,11 +66,20 @@ in {
   options = {
     programs.skhd = {
       enable = mkEnableOption "skhd keybinds";
+      maestroIntegration = mkEnableOption "skhd maestro integration" // { default = true; };
       keybinds = keybindOptions;
     };
   };
 
   config = mkIf cfg.enable {
     xdg.configFile."skhd/skhdrc".text = skhdrc;
+
+    programs.maestro = mkIf cfg.maestroIntegration {
+      enable = true;
+      cancelCommand = "/run/current-system/sw/bin/skhd -k \"${exitKey}\"";
+      helpCommand = "exec ${copper.packages.mac-wm-helpers}/bin/show-keybind-helper ${pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.keybinds.binds)} \"$KEYMAP\"";
+      keymapTimeout = cfg.keybinds.submapSettings.timeout;
+      helpTimeout = cfg.keybinds.submapSettings.helpTimeout;
+    };
   };
 }
