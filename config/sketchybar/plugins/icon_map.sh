@@ -80,7 +80,7 @@ case $@ in
 "Microsoft Word")
   icon_result=":microsoft_word:"
   ;;
-"Microsoft Teams")
+"Microsoft Teams classic")
   icon_result=":microsoft_teams:"
   ;;
 "Iris")
