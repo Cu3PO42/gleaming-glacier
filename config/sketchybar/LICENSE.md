@@ -1,4 +1,6 @@
-This config was heavily modified by me, but originally written by [FelixKratz](https://github.com/FelixKratz/dotfiles/), who made their code available under the terms of the GPLv3.
+This sketchybar config was originally written by [FelixKratz](https://github.com/FelixKratz/dotfiles/), who made their code available under the terms of the GPLv3.
+I have since modified it extensively.
+All commits containing code from Felix have been marked as such (in addition to the initial commit), other commits represent my modifications.
 
 Additionally, the following files where derived from other repositories:
 

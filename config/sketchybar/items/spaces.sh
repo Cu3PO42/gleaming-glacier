@@ -9,7 +9,7 @@ do
   sid=$(($i+1))
 
   space=(
-    associated_space=$sid
+    space=$sid
     icon="${SPACE_ICONS[i]}"
     icon.padding_left=10
     icon.padding_right=0
