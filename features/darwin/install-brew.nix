@@ -9,7 +9,7 @@
   ];
 
   nix-homebrew.enable = true;
-  nix-homebrew.patchBrew = false;
+  nix-homebrew.patchBrew = true;
   nix-homebrew.user = config.defaultUser;
 
   environment.extraInit = ''eval "$(brew shellenv)"'';
