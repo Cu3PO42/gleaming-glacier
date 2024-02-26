@@ -6,7 +6,7 @@
   inherit (import ../../lib/loading.nix origin.inputs) loadSystems loadHome loadPackages loadApps loadModules importIfExists importIfExistsApply;
 
   loadNixos = loadSystems inputs.nixpkgs.lib.nixosSystem;
-  loadDarwin = loadSystems inputs.nix-darwin.lib.darwinSystem;
+  loadDarwin = loadSystems (inputs.nix-darwin or origin.inputs.nix-darwin).lib.darwinSystem;
 
   loadModules' = loadModules {
     inherit (config.gleaming) basename basepath;
