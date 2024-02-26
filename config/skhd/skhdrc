@@ -116,8 +116,6 @@ shift + ctrl + lalt - s : yabai -m window --insert stack
 ## Misc
 # Open new iTerm2 window
 lalt - c : open-iterm-window
-# Scratchpad wwindow
-lalt - w : toggle-scratchpad
 
 # New window in hor./ vert. splits for all applications with yabai
 lalt - h : yabai -m window --insert east;  skhd -k "cmd - n"
