@@ -86,7 +86,7 @@
   '';
 in {
   services.yabai.enable = true;
-  services.yabai.enableScriptingAddition = true;
+  services.yabai.enableScriptingAddition = false;
   # Our config needs jq to be available. Unfortunately the yabai module does
   # not use the abstraction over path, so we need to copy over the values from
   # the module as well.
