@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  copper,
   ...
 }: let
   toggleScratchpad = pkgs.writeScriptBin "toggle-scratchpad" ''
@@ -113,10 +114,10 @@ in {
   services.sketchybar.extraPackages = with pkgs; [
     jq
     gh
-    ical-buddy
-    ifstat
     glab
-    sketchybar-helper
+    copper.packages.ical-buddy
+    copper.packages.ifstat
+    copper.packages.sketchybar-helper
   ];
 
   homebrew.brews = [
@@ -129,8 +130,8 @@ in {
   ];
 
   fonts.fonts = with pkgs; [
-    sketchybar-app-font
-    liga-sfmono-nerd-font
+    copper.packages.sketchybar-app-font
+    copper.packages.liga-sfmono-nerd-font
     font-awesome
   ];
 
