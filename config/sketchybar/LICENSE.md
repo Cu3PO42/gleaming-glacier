@@ -4,6 +4,6 @@ Additionally, the following files where derived from other repositories:
 
 * `items/applemusic.sh`, `plugins/applemusic*` were originally adapted from FelixKratz' dotfiles by [hunterliao29](https://github.com/FelixKratz/SketchyBar/discussions/12#discussioncomment-4406700)
 * `plugins/stats/*` were adapted from [khaneliman's dotfiles](https://github.com/khaneliman/dotfiles)
-* `items/ical.sh`, `plugins/ical.sh` were published by [EphraimSiegfried](https://github.com/FelixKratz/SketchyBar/discussions/12#discussioncomment-4730516)
+* `items/ical.sh`, `plugins/ical.sh` were originally published by [EphraimSiegfried](https://github.com/FelixKratz/SketchyBar/discussions/12#discussioncomment-4730516) and adapted by me
 
 I make no claims as to the licenses under which these particular files are available.
