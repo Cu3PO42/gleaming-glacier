@@ -8,7 +8,7 @@
       "com.apple.swipescrolldirection" = false;
       "com.apple.trackpad.scaling" = 3.0;
     };
-    ".GlobalPreferences"."com.apple.mouse.scaling" = "2.5";
+    ".GlobalPreferences"."com.apple.mouse.scaling" = 2.5;
     CustomSystemPreferences = let
       m = with lib; mapAttrs (outer: mapAttrs' (inner: nameValuePair "${outer}.${inner}"));
     in
