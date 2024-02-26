@@ -29,34 +29,43 @@ struct ServerConfig {
     cancel_command: &'static str,
 }
 
+#[derive(Debug, Default)]
+struct ServerState {
+    keymap: String,
+    cancel_flag: Mutex<bool>,
+    abort_flag: Mutex<bool>,
+    abort_cond: Condvar,
+    help_active: Mutex<bool>,
+}
+
+impl ServerState {
+    fn new(keymap: String) -> Self {
+        Self {
+            keymap,
+            ..Default::default()
+        }
+    }
+}
+
 struct Server {
     config: ServerConfig,
-
-    current_keymap: Option<String>,
-    cancel_flag: Option<Arc<AtomicBool>>,
-    abort_help: Option<Arc<(Mutex<bool>, Condvar)>>,
+    state: Option<Arc<ServerState>>,
 }
 
 impl Server {
     fn new(config: ServerConfig) -> Self {
         Self {
             config,
-
-            cancel_flag: None,
-            current_keymap: None,
-            abort_help: None,
+            state: None,
         }
     }
 
     fn abort_running(&mut self) {
-        if let Some(f) = self.cancel_flag.take() {
-            f.store(true, Ordering::Relaxed);
+        if let Some(state) = self.state.take() {
+            *state.cancel_flag.lock().unwrap() = true;
+            *state.abort_flag.lock().unwrap() = true;
+            state.abort_cond.notify_all();
         }
-        if let Some(abort_help) = self.abort_help.take() {
-            *abort_help.0.lock().unwrap() = true;
-            abort_help.1.notify_all();
-        }
-        self.current_keymap.take();
     }
 
     fn dispatch(&mut self, cmd: maestro::Command) -> anyhow::Result<()> {
@@ -65,13 +74,12 @@ impl Server {
             Command::MapActivated(map_name) => {
                 println!("Map activated: {}", map_name);
 
-                self.abort_running();
-                let cancel_flag = Arc::new(AtomicBool::new(false));
-                let abort_help = Arc::new((Mutex::new(false), Condvar::new()));
+                let in_help = self.state.as_ref().is_some_and(|state| *state.help_active.lock().unwrap());
 
-                self.current_keymap = Some(map_name.clone());
-                self.cancel_flag = Some(cancel_flag.clone());
-                self.abort_help = Some(abort_help.clone());
+                self.abort_running();
+                let state = Arc::new(ServerState::new(map_name));
+                *state.help_active.lock().unwrap() = in_help;
+                self.state = Some(state.clone());
 
                 // We need to copy these values because otherwise self would be moved.
                 let help_timeout = self.config.help_timeout;
@@ -81,39 +89,44 @@ impl Server {
 
                 thread::spawn(move || {
                     if let Some(help_command) = help_command {
-                        thread::sleep(Duration::from_secs(help_timeout));
-                        if cancel_flag.load(Ordering::Relaxed) {
-                            return;
+                        if !in_help {
+                            thread::sleep(Duration::from_secs(help_timeout));
+                            if *state.cancel_flag.lock().unwrap() {
+                                return;
+                            }
+                            println!("Help timeout exceeded, running help command for map: {}", state.keymap);
                         }
 
-                        println!("Help timeout exceeded, running help command for map: {}", map_name);
+                        *state.help_active.lock().unwrap() = true;
                         let mut proc = std::process::Command::new("/usr/bin/env")
                             .arg("sh")
                             .arg("-c")
                             .arg(help_command)
-                            .env("KEYMAP", &map_name)
+                            .env("KEYMAP", &state.keymap)
                             .spawn()
                             .unwrap();
 
                         if keymap_timeout > 0 {
-                            let child_abort_help = abort_help.clone();
+                            let child_state = state.clone();
                             thread::spawn(move || {
-                                thread::sleep(Duration::from_secs(keymap_timeout - help_timeout));
+                                let waited_before = if in_help { 0 } else { help_timeout };
+                                thread::sleep(Duration::from_secs(keymap_timeout - waited_before));
 
-                                *child_abort_help.0.lock().unwrap() = true;
-                                child_abort_help.1.notify_all();
+                                *child_state.abort_flag.lock().unwrap() = true;
+                                child_state.abort_cond.notify_all();
 
-                                if !cancel_flag.load(Ordering::Relaxed) {
+                                if !*child_state.cancel_flag.lock().unwrap() {
                                     run_command(cancel_command).unwrap();
                                 }
                             });
                         }
 
-                        let mut close = abort_help.0.lock().unwrap();
+                        let mut close = state.abort_flag.lock().unwrap();
                         while !*close {
-                            close = abort_help.1.wait(close).unwrap();
+                            close = state.abort_cond.wait(close).unwrap();
                         }
 
+                        *state.help_active.lock().unwrap() = false;
                         // If we get to this point, one of two things must have happened:
                         // - We have reached the keymap timeout,
                         // - The user has switched maps or used a bind.
@@ -135,7 +148,7 @@ impl Server {
                         let _ = proc.wait();
                     } else if keymap_timeout > 0 {
                         thread::sleep(Duration::from_secs(keymap_timeout));
-                        if cancel_flag.load(Ordering::Relaxed) {
+                        if *state.cancel_flag.lock().unwrap() {
                             return;
                         }
                         run_command(cancel_command).unwrap();
@@ -144,10 +157,11 @@ impl Server {
             }
             Command::BindUsed => {
                 println!("Bind used");
-                let map_name = self.current_keymap.take();
-                self.abort_running();
-                if let Some(map_name) = map_name {
-                    self.dispatch(Command::MapActivated(map_name))?;
+                if let Some(state) = &self.state {
+                    // Includes abort.
+                    self.dispatch(Command::MapActivated(state.keymap.clone()))?;
+                } else {
+                    self.abort_running();
                 }
             },
             Command::MapExit => {
