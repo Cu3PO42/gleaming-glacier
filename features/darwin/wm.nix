@@ -122,6 +122,7 @@ in {
     jq
     gh
     glab
+    bash # Newer bash is needed for the iCal plugin
     copper.packages.ical-buddy
     copper.packages.ifstat
     copper.packages.sketchybar-helper
