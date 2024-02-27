@@ -15,6 +15,7 @@ pkgs.writeShellApplication {
     jq
     gnused
     gawk
+    dos2unix
   ];
   text = builtins.readFile ./plate.sh;
 

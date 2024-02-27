@@ -2,6 +2,13 @@
 
 CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/plate"
 
+readOpKey() {
+    ARG="$1"
+    # Fix up 1Password's weird handling of SSH keys over the CLI.
+    case "$ARG" in *"private key") ARG="$ARG?ssh-format=openssh" ;; esac
+    op read "$ARG" | dos2unix
+}
+
 hosts() {
     [ -e "$CONFIG/hosts.json" ] && cat "$CONFIG/hosts.json" || echo "{}"
 }
@@ -49,7 +56,6 @@ updateHosts() {
 
 provision() {
     BUILD_ON_REMOTE=0
-    TARGET_USER="root"
     PORT="22"
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -70,6 +76,7 @@ provision() {
         esac
         shift
     done
+    TARGET_USER=${TARGET_USER:-${DEFAULT_TARGET_USER:-root}}
 
     TEMP=$(mktemp -d)
     trap 'rm -rf "$TEMP"' EXIT
@@ -77,7 +84,7 @@ provision() {
     if [ -n "$HOST_KEY" ]; then
         TOTAL_KEY_LOCATION="$TEMP$HOST_KEY_LOCATION"
         mkdir -p "$(dirname "$TOTAL_KEY_LOCATION")"
-        op read "$HOST_KEY" > "$TOTAL_KEY_LOCATION"
+        readOpKey "$HOST_KEY" > "$TOTAL_KEY_LOCATION"
         chmod 600 "$TOTAL_KEY_LOCATION"
         ssh-keygen -y -f "$TOTAL_KEY_LOCATION" > "$TOTAL_KEY_LOCATION.pub"
     fi
@@ -102,6 +109,7 @@ provision() {
         "${DEK_ARGS[@]}" \
         "${REMOTE_ARGS[@]}" \
         -p "$PORT" \
+        "${NIXOS_ANYWHERE_ARGS[@]}" \
         "$TARGET_USER@$TARGET"
 
     if [ -n "$HOST_KEY" ]; then
@@ -118,6 +126,10 @@ update() {
             --build-on-remote)
                 BUILD_ON_REMOTE=1
                 ;;
+            --target-user)
+                TARGET_USER="$2"
+                shift
+                ;;
             --test)
                 TEST=1
                 ;;
@@ -128,9 +140,7 @@ update() {
         shift
     done
 
-    if [ -z "$TARGET_USER" ]; then
-        TARGET_USER="$(whoami)"
-    fi
+    TARGET_USER=${TARGET_USER:-${DEFAULT_TARGET_USER:-$(whoami)}}
 
     if [ $BUILD_ON_REMOTE -eq 1 ]; then
         REMOTE_ARGS=( --build-host "$TARGET_USER@$TARGET" )
@@ -169,7 +179,7 @@ unlock() {
     trap 'rm -f "$TEMP"' EXIT
     REAL_HOSTNAME=$(ssh -G "$TARGET" | awk '$1 == "hostname" { print $2 }')
     sed "/^$REAL_HOSTNAME/d" ~/.ssh/known_hosts > "$TEMP"
-    echo "$REAL_HOSTNAME $(cat "$INITRD_PUBLIC_KEY")" >> "$TEMP"
+    echo "$REAL_HOSTNAME $INITRD_PUBLIC_KEY" >> "$TEMP"
 
     SSH_COMMAND=( ssh "root@$TARGET" -T -o "UserKnownHostsFile=$TEMP" -o StrictHostKeyChecking=yes )
 

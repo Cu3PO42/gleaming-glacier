@@ -57,9 +57,10 @@ in {
       };
 
       initrdPublicKey = mkOption {
-        type = types.nullOr types.path;
-	default = null;
+        type = with types; nullOr (either path str);
+        default = null;
         example = ./initrd_host_ed25519_key.pub;
+        apply = v: if v == null then "" else if isString v then v else builtins.readFile v;
         description = ''
           The location of the public host key that will be used by the initrd
           SSH server used for remote unlocking.
@@ -90,6 +91,29 @@ in {
           key will be automatically installed to `$\{host_key_location}.pub`.
         '';
       };
+
+      opAccount = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "my.1password.eu";
+        description = ''
+          This setting controls which 1Password to read the referenced secrets
+          from. The account is specified by the 1Password domain in which the
+          relevant vaults are located. This is particularly useful when you
+          have both a private and a business 1Password account.
+          
+          If not specified, the default account is used.
+        '';
+      };
+
+      extraNixosAnywhereArgs = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = ["--build-on-remote"];
+        description = ''
+          Additional arguments to pass to `nixos-anywhere` during provision.
+        '';
+      };
     };
   };
 
@@ -104,11 +128,13 @@ in {
 
     system.build.plateVars = mkIf (cfg.target != null) (pkgs.writeShellScript "vars.sh" ''
       TARGET="${cfg.target}"
-      TARGET_USER="${orEmpty cfg.targetUser}"
+      ${optionalString (cfg.targetUser != null) ''DEFAULT_TARGET_USER="${cfg.targetUser}"''}
       DISK_ENCRYPTION_KEY="${orEmpty cfg.diskEncryptionKey}"
-      INITRD_PUBLIC_KEY="${toString (orEmpty cfg.initrdPublicKey)}"
+      INITRD_PUBLIC_KEY="${cfg.initrdPublicKey}"
       HOST_KEY="${orEmpty cfg.hostKey}"
       HOST_KEY_LOCATION="${cfg.hostKeyLocation}"
+      ${optionalString (cfg.opAccount != null) "export OP_ACCOUNT=${cfg.opAccount}"}
+      NIXOS_ANYWHERE_ARGS=(${concatMapStringsSep " " escapeShellArgs cfg.extraNixosAnywhereArgs})
     '');
   };
 }
