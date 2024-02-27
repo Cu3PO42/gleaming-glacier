@@ -30,5 +30,6 @@
 
   networking = {
     firewall.enable = true;
+    useNetworkd = true;
   };
 }
