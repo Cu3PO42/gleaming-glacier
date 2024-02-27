@@ -3,6 +3,7 @@
   config,
   pkgs,
   copper,
+  lib,
   ...
 }: {
   # General Nix settings
@@ -36,11 +37,13 @@
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
+  # on your system were taken. This value is host-specific and should never
+  # be updated. Thus, it should defined in the host configuration and not
+  # any module. It was erroneously defined here in the past. This default
+  # is deprecated.
+  system.stateVersion = let
+    msg = "You should always set `system.stateVersion` yourself because it is a host-specific property. Relying on a default is incorrect.";
+  in lib.mkDefault (lib.warn msg "23.05");
 
   # Make every root user trusted.
   nix.settings.trusted-users = let
