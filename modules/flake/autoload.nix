@@ -3,7 +3,7 @@
   cfg = config.gleaming.autoload;
 
   # Do not refere origin.lib as that would cause infinite recursion.
-  inherit (import ../../lib/loading.nix origin.inputs) loadSystems loadHome loadPackages loadApps loadModules importIfExists importIfExistsApply;
+  inherit (import ../../lib/loading.nix origin.inputs) loadSystems loadHome loadPackages loadApps loadModules loadConfig importIfExists importIfExistsApply;
 
   loadNixos = loadSystems inputs.nixpkgs.lib.nixosSystem;
   loadDarwin = loadSystems (inputs.nix-darwin or origin.inputs.nix-darwin).lib.darwinSystem;
@@ -101,6 +101,8 @@ in {
         modules = config.gleaming.autoload.baseModules.darwin;
         dir = base + "/hosts/darwin";
       };
+
+      copperConfig = loadConfig (base + "/hosts");
     };
 
     perSystem = {pkgs, system, config, options, inputs', ...}: let

@@ -36,11 +36,8 @@ parseFlake() {
         fi
     fi
 
-    # TODO: this still requires us to be able to evaluate the config, which
-    # means we need a builder for the remote architecture, evne when
-    # --build-on-remote is specified. We should find a way to avoid this.
     # shellcheck disable=SC1090
-    source "$(nix build "$FLAKE_REF#nixosConfigurations.\"$FLAKE_ATTR\".config.system.build.plateVars" --print-out-paths --no-link)"
+    source <(nix eval "$FLAKE_REF#copperConfig.\"$FLAKE_ATTR\".build.plate" --raw)
 }
 
 

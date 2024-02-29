@@ -13,6 +13,7 @@
         copperModules.base
         copperModules.autoload
         copperModules.copper-chroma
+        copperModules.copper-plate
         copperModules.default-overlays
         copperModules.gleaming
         copperModules.gleaming-modules

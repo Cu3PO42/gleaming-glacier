@@ -2,15 +2,22 @@
   inherit (import ./modules.nix inputs) mkFeatureModule injectArgs importInjectArgs;
 in rec {
   loadDir = with nixpkgs.lib;
-    dir: f:
-      mapAttrs' (name: _: {
+    dir: f: let
+      contents = if builtins.pathExists dir then builtins.readDir dir else {};
+      contents' = mapAttrsToList (name: value: {
+        inherit name;
+        typ = value;
+      }) contents;
+      validImports = filter (e: hasSuffix ".nix" e.name && e.name != "default.nix" || e.typ == "directory") contents';
+      imported = map ({name, ...}: {
         name = removeSuffix ".nix" name;
         value = f {
           inherit name;
           path = dir + "/${name}";
         };
-      })
-      (filterAttrs (name: typ: (hasSuffix ".nix" name && name != "default.nix") || typ == "directory") (if builtins.pathExists dir then builtins.readDir dir else {}));
+      }) validImports;
+      nnImported = filter (v: v.value != null) imported;
+    in listToAttrs nnImported;
 
   loadDirRec = dir: f:
     with nixpkgs.lib; let
@@ -78,29 +85,32 @@ in rec {
           }))
       ));
 
-    loadSystems = constructor: {
-      modules,
-      specialArgs,
-      dir,
-    }:
-      loadDir dir ({
-        path,
-        name,
-        ...
-      }: let
-        modules' =
-          [
-            (import path)
-            ({lib, ...}: {
-              networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
-            })
-          ]
-          ++ modules;
-      in
-        constructor {
-          modules = modules';
-          inherit specialArgs;
-        });
+  isNewHost = host: host ? main;
+
+  loadSystems = constructor: {
+    modules,
+    specialArgs,
+    dir,
+  }:
+    loadDir dir ({
+      path,
+      name,
+      ...
+    }: with nixpkgs.lib; let
+      entry = import path;
+      modules' =
+        [
+          (if isNewHost entry then setDefaultModuleLocation path entry.main else warn "Specifying a host directly is deprecated." entry)
+          ({lib, ...}: {
+            networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
+          })
+        ]
+        ++ modules;
+    in
+      constructor {
+        modules = modules';
+        inherit specialArgs;
+      });
 
   loadHome = {
     modules,
@@ -128,4 +138,11 @@ in rec {
         modules = modules';
         extraSpecialArgs = specialArgs;
       });
+
+  loadConfig = dir: let
+    load = dir: loadDir dir ({path, ...}: let
+      def = import path;
+    in if isNewHost def then def.config or {} else {});
+  in load (dir + "/darwin") // load (dir + "/nixos");
+
 }

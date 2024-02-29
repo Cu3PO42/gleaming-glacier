@@ -7,4 +7,5 @@ let
   flake = import ./flake.nix inputs;
   keybinds = import ./keybinds.nix inputs;
   types = import ./types.nix inputs;
-in loading // modules // misc // strings // flake // {inherit keybinds types;}
+  plate = import ./plate.nix inputs;
+in loading // modules // misc // strings // flake // {inherit keybinds types plate;}

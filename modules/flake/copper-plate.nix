@@ -1,10 +1,6 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-with lib; let
+{lib, origin, ...}: with lib; let
+  inherit (origin.lib.types) submoduleWithAssertions;
+
   is1PR = val: isString val && (builtins.substring 0 5 val) == "op://";
 
   opRef = mkOptionType {
@@ -15,18 +11,10 @@ with lib; let
     merge = mergeEqualOption;
   };
 
-  orEmpty = val:
-    if val == null
-    then ""
-    else val;
-
-  cfg = config.copper.plate;
-in {
-  options = {
-    copper.plate = {
+  plateModule = {config, ...}: {
+    options = {
       target = mkOption {
-        type = types.nullOr types.str;
-        default = null;
+        type = types.str;
         example = "1.2.3.4";
         description = ''
           The host that should be installed and updated. Can be referred to by
@@ -75,10 +63,6 @@ in {
           A reference to a 1Password Secret that contains the unencrypted
           private key that should be used as the host key for a server when
           it is freshly deployed.
-
-          Please note that at the time of writing, the 1Password CLI will
-          incorrectly export SSH private keys that are stored as such.
-          Instead, you must store the key as text.
         '';
       };
 
@@ -115,26 +99,44 @@ in {
         '';
       };
     };
+
+    config = {
+      assertions = [
+        {
+          assertion = (config.diskEncryptionKey != null) == (config.initrdPublicKey != null);
+          message = "Specifying an initrd public host key doesn't make sense if FDE isn't enabled.";
+        }
+      ];
+    };
   };
+in {
+  options = {
+    flake.copperConfig = mkOption {
+      type = with types; attrsOf (submodule ({config, ...}: {
+        options = {
+          plate = mkOption {
+            type = types.nullOr (submoduleWithAssertions plateModule);
+            apply = filterAttrs (name: _: name != "assertions" && name != "warnings");
+            default = null;
+            description = ''
+              Configuration for the `plate` tool.
+            '';
+          };
 
-  config = {
-    # need to be specified: target
-    assertions = [
-      {
-        assertion = (cfg.diskEncryptionKey != null) == (cfg.initrdPublicKey != null);
-        message = "Specifying an initrd public host key doesn't make sense if FDE isn't enabled.";
-      }
-    ];
+          build = mkOption {
+            type = types.anything;
+            default = {};
+          };
+        };
 
-    system.build.plateVars = mkIf (cfg.target != null) (pkgs.writeShellScript "vars.sh" ''
-      TARGET="${cfg.target}"
-      ${optionalString (cfg.targetUser != null) ''DEFAULT_TARGET_USER="${cfg.targetUser}"''}
-      DISK_ENCRYPTION_KEY="${orEmpty cfg.diskEncryptionKey}"
-      INITRD_PUBLIC_KEY="${cfg.initrdPublicKey}"
-      HOST_KEY="${orEmpty cfg.hostKey}"
-      HOST_KEY_LOCATION="${cfg.hostKeyLocation}"
-      ${optionalString (cfg.opAccount != null) "export OP_ACCOUNT=${cfg.opAccount}"}
-      NIXOS_ANYWHERE_ARGS=(${concatMapStringsSep " " escapeShellArgs cfg.extraNixosAnywhereArgs})
-    '');
+        config = {
+          build.plate = mkIf (config.plate != null) (origin.lib.plate.buildVars config.plate);
+        };
+      }));
+      default = {};
+      description = ''
+        Per-host configuration for Copper's external tools.
+      '';
+    };
   };
 }
