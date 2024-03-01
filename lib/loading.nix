@@ -101,8 +101,12 @@ in rec {
       modules' =
         [
           (if isNewHost entry then setDefaultModuleLocation path entry.main else warn "Specifying a host directly is deprecated." entry)
-          ({lib, ...}: {
-            networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
+          ({options, lib, ...}: {
+            config = {
+              networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
+            } // lib.optionalAttrs (options ? copper.mage) {
+              copper.mage.secretFolder = mkIf (isNewHost entry && entry ? config.mage.secrets) entry.config.mage.secrets;
+            };
           })
         ]
         ++ modules;
@@ -144,5 +148,4 @@ in rec {
       def = import path;
     in if isNewHost def then def.config or {} else {});
   in load (dir + "/darwin") // load (dir + "/nixos");
-
 }

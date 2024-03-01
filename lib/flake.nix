@@ -12,7 +12,9 @@
         (module flakeModules)
         copperModules.base
         copperModules.autoload
+        copperModules.copper-config
         copperModules.copper-chroma
+        copperModules.copper-mage
         copperModules.copper-plate
         copperModules.default-overlays
         copperModules.gleaming

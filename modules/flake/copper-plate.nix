@@ -110,33 +110,20 @@
     };
   };
 in {
-  options = {
-    flake.copperConfig = mkOption {
-      type = with types; attrsOf (submodule ({config, ...}: {
-        options = {
-          plate = mkOption {
-            type = types.nullOr (submoduleWithAssertions plateModule);
-            apply = filterAttrs (name: _: name != "assertions" && name != "warnings");
-            default = null;
-            description = ''
-              Configuration for the `plate` tool.
-            '';
-          };
+  options.flake.copperConfig = mkOption {
+    type = with types; attrsOf (submodule ({config, ...}: {
+      options.plate = mkOption {
+        type = types.nullOr (submoduleWithAssertions plateModule);
+        apply = filterAttrs (name: _: name != "assertions" && name != "warnings");
+        default = null;
+        description = ''
+          Configuration for the `plate` tool.
+        '';
+      };
 
-          build = mkOption {
-            type = types.anything;
-            default = {};
-          };
-        };
-
-        config = {
-          build.plate = mkIf (config.plate != null) (origin.lib.plate.buildVars config.plate);
-        };
-      }));
-      default = {};
-      description = ''
-        Per-host configuration for Copper's external tools.
-      '';
-    };
+      config = {
+        build.plate = mkIf (config.plate != null) (origin.lib.plate.buildVars config.plate);
+      };
+    }));
   };
 }
