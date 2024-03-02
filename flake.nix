@@ -45,6 +45,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hypridle = {
+      url = "github:hyprwm/hypridle";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
+    };
+
+    hyprlock = {
+      url = "github:hyprwm/hyprlock";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
+    };
+
     # Support for erasing / on every boot
     impermanence.url = "github:nix-community/impermanence";
 
@@ -109,6 +121,10 @@
 
     systems = {
       url = "github:nix-systems/default";
+    };
+
+    systems-linux = {
+      url = "github:nix-systems/default-linux";
     };
   };
 

@@ -29,6 +29,7 @@
     nerdfonts
   ];
 
-  # Required to allow swaylock to unlock.
+  # Required to allow swaylock/hyprlock to unlock.
   security.pam.services.swaylock = {};
+  security.pam.services.hyprlock = {};
 }
