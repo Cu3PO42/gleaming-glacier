@@ -12,19 +12,19 @@
               }];
             }).config;
           in {
-            ${config.gleaming.basename} =
+            ${config.gleaming.namespace} =
               (perSys.packages or {})
               // (perSys.legacyPackages or {})
               // (if perSys ? chromaThemes then { inherit (perSys) chromaThemes; } else {});
           };
 
         # Inspired by github.com/Misterio77/nix-config:
-        # For every flake input, aliases 'pkgs.${basename}-inputs.${flake}' to
+        # For every flake input, aliases 'pkgs.${namespace}-inputs.${flake}' to
         # 'inputs.${flake}.packages.${pkgs.system}' or
         # 'inputs.${flake}.legacyPackages.${pkgs.system}',
         # and also define 'pkgs.inputs.${flake}' as the default package
         flake-inputs = final: _: {
-          "${config.gleaming.basename}-inputs" =
+          "${config.gleaming.namespace}-inputs" =
             builtins.mapAttrs (
               _: flake: let
                 # The order of packages and legacyPackages is important:

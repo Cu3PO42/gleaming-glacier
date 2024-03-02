@@ -9,7 +9,7 @@
   loadDarwin = loadSystems (inputs.nix-darwin or origin.inputs.nix-darwin).lib.darwinSystem;
 
   loadModules' = loadModules {
-    inherit (config.gleaming) basename basepath;
+    inherit (config.gleaming) namespace basepath;
     injectionArgs = cfg.moduleInjectionArgs;
   };
 

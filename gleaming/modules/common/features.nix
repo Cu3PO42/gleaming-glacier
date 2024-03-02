@@ -6,7 +6,7 @@
 }:
 with lib; let
   inherit (origin.config) gleaming;
-  features = map (splitString "/") config.${gleaming.basename}.features;
+  features = map (splitString "/") config.${gleaming.namespace}.features;
 
   enableOrStep = v: let
     empty = partition (e: length e == 0) v;
@@ -23,7 +23,7 @@ with lib; let
     mapAttrs (_: enableOrStep) grouped;
 in {
   options = {
-    ${gleaming.basename} = {
+    ${gleaming.namespace} = {
       features = mkOption {
         type = with types; listOf str;
         default = [];
@@ -32,7 +32,7 @@ in {
           This is simply a convenience option to enable a number of features
           from a Gleaming Glacier-based config. For every element `mod` that
           is inculded here, the option
-          `${gleaming.basename}.features.''${mod}.enable = true`; will be set.
+          `${gleaming.namespace}.features.''${mod}.enable = true`; will be set.
         '';
       };
 
@@ -43,6 +43,6 @@ in {
   };
 
   config = {
-    ${gleaming.basename}.feature = step features;
+    ${gleaming.namespace}.feature = step features;
   };
 }

@@ -64,7 +64,7 @@ in rec {
 
   loadModules = {
     injectionArgs,
-    basename,
+    namespace,
     basepath,
   }: kind:
       loadDirRec (basepath + "/modules/common") ({path, ...}: importInjectArgs injectionArgs path)
@@ -81,7 +81,7 @@ in rec {
           nixpkgs.lib.setDefaultModuleLocation path (injectArgs injectionArgs (mkFeatureModule {
             name = builtins.replaceStrings ["/"] ["."] name;
             cfg = import path;
-            prefix = basename;
+            prefix = namespace;
           }))
       ));
 

@@ -1,6 +1,6 @@
 {lib, ...}: with lib; {
   options = {
-    gleaming.basename = mkOption {
+    gleaming.namespace = mkOption {
       type = types.str;
       example = "copper";
       description = ''

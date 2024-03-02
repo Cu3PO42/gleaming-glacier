@@ -1,5 +1,5 @@
 {flake-parts, ...}@lib-inputs: {
-  mkGleamingFlake = inputs: basepath: basename: module: let
+  mkGleamingFlake = inputs: basepath: namespace: module: let
     inherit (import ./loading.nix lib-inputs) loadDirRec;
     inherit (import ./modules.nix lib-inputs) importInjectArgs;
   
@@ -23,7 +23,7 @@
       ];
 
       gleaming = {
-        inherit basepath basename;
+        inherit basepath namespace;
       };
 
       flake = {

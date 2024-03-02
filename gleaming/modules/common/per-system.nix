@@ -2,7 +2,7 @@
   inherit (origin.config) gleaming;
 in {
   options = {
-    ${gleaming.basename}.perSystem.useConfigPkgs = mkOption {
+    ${gleaming.namespace}.perSystem.useConfigPkgs = mkOption {
       type = types.bool;
       default = false;
       example = true;
@@ -17,7 +17,7 @@ in {
   };
 
   config = {
-    _module.args.${gleaming.basename} = let
+    _module.args.${gleaming.namespace} = let
       system = pkgs.stdenv.hostPlatform.system or pkgs.system;
       perSystem = origin.getSystemIgnoreWarning (system);
       # This is included via flake-parts' withSystem
@@ -26,7 +26,7 @@ in {
           _module.args.pkgs = lib.mkForce pkgs;
         }];
       }).config;
-      selectedPerSystem = if config.${gleaming.basename}.perSystem.useConfigPkgs
+      selectedPerSystem = if config.${gleaming.namespace}.perSystem.useConfigPkgs
         then perSystemWithOurPkgs
         else perSystem;
       inputs = mapAttrs (_: e:

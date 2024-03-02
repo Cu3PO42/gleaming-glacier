@@ -27,8 +27,8 @@
 
   config = {
     flake = let
-      loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.basename}-${name}") (origin.lib.loadModules {
-        inherit (config.gleaming) basename;
+      loadModules' = kind: lib.mapAttrs' (name: lib.nameValuePair "${config.gleaming.namespace}-${name}") (origin.lib.loadModules {
+        inherit (config.gleaming) namespace;
         basepath = ../../gleaming;
         injectionArgs = { origin = config._module.args // specialArgs // { inherit config options; }; };
       } kind);
