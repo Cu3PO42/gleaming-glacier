@@ -65,14 +65,14 @@ in rec {
   loadModules = {
     injectionArgs,
     namespace,
-    basepath,
+    src,
   }: kind:
-      loadDirRec (basepath + "/modules/common") ({path, ...}: importInjectArgs injectionArgs path)
-      // loadDirRec (basepath + "/modules/${kind}") ({path, ...}: importInjectArgs injectionArgs path)
+      loadDirRec (src + "/modules/common") ({path, ...}: importInjectArgs injectionArgs path)
+      // loadDirRec (src + "/modules/${kind}") ({path, ...}: importInjectArgs injectionArgs path)
       // nixpkgs.lib.mapAttrs' (name: value: {
         name = "feature/${name}";
         inherit value;
-      }) (loadDirRec (basepath + "/features/${kind}") (
+      }) (loadDirRec (src + "/features/${kind}") (
         {
           name,
           path,

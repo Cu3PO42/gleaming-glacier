@@ -10,7 +10,7 @@
       '';
     };
 
-    gleaming.basepath = mkOption {
+    gleaming.src = mkOption {
       type = types.path;
       example = literalExpression "./.";
       description = "The base path of the Flake from which to load all elmements.";

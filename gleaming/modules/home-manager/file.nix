@@ -8,7 +8,7 @@ with lib; let
   inherit (origin.config) gleaming;
   cfg = config.${gleaming.namespace}.file;
 
-  copy = n: v: {source = gleaming.basepath + "/${v}";};
+  copy = n: v: {source = gleaming.src + "/${v}";};
   symlink = n: v: {source = config.lib.file.mkOutOfStoreSymlink "${cfg.symlink.base}/${v}";};
 
   mapFile =

@@ -1,5 +1,5 @@
 {config, options, specialArgs, lib, inputs, origin, ...}: with lib; let
-  base = config.gleaming.basepath;
+  base = config.gleaming.src;
   cfg = config.gleaming.autoload;
 
   # Do not refere origin.lib as that would cause infinite recursion.
@@ -9,7 +9,7 @@
   loadDarwin = loadSystems (inputs.nix-darwin or origin.inputs.nix-darwin).lib.darwinSystem;
 
   loadModules' = loadModules {
-    inherit (config.gleaming) namespace basepath;
+    inherit (config.gleaming) namespace src;
     injectionArgs = cfg.moduleInjectionArgs;
   };
 
