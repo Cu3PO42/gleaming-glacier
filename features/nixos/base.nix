@@ -35,6 +35,10 @@
   # pre-built one.
   programs.nix-index.package = copper.inputs.nix-index-database.nix-index-with-db;
 
+  # Enable NixOS to run non-NixOS binaries with a custom dynamic linker.
+  programs.nix-ld.enable = true;
+  programs.nix-ld.package = copper.inputs.nix-ld-rs;
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. This value is host-specific and should never
@@ -74,4 +78,8 @@
 
   programs.fish.enable = true;
   programs.zsh.enable = true;
+
+  # Enable auth via SSH agent only with system-managed keys.
+  # This is a fix for nixpkgs#31611.
+  security.pam.sshAgentAuth.authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
 }

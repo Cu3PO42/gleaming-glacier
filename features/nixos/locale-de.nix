@@ -20,4 +20,6 @@
     keyMap = lib.mkForce "de";
     useXkbConfig = true; # use xkbOptions in tty.
   };
+  
+  services.xserver.xkb.layout = "de";
 }

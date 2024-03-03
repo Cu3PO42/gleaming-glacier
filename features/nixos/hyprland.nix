@@ -9,6 +9,8 @@
     origin.inputs.hyprland.nixosModules.default
   ];
 
+  copper.feature.desktop.enable = true;
+
   programs.hyprland = {
     enable = true;
   };
@@ -20,6 +22,7 @@
   services.blueman.enable = true;
 
   services.xserver.displayManager.sddm = {
+    enable = true;
     theme = "corners";
     # This is a fix for a huge onscreen keyboard appearing and hiding everything.
     settings.General.InputMethod = "";
