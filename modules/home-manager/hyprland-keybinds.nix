@@ -56,6 +56,7 @@
     ${optionalString (submap.id != "$root") ''
       bind=${renderKey cfg.submapSettings.parentMapKey},submap,${renderMapName submap.parentId}
       bind=${renderKey cfg.submapSettings.exitKey},submap,reset
+      bind=,catchall,exec,true
     ''}
     submap=reset
   '';
