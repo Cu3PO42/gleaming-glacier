@@ -33,28 +33,37 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
-    # The Window Manager I use
+    # The Window Manager I use + tooling
+    hyprlang = {
+      url = "github:hyprwm/hyprlang";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
+    };
+
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.systems.follows = "systems";
-    };
-
-    hypr-contrib = {
-      url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
+      inputs.hyprlang.follows = "hyprlang";
     };
 
     hypridle = {
       url = "github:hyprwm/hypridle";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
+      inputs.hyprlang.follows = "hyprlang";
     };
 
     hyprlock = {
       url = "github:hyprwm/hyprlock";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
+      inputs.hyprlang.follows = "hyprlang";
+    };
+
+    hypr-contrib = {
+      url = "github:hyprwm/contrib";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Support for erasing / on every boot
