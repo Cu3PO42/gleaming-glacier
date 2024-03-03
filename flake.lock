@@ -25,6 +25,26 @@
         "type": "github"
       }
     },
+    "ags": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1709473466,
+        "narHash": "sha256-Ss2et0L/2zHLMGUmQ7Y/bG9HuFw61RlO14Hs4rAE37w=",
+        "owner": "aylur",
+        "repo": "ags",
+        "rev": "33b034199794a8230e2de1381fc072bfeb037bf4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aylur",
+        "repo": "ags",
+        "type": "github"
+      }
+    },
     "brew-src": {
       "flake": false,
       "locked": {
@@ -697,6 +717,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "ags": "ags",
         "disko": "disko",
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",

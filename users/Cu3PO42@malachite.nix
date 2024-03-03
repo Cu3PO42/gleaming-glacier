@@ -9,6 +9,7 @@
       "link-config"
       "lunarvim"
       "chroma"
+      "nixos/ags"
       "nixos/hyprland"
       "nixos/waybar-hyprdots"
       "nixos/dunst"

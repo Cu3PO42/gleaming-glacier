@@ -1,4 +1,4 @@
-{config, lib, copper, ...}: with lib; let
+{config, lib, copper, pkgs, ...}: with lib; let
   cfg = config.programs.maestro;
 in {
   options = {
@@ -45,13 +45,24 @@ in {
         default = null;
         example = "mac-show-keymap --keymap $KEYMAP";
         description = ''
-          Command to run to showthe keymap help. Will be run in sh.
-          The process should stay alive while the help is being displayed and
-          hide the help when killed. The currently active keymap is available
-          in the `KEYMAP` environment variable.
+          Command to run to show the keymap help. Will be run in sh.
+          The process may stay alive while the help is being displayed. It must
+          either hide the help when killed, or `cancelHelpCommand` must be set.
+          
+          The currently active keymap is available in the `KEYMAP` environment
+          variable.
 
           If set to null, the current implementation does not support showing
           a help.
+        '';
+      };
+
+      cancelHelpCommand = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "ags --run-js 'hidelHelp()'";
+        description = ''
+          Command to run to hide the keymap help. Will be run in sh.
         '';
       };
 
@@ -67,8 +78,13 @@ in {
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile."maestro/config.json".text = builtins.toJSON {
-      inherit (cfg) cancelKeymapCommand keymapTimeout helpCommand helpTimeout;
+    xdg.configFile."maestro/config.json" = {
+      text = builtins.toJSON {
+        inherit (cfg) cancelKeymapCommand keymapTimeout helpCommand cancelHelpCommand helpTimeout;
+      };
+      onChange = optionalString (pkgs.stdenvNoCC.hostPlatform.isLinux) ''
+        $DRY_RUN_CMD ${pkgs.systemd}/bin/systemctl --user restart maestro
+      '';
     };
 
     home.packages = [cfg.package];

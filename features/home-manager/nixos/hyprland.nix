@@ -191,6 +191,8 @@
     Install.WantedBy = ["hyprland-session.target"];
   };
 
+  systemd.user.services.ags.Install.WantedBy = ["hyprland-session.target"];
+
   systemd.user.services.hyprdots-batterynotify = {
     Unit = {
       Description = "Battery notification from hyprdots";
