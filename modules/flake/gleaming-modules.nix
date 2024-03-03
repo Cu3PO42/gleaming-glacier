@@ -5,8 +5,8 @@
       # typically fine, since the Flake output allows for arbitrary outputs.
       # However, without a type definition, attribute sets cannot be merged,
       # so this module causes a conflict. Thus, we need to tell flake-parts
-      # that homeModules and darwinModules are also simple attrsets.
-      homeModules = mkOption {
+      # that homeManagerModules and darwinModules are also simple attrsets.
+      homeManagerModules = mkOption {
         type = types.lazyAttrsOf types.unspecified;
         description = ''
           Home-Manager modules.
@@ -34,7 +34,7 @@
       } kind);
     in {
       nixosModules = loadModules' "nixos";
-      homeModules = loadModules' "home-manager";
+      homeManagerModules = loadModules' "home-manager";
       darwinModules = loadModules' "darwin";
     };
   };

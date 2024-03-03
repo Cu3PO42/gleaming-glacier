@@ -24,7 +24,7 @@
     gleaming.autoload.baseModules = mkMerge [
       (mkIf config.copper.inheritModules {
         nixos = attrValues origin.nixosModules;
-        home = attrValues origin.homeModules;
+        home = attrValues origin.homeManagerModules;
         darwin = attrValues origin.darwinModules;
       })
       (mkIf config.copper.base.enable {

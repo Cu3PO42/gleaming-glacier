@@ -62,7 +62,7 @@ in {
     gleaming.autoload = rec {
       baseModules = {
         nixos = lib.attrValues config.flake.nixosModules;
-        home = lib.attrValues config.flake.homeModules;
+        home = lib.attrValues config.flake.homeManagerModules;
         darwin = lib.attrValues config.flake.darwinModules;
       };
 
@@ -80,7 +80,7 @@ in {
       overlays = importIfExistsApply (base + "/overlays") moduleArgs;
 
       nixosModules = loadModules' "nixos";
-      homeModules = loadModules' "home-manager";
+      homeManagerModules = loadModules' "home-manager";
       darwinModules = loadModules' "darwin";
 
       nixosConfigurations = loadNixos {
