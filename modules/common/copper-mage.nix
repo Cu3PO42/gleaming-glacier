@@ -8,7 +8,8 @@ in {
   options = {
     copper.mage = {
       secretFolder = mkOption {
-        type = types.path;
+        type = types.nullOr types.path;
+        default = null;
         description = ''
           The host-specific folder where secrets are stored.
         '';
@@ -17,6 +18,6 @@ in {
   };
 
   config = lib.optionalAttrs (options ? age) {
-    age.secrets = lib.genAttrs secrets (name: {file = cfg.secretFolder + "/${name}.age";});
+    age.secrets = lib.mkIf (cfg.secretFolder != null) (lib.genAttrs secrets (name: {file = cfg.secretFolder + "/${name}.age";}));
   };
 }
