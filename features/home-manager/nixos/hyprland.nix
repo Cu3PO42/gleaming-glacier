@@ -132,8 +132,8 @@
               "t" = mkBind "Select Theme" "exec,pkill -x rofi || themeselect.sh";
               "r" = mkBind "Select Rofi Style" "exec,pkill -x rofi || rofiselect.sh";
               "w" = mkBind "Select Wallpaper" "exec,pkill -x rofi || swwwallselect.sh";
-              "leftarrow" = mkBind "Previous Wallpaper" "swimctl previous" // { remain = true; };
-              "rightarrow" = mkBind "Next Wallpaper" "swimctl next" // { remain = true; };
+              "leftarrow" = mkBind "Previous Wallpaper" "exec,swimctl previous" // { remain = true; };
+              "rightarrow" = mkBind "Next Wallpaper" "exec,swimctl next" // { remain = true; };
             };
           };
           "shift l" = mkBind "Lock Screen" "exec,swaylock";

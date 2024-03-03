@@ -67,6 +67,6 @@ in {
   };
 
   config = {
-    wayland.windowManager.hyprland.settings.source = pkgs.writeTextFile "hyprland-keybinds.conf" keybindSettings;
+    wayland.windowManager.hyprland.extraConfig = "source = ${pkgs.writeText "hyprland-keybinds.conf" keybindSettings}";
   };
 }
