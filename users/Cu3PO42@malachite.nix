@@ -13,7 +13,7 @@
       "nixos/waybar-hyprdots"
       "nixos/dunst"
       "nixos/rofi"
-      "nixos/swaylock"
+      "nixos/hyprlock"
       "nixos/wlogout"
       "nixos/swim"
       "nixos/_1password"
