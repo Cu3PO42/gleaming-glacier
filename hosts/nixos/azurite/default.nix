@@ -1,5 +1,5 @@
 {
-  config = {
+  copperConfig = {
     plate = {
       target = "128.140.125.200";
       targetUser = "Cu3PO42";

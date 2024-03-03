@@ -146,6 +146,6 @@ in rec {
   loadConfig = dir: let
     load = dir: loadDir dir ({path, ...}: let
       def = import path;
-    in if isNewHost def then def.config or {} else {});
+    in if isNewHost def then def.copperConfig or {} else {});
   in load (dir + "/darwin") // load (dir + "/nixos");
 }
