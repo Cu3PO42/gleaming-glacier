@@ -73,7 +73,7 @@
     };
 
     ags = {
-      url = "github:aylur/ags";
+      url = "github:Cu3PO42/ags/polkit";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
