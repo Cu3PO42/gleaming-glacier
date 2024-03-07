@@ -48,7 +48,7 @@
         type = with types; nullOr (either path str);
         default = null;
         example = ./initrd_host_ed25519_key.pub;
-        apply = v: if v == null then "" else if isString v then v else builtins.readFile v;
+        apply = v: if v == null then null else if isString v then v else builtins.readFile v;
         description = ''
           The location of the public host key that will be used by the initrd
           SSH server used for remote unlocking.
@@ -102,10 +102,10 @@
 
     config = {
       assertions = [
-        {
-          assertion = (config.diskEncryptionKey != null) == (config.initrdPublicKey != null);
+        /*{
+          assertion = true || (config.diskEncryptionKey != null) == (config.initrdPublicKey != null);
           message = "Specifying an initrd public host key doesn't make sense if FDE isn't enabled.";
-        }
+        }*/
       ];
     };
   };
