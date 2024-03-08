@@ -9,6 +9,7 @@
       "quiet-boot"
       "luks-tpm"
       "secure-boot"
+      "sddm"
       "hyprland"
       "_1password"
     ];

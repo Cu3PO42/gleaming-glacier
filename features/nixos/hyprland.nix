@@ -21,14 +21,7 @@
 
   services.blueman.enable = true;
 
-  services.xserver.displayManager.sddm = {
-    enable = true;
-    theme = "corners";
-    # This is a fix for a huge onscreen keyboard appearing and hiding everything.
-    settings.General.InputMethod = "";
-  };
   environment.systemPackages = with pkgs; [
-    copper.packages.sddm-theme-corners
     nerdfonts
   ];
 
