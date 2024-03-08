@@ -7,7 +7,6 @@
 }: let
   cfg = config.copper.feature.zfs;
   hasImpermanence = config.copper.feature.impermanence.enable;
-  hasDiskEncryption = true;
 in {
   imports = [
     origin.inputs.disko.nixosModules.disko
@@ -20,6 +19,15 @@ in {
       example = true;
       description = ''
         Create ZFS snapshots using Sanoid.
+      '';
+    };
+
+    hasDiskEncryption = mkOption {
+      type = types.bool;
+      default = true;
+      example = false;
+      description = ''
+        Whether to encrypt the ZFS pool.
       '';
     };
 
@@ -150,7 +158,7 @@ in {
           compression = "on";
           mountpoint = "none";
         }
-        // lib.optionalAttrs hasDiskEncryption {
+        // lib.optionalAttrs cfg.hasDiskEncryption {
           encryption = "aes-256-gcm";
           keyformat = "passphrase";
           # TODO: figure out how to factor that out
@@ -160,7 +168,7 @@ in {
         lib.optionalString hasImpermanence ''
           zfs snapshot -r rpool@blank
         ''
-        + lib.optionalString hasDiskEncryption ''
+        + lib.optionalString cfg.hasDiskEncryption ''
           # During boot, ask for the key.
           zfs set keylocation="prompt" "rpool"
         '';
