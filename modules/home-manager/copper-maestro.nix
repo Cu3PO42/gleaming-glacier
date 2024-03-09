@@ -23,7 +23,7 @@ in {
       };
 
 
-      cancelCommand = mkOption {
+      cancelKeymapCommand = mkOption {
         type = types.str;
         default = "";
         example = "hyprctl dispatch submap reset";
@@ -68,7 +68,7 @@ in {
 
   config = mkIf cfg.enable {
     xdg.configFile."maestro/config.json".text = builtins.toJSON {
-      inherit (cfg) cancelCommand keymapTimeout helpCommand helpTimeout;
+      inherit (cfg) cancelKeymapCommand keymapTimeout helpCommand helpTimeout;
     };
 
     home.packages = [cfg.package];

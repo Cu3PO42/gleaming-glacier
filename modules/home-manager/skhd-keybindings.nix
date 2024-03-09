@@ -76,7 +76,7 @@ in {
 
     programs.maestro = mkIf cfg.maestroIntegration {
       enable = true;
-      cancelCommand = "/run/current-system/sw/bin/skhd -k \"${exitKey}\"";
+      cancelKeymapCommand = "/run/current-system/sw/bin/skhd -k \"${exitKey}\"";
       helpCommand = "exec ${copper.packages.mac-wm-helpers}/bin/show-keybind-helper ${pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.keybinds.binds)} \"$KEYMAP\"";
       keymapTimeout = cfg.keybinds.submapSettings.timeout;
       helpTimeout = cfg.keybinds.submapSettings.helpTimeout;
