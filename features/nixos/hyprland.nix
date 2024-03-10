@@ -28,4 +28,16 @@
   # Required to allow swaylock/hyprlock to unlock.
   security.pam.services.swaylock = {};
   security.pam.services.hyprlock = {};
+
+  services = {
+    gvfs.enable = true;
+    devmon.enable = true;
+    udisks2.enable = true;
+    upower.enable = true;
+    power-profiles-daemon.enable = true;
+    accounts-daemon.enable = true;
+    gnome = {
+      glib-networking.enable = true;
+    };
+  };
 }
