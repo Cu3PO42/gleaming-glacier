@@ -21,6 +21,7 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+      inputs.systems.follows = "systems";
     };
 
     # NixOS inputs
@@ -47,6 +48,11 @@
       inputs.hyprlang.follows = "hyprlang";
     };
 
+    hyprland-plugins = {
+      url = "github:hyprwm/Hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
     hypridle = {
       url = "github:hyprwm/hypridle";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -69,6 +75,18 @@
     ags = {
       url = "github:aylur/ags";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    asztal = {
+      url = "github:Aylur/dotfiles";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+      inputs.ags.follows = "ags";
+      inputs.hyprland.follows = "hyprland";
+      inputs.hyprland-plugins.follows = "hyprland-plugins";
+      inputs.astal.follows = "astal";
+      inputs.matugen.follows = "matugen";
+      inputs.stm.follows = "stm";
     };
 
     # Support for erasing / on every boot
@@ -139,6 +157,21 @@
 
     systems-linux = {
       url = "github:nix-systems/default-linux";
+    };
+
+    astal = {
+      url = "github:Aylur/astal";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    matugen = {
+      url = "github:InioX/matugen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    stm = {
+      url = "github:Aylur/stm";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

@@ -192,6 +192,7 @@
   };
 
   systemd.user.services.ags.Install.WantedBy = ["hyprland-session.target"];
+  systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];
 
   systemd.user.services.hyprdots-batterynotify = {
     Unit = {
