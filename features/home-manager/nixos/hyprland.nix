@@ -22,7 +22,7 @@
       ];
     # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
     settings.source = lib.mkMerge [(lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
-    settings.exec = "[workspace special:terminal silent;float;center] kitty";
+    settings.exec-once = "[workspace special:terminal silent;float;center] kitty";
     # Move/Resize windows with SUPER + mouse buttons
     settings.bindm = [
       "super,mouse:272,movewindow"
