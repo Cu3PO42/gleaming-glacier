@@ -29,6 +29,8 @@ in {
         configuration, but makes faster iteration easy.
       '';
     };
+
+    polkitAgent.enable = mkEnableOption "Enable our own Polkit Agent" // { default = true; };
   };
 
   config = mkMerge [
@@ -51,6 +53,8 @@ in {
           BusName = "com.github.Aylur.ags.ags";
         };
       };
+
+      xdg.configFile."argyrodit.json".text = builtins.toJSON { polkit = cfg.polkitAgent.enable; };
     }
     (mkIf cfg.develop.enable {
       copper.file.config."ags" = "config/ags";
