@@ -59,7 +59,7 @@
 
   boot.loader = {
     # Use the systemd-boot EFI boot loader.
-    systemd-boot.enable = true;
+    systemd-boot.enable = lib.mkDefault true;
     # Disable command line editing because it allows root access
     systemd-boot.editor = false;
     timeout = 1;

@@ -34,6 +34,14 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    # NixOS on WSL - Duh.
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.flake-compat.follows = "flake-compat";
+    };
+
     # The Window Manager I use + tooling
     hyprlang = {
       url = "github:hyprwm/hyprlang";
