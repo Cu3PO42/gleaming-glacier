@@ -59,6 +59,7 @@
     hyprland-plugins = {
       url = "github:hyprwm/Hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
+      inputs.systems.follows = "systems-linux";
     };
 
     hypridle = {
