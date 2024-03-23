@@ -82,7 +82,7 @@ in {
               name = "Move Current Window to Workspace";
               submap.binds =
                 gen1To10 "" (n: mkBind "Workspace ${n}" "movetoworkspace,${n}") //
-                gen1To10 "shift" (n: mkBind "Workspace ${n} (silent)" "movetoworkspacesilint,${n}") // {
+                gen1To10 "shift" (n: mkBind "Workspace ${n} (silent)" "movetoworkspacesilent,${n}") // {
                   "t" = mkBind "Next Workspace" "movetoworkspace,r+1";
                   "d" = mkBind "Previous Workspace" "movetoworkspace,r-1";
                   "e" = mkBind "Empty Workspace" "movetoworkspace,empty";
@@ -153,7 +153,7 @@ in {
             };
             "shift p" = mkBind "Power Menu" "exec,wlogout-launcher-hyprland 1";
             "p" = mkBind "Pin on all workspaces" "pin,active";
-            "shift s" = mkBind "Toggle Scratchpad Terminal" "togglespecialworkspace:terminal";
+            "shift s" = mkBind "Toggle Scratchpad Terminal" "togglespecialworkspace,terminal";
             "g" = {
               name = "Create Groups";
               submap.binds = {
