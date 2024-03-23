@@ -10,7 +10,7 @@
       "lunarvim"
       "chroma"
       "nixos/argyrodite"
-      "nixos/asztal"
+      "nixos/waybar-hyprdots"
       "nixos/hyprland"
       "nixos/dunst"
       "nixos/rofi"
