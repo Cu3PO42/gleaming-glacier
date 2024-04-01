@@ -18,6 +18,7 @@ in {
     # Needed by our configuration
     fd
     ripgrep
+    gcc
 
     luajit # Used by some neovim packages
   ];
@@ -46,7 +47,7 @@ in {
 
   imports = [
     (mkIf config.copper.file.symlink.enable {
-  copper.file.config."nvim" = "config/nvim";
+      copper.file.config."nvim" = "config/nvim";
     })
     (mkIf (!config.copper.file.symlink.enable) {
       xdg.configFile."nvim".source = pkgs.stdenvNoCC.mkDerivation {
