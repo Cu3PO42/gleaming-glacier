@@ -12,6 +12,6 @@
     maintainers = ["Cu3PO42"];
     platforms = platforms.all;
 
-    meta.mainProgram = "dynachrome";
+    mainProgram = "dynachrome";
   };
 }
