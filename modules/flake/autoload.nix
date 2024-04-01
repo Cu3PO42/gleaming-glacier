@@ -56,6 +56,14 @@ in {
         '';
       };
     };
+
+    # The following options are set so attribute merging via the module system works.
+    flake = {
+      templates = mkOption {
+        type = with types; lazyAttrsOf unspecified;
+        default = {};
+      };
+    };
   };
 
   config = {
