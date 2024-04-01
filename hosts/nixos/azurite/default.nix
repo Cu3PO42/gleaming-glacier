@@ -54,6 +54,7 @@
         "catppuccin"
         "copilot"
         "git"
+        "neovim"
         "lunarvim"
       ];
     };
