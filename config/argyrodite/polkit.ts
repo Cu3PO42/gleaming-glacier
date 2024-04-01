@@ -250,6 +250,6 @@ class AgsPolkitAgent extends Shell.PolkitAuthenticationAgent {
 
     this.complete(dismissed);
   }
-});
+};
 
 export const PolkitAuthenticationAgent = GObject.registerClass(AgsPolkitAgent);
