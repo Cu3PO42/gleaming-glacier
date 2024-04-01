@@ -89,10 +89,6 @@ in {
       condition = fish: config.programs.fish.enable && ((builtins.compareVersions "3.7.0" fish.version) == 1);
     }];
 
-    # Relevant to support Linux 6.4 and newer on aarch64
-    boot.zfs.package = lib.mkIf config.boot.zfs.removeLinuxDRM (pkgs.zfs.override { removeLinuxDRM = true; });
-    boot.zfs.removeLinuxDRM = pkgs.stdenvNoCC.hostPlatform.isAarch64;
-
     services.sanoid = lib.mkIf cfg.snapshot {
       enable = true;
       templates = {
