@@ -16,3 +16,5 @@ if os.getenv('WSL_DISTRO_NAME') ~= nil then
     cache_enabled = 0,
   }
 end
+
+vim.opt.cindent = true -- smarter than smartindent
