@@ -1,5 +1,5 @@
 {config, origin, pkgs, lib, ...}: with lib; let
-  cfg = config.copper.feature.nixos.ags;
+  cfg = config.copper.feature.nixos.argyrodite;
 
   buildConfig = src: pkgs.stdenvNoCC.mkDerivation {
     name = "ags-config";
@@ -39,28 +39,28 @@ in {
         enable = true;
       };
 
-      systemd.user.services.ags = {
+      systemd.user.services.argyrodite = {
         Unit = {
-          Description = "Aylur's Gtk Shell";
+          Description = "Aylur's Gtk Shell - Copper's configuration";
           Documentation = "https://aylur.github.io/ags-docs/";
           After = ["graphical-session-pre.target"];
           PartOf = ["graphical-session.target"];
         };
 
         Service = {
-          ExecStart = "${config.programs.ags.finalPackage}/bin/ags";
+          ExecStart = "${config.programs.ags.finalPackage}/bin/ags -b argyrodite -c '${config.xdg.configHome}/argyrodite/config.js'";
           Restart = "always";
-          BusName = "com.github.Aylur.ags.ags";
+          BusName = "com.github.Aylur.ags.argyrodite";
         };
       };
 
-      xdg.configFile."argyrodit.json".text = builtins.toJSON { polkit = cfg.polkitAgent.enable; };
+      xdg.configFile."argyrodite.json".text = builtins.toJSON { polkit = cfg.polkitAgent.enable; };
     }
     (mkIf cfg.develop.enable {
-      copper.file.config."ags" = "config/ags";
+      copper.file.config."argyrodite" = "config/argyrodite";
     })
     (mkIf (!cfg.develop.enable) {
-      xdg.configFile."ags".source = buildConfig ../../../config/ags;
+      xdg.configFile."argyrodite".source = buildConfig ../../../config/argyrodite;
     })
   ];
 }

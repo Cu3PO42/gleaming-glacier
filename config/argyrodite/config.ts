@@ -17,7 +17,7 @@ interface Config {
 }
 
 function loadConfigFile(): Config {
-    let cfgFile = `${GLib.get_user_config_dir()}/argyrodit.json`;
+    let cfgFile = `${GLib.get_user_config_dir()}/argyrodite.json`;
     try {
         const file = Gio.File.new_for_path(cfgFile);
         const [, contents] = file.load_contents(null);

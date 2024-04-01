@@ -9,7 +9,7 @@
       "link-config"
       "lunarvim"
       "chroma"
-      "nixos/ags"
+      "nixos/argyrodite"
       "nixos/asztal"
       "nixos/hyprland"
       "nixos/dunst"

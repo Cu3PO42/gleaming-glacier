@@ -90,9 +90,9 @@ in {
     wayland.windowManager.hyprland.extraConfig = "source = ${pkgs.writeText "hyprland-keybinds.conf" keybindSettings}";
 
     programs.maestro = mkIf cfg.maestroIntegration (let
-      agsBin = "${config.programs.ags.finalPackage}/bin/ags";
-      ifAgsEnabled = optionalString config.copper.feature.nixos.ags.enable;
-      maestroJs = ''(await import('file://${config.xdg.configHome}/ags/maestro.js'))'';
+      agsBin = "${config.programs.ags.finalPackage}/bin/ags -b argyrodite";
+      ifAgsEnabled = optionalString config.copper.feature.nixos.argyrodite.enable;
+      maestroJs = ''(await import('file://${config.xdg.configHome}/argyrodite/maestro.js'))'';
       keymapJson = pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.binds);
     in {
       enable = true;
