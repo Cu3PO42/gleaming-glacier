@@ -105,7 +105,7 @@ in rec {
             config = {
               networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
             } // lib.optionalAttrs (options ? copper.mage) {
-              copper.mage.secretFolder = mkIf (isNewHost entry && entry ? config.mage.secrets) entry.config.mage.secrets;
+              copper.mage.secretFolder = mkIf (isNewHost entry && entry ? copperConfig.mage.secrets) entry.copperConfig.mage.secrets;
             };
           })
         ]
