@@ -7,7 +7,7 @@
   accent2 ? "rosewater",
   accent3 ? "mauve",
   hyprlandOverrides ? p: {},
-  waylbarOverrides ? p: {},
+  waybarOverrides ? p: {},
   rofiOverrides ? p: {},
   ...
 }: let
@@ -73,7 +73,7 @@ in rec {
 
   hyprland.colorOverrides = hyprlandOverrides palette;
 
-  waylbar.colorOverrides = waylbarOverrides palette;
+  waybar.colorOverrides = waybarOverrides palette;
 
   rofi.colorOverrides = rofiOverrides palette;
 
