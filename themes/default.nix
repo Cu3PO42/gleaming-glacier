@@ -44,7 +44,7 @@
 
     waybarOverrides = palette: {
       main-background = palette.all.crust;
-      text = "cddt6f4";
+      text = "cdd6f4";
       active-highlight = "a6adc8";
       active-text = "313244";
       hover-highlight = palette.accents.pink;
