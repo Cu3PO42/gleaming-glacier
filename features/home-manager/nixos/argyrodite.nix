@@ -1,4 +1,4 @@
-{config, origin, pkgs, lib, ...}: with lib; let
+{config, origin, pkgs, lib, copper, ...}: with lib; let
   cfg = config.copper.feature.nixos.argyrodite;
 
   buildConfig = src: pkgs.stdenvNoCC.mkDerivation {
@@ -37,6 +37,9 @@ in {
     {
       programs.ags = {
         enable = true;
+        package = copper.inputs.ags.overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ [copper.inputs.gtk-session-lock];
+        });
       };
 
       systemd.user.services.argyrodite = {

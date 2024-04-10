@@ -89,6 +89,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    gtk-session-lock = {
+      url = "github:Cu3PO42/gtk-session-lock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ags = {
       url = "github:Cu3PO42/ags/polkit";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -308,6 +308,26 @@
         "type": "github"
       }
     },
+    "gtk-session-lock": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1712691041,
+        "narHash": "sha256-rWx2IF0Po5/OLa4xxprdwn9bhS7aaz8bVHVA4KpicI8=",
+        "owner": "Cu3PO42",
+        "repo": "gtk-session-lock",
+        "rev": "e1a913f480f60f5ce3fa235f017bcfc33d902858",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Cu3PO42",
+        "repo": "gtk-session-lock",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -920,6 +940,7 @@
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",
+        "gtk-session-lock": "gtk-session-lock",
         "home-manager": "home-manager",
         "hypr-contrib": "hypr-contrib",
         "hyprcursor": "hyprcursor",
