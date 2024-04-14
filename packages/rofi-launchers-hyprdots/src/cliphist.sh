@@ -45,8 +45,8 @@ max_y=$((y_mon - clip_h - 15 )) #offset of 15 for gaps
 x_cur=$((x_cur - x_offset))
 y_cur=$((y_cur - y_offset))
 # 
-x_cur=$(( x_cur < min_x ? min_x : ( x_cur > max_x ? max_x :  x_cur)))
-y_cur=$(( y_cur < min_y ? min_y : ( y_cur > max_y ? max_y :  y_cur)))
+x_cur=$(( x_cur < 0 ? 0 : ( x_cur > max_x ? max_x :  x_cur)))
+y_cur=$(( y_cur < 0 ? 0 : ( y_cur > max_y ? max_y :  y_cur)))
 
 pos="window {location: north west; x-offset: ${x_cur}px; y-offset: ${y_cur}px;}" #! I just Used the old pos function
 #pos="window {location: $y_rofi $x_rofi; $x_offset $y_offset}" 

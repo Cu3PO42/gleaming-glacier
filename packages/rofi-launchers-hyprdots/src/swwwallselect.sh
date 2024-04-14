@@ -22,7 +22,7 @@ CACHE_DIR="$(nailgun thumbnails-for-theme "$WALLPAPER_DIR")"
 RofiSel=$( find "$CACHE_DIR" -type l -printf "%P\n" | sort | while read rfile
 do
     echo -en "$rfile\x00icon\x1f${CACHE_DIR}/${rfile}/thumb\n"
-done | rofi -dmenu -theme-str "${r_override}" -config "${RofiConf}" -select "$(basename "$(readlink "$SWIM_STATE_DIR/active/wallpaper")")"
+done | rofi -dmenu -theme-str "${r_override}" -config "${RofiConf}" -select "$(basename "$(readlink "$SWIM_STATE_DIR/active/wallpaper")")" )
 
 
 # apply wallpaper
