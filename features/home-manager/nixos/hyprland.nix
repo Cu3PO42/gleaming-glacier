@@ -32,7 +32,7 @@ in {
         ];
       # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
       settings.source = lib.mkMerge [(lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
-      settings.exec-once = "[workspace special:terminal silent;float;center] kitty";
+      settings.exec-once = "[workspace special:terminal silent;float;center;size 1200 800] kitty";
       # Move/Resize windows with SUPER + mouse buttons
       settings.bindm = [
         "super,mouse:272,movewindow"
@@ -55,10 +55,10 @@ in {
           "${mods} t" = gen "${prefix} Left" commands.left;
           "${mods} d" = gen "${prefix} Right" commands.right;
 
-          "${mods} uparrow" = gen "${prefix} Up" commands.up;
-          "${mods} downarrow" = gen "${prefix} Down" commands.down;
-          "${mods} leftarrow" = gen "${prefix} Left" commands.left;
-          "${mods} rightarrow" = gen "${prefix} Right" commands.right;
+          "${mods} up" = gen "${prefix} Up" commands.up;
+          "${mods} down" = gen "${prefix} Down" commands.down;
+          "${mods} left" = gen "${prefix} Left" commands.left;
+          "${mods} right" = gen "${prefix} Right" commands.right;
         };
         moveFocusBinds = genDirections "Move Focus" "alt" mkBind {
           "up" = "movefocus,u";
@@ -117,9 +117,9 @@ in {
             "s" = {
               name = "Create a screenshot";
               submap.binds = {
-                "m" = mkBind "Current Monitor" "exec,screenshot.sh m";
-                "a" = mkBind "All Monitors" "exec,screenshot.sh p";
-                "d" = mkBind "Select Area" "exec,screenshot.sh s";
+                "m" = mkBind "Current Monitor" "exec,${copper.packages.misc-scripts-hyprdots}/bin/screenshot.sh m";
+                "a" = mkBind "All Monitors" "exec,${copper.packages.misc-scripts-hyprdots}/bin/screenshot.sh p";
+                "d" = mkBind "Select Area" "exec,${copper.packages.misc-scripts-hyprdots}/bin/screenshot.sh s";
               };
             };
             "l" = {
@@ -130,7 +130,7 @@ in {
                 "f" = mkBind "File Manager" "exec,nautilus";
                 "b" = mkBind "Browser" "exec,firefox";
                 "a" = mkBind "Application Launcher" "exec,pkill -x rofi || rofilaunch.sh d";
-                "m" = mkBind "System Monitor" "exec,[float] kitty -e btop";
+                "m" = mkBind "System Monitor" "exec,[float;size 1100 800] kitty -e btop";
                 "shift f" = mkBind "Browse System Files" "exec,pkill -x rofi || rofilaunch.sh f";
                 "s" = mkBind "Application Switcher" "exec,pkill -x rofi || rofilaunch.sh w";
                 "shift c" = mkBind "Clipboard History" "exec,pkill -x rofi || cliphist.sh c";
@@ -146,7 +146,7 @@ in {
                 "rightarrow" = mkBind "Next Wallpaper" "exec,swimctl next" // { remain = true; };
               };
             };
-            "shift l" = mkBind "Lock Screen" "exec,swaylock";
+            "shift l" = mkBind "Lock Screen" "exec,loginctl lock-session";
             "shift q" = {
               name = "Quit Hyprland";
               submap.binds."y" = mkBind "Yes" "exit";

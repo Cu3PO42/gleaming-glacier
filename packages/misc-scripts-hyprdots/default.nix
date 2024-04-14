@@ -17,7 +17,7 @@
   ...
 }:
 symlinkJoin {
-  name = "rofi-launcher-hyprdots";
+  name = "misc-scripts-hyprdots";
   paths = builtins.map (f:
     writeShellApplication {
       name = f;
