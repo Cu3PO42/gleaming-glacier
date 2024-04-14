@@ -17,7 +17,7 @@
       homepage = "https://github.com/jstarks/npiperelay";
       maintainers = ["Cu3PO42"];
       license = licenses.mit;
-      sourceProvenance = sourceTypes.binaryNativeCode;
+      sourceProvenance = [sourceTypes.binaryNativeCode];
     };
   };
 
