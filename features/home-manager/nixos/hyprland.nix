@@ -181,7 +181,7 @@ in {
       };
     };
 
-    home.packages = [copper.packages.systemctl-toggle pkgs.procps pkgs.btop];
+    home.packages = [copper.packages.systemctl-toggle pkgs.procps pkgs.btop pkgs.cliphist pkgs.wl-clipboard];
 
     systemd.user.services.polkit-authentication-agent = mkIf cfg.defaultPolkitAgent.enable {
       Unit = {
