@@ -40,11 +40,23 @@ const modMap = {
     super: "super",
 };
 
+function translateSym(sym: string) {
+    // We need to translate XKB keysyms to GDK keysyms. Further changes will
+    // be necessary.
+    const map = {
+        "up": "uparrow",
+        "down": "downarrow",
+        "left": "leftarrow",
+        "right": "rightarrow",
+    };
+    if (Object.hasOwn(map, sym)) return map[sym];
+    return sym;
+}
+
 function translateKey(key: Key): string {
     const order = ["ctrl", "alt", "shift", "super"] as const;
     const mods = order.filter(v => key.modifiers[v]).map(v => `<${modMap[v]}>`);
-    // TODO: this accepts GDK keysyms rather than XKB keysyms, some translation may be necessary
-    return mods.join("") + key.key;
+    return mods.join("") + translateSym(key.key);
 }
 
 function buildGtkShortcut(bind: Bind) {
