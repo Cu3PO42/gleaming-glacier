@@ -21,4 +21,6 @@
   copper.file.config."dunst/dunstrc.d/00-hyprdots" = "config/dunst/dunstrc.d/00-hyprdots";
   # TODO: some icons, in particular volume icons are needed by the volumecontrol script and should maybe be colocated with that
   copper.file.config."dunst/icons" = "config/dunst/icons";
+
+  copper.desktopEnvironment.notificationDaemon = "dunst";
 }

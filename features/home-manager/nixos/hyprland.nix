@@ -200,6 +200,7 @@ in {
 
       Install.WantedBy = ["hyprland-session.target"];
     };
+    copper.desktopEnvironment.polkitAgent = mkIf cfg.defaultPolkitAgent.enable "pantheon";
 
     systemd.user.services.argyrodite.Install.WantedBy = ["hyprland-session.target"];
     systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];

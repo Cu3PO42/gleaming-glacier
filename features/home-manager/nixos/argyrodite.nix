@@ -58,6 +58,8 @@ in {
       };
 
       xdg.configFile."argyrodite.json".text = builtins.toJSON { polkit = cfg.polkitAgent.enable; };
+
+      copper.desktopEnvironment.polkitAgent = mkIf cfg.polkitAgent.enable "argyrodite";
     }
     (mkIf cfg.develop.enable {
       copper.file.config."argyrodite" = "config/argyrodite";
