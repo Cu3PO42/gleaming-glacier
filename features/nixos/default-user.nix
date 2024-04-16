@@ -17,6 +17,7 @@ in {
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMEAQlWNszj4j05lq9qjjwYE3oe7JO97Ck9ovw/QUWmJ"
       ];
+      icon = ../../assets/Cu3PO42.png;
     };
   };
 }
