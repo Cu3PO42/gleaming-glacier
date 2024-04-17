@@ -86,7 +86,7 @@ in {
     };
   };
 
-  config = {
+  config = mkIf config.wayland.windowManager.hyprland.enable {
     wayland.windowManager.hyprland.extraConfig = "source = ${pkgs.writeText "hyprland-keybinds.conf" keybindSettings}";
 
     programs.maestro = mkIf cfg.maestroIntegration (let
