@@ -37,6 +37,7 @@
       gtk.enable = true;
       gtk.gtk4.libadwaitaSupport = "patch-binary";
       qt.enable = true;
+      vscode.enable = true;
     };
   })];
 }

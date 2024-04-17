@@ -117,6 +117,17 @@ in rec {
     file."theme.conf".source = "${pkgs.kitty-themes}/share/kitty-themes/themes/Catppuccin-${Variant}.conf";
   };
 
+  vscode = {
+    colorTheme = {
+      extension.id = "Catppuccin.catppuccin-vsc";
+      name = "Catppuccin ${Variant}";
+    };
+    iconTheme = {
+      extension.id = "Catppuccin.catppuccin-vsc-icons";
+      name = "catppuccin-${variant}";
+    };
+  };
+
   fish.theme = {
     file = "${pkgs.fetchFromGitHub {
       owner = "catppuccin";
