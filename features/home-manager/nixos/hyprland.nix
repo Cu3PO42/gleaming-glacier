@@ -21,6 +21,10 @@ in {
       enable = true;
       # TODO: this also installs a hyprland package, how does this conflict with the global install
       package = copper.inputs.hyprland;
+      plugins = [
+        copper.inputs.hy3
+        copper.inputs.hyprspace.Hyprspace
+      ];
       systemd.enable = true;
       # Needed so that waybar, etc. have a complete environment
       systemd.variables =
