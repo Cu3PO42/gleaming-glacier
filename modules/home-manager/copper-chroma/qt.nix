@@ -23,7 +23,7 @@ in {
       activationCommand = {
         name,
         opts,
-      }: "${pkgs.libsForQt5.qtstyleplugin-kvantum}/bin/kvantummanager --set ${opts.kvantum.name}";
+      }: "${pkgs.kdePackages.qtstyleplugin-kvantum}/bin/kvantummanager --set ${opts.kvantum.name}";
 
       themeOptions = {
         qtct = {
