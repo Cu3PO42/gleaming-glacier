@@ -34,7 +34,7 @@
 
       WINPATH="$(wslpath "$( (cd /mnt/c/; cmd.exe /c 'echo %LOCALAPPDATA%') | sed -e 's/\r//')")/nix-cache"
       if ! [ -e "$WSLPATH" ]; then
-        mkdir "$WINPATH/nix-cache"
+        mkdir -p "$WINPATH"
       fi
 
       if ! cmp -s ${npiperelay}/bin/npiperelay.exe "$WINPATH/npiperelay.exe"; then
