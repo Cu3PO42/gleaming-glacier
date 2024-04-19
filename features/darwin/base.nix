@@ -1,4 +1,5 @@
 {
+  config,
   origin,
   lib,
   ...
@@ -13,6 +14,8 @@
     settings = {
       # Setting this to true causes various build issues due to links.
       auto-optimise-store = false;
+
+      trusted-users = [config.defaultUser];
     };
     extraOptions = ''
       extra-nix-path = nixpkgs=flake:nixpkgs
