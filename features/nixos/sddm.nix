@@ -4,9 +4,17 @@
     theme = "corners";
     # Explicitly use the Qt5 version of SDDM, because that is what the theme is
     # compatible with.
-    package = pkgs.libsForQt5.sddm;
+    package = lib.mkForce pkgs.libsForQt5.sddm;
     # This is a fix for a huge onscreen keyboard appearing and hiding everything.
     settings.General.InputMethod = "";
+    # This is necessary to remove Qt6-based packages when Plasma 6 is enabled.
+    # We also need to supply dependencies of the theme.
+    extraPackages = lib.mkForce (with pkgs.libsForQt5.qt5; [
+      qtquickcontrols
+      qtquickcontrols2
+      qtgraphicaleffects
+      qtsvg
+    ]);
     # SDDM theoretically supports getting user icons from AccountsService (which
     # we have set up), but implements it poorly. Instead of actually querying
     # AccountsService for the icon, it hardcodes the path where it will typically
