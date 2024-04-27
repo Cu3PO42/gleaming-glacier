@@ -1,4 +1,8 @@
 {
+  copperConfig.plate = {
+    standaloneHomeManagerUsers = ["Cu3PO42"];
+  };
+
   main = {
     copper.features = [
       "base"
@@ -33,6 +37,7 @@
     security.pam.sshAgentAuth.enable = true;
 
     virtualisation.libvirtd.enable = true;
+    virtualisation.libvirtd.qemu.ovmf.enable = true;
     programs.virt-manager.enable = true;
 
     system.stateVersion = "23.05";
