@@ -30,6 +30,9 @@
     services.openssh.enable = true;
     security.pam.sshAgentAuth.enable = true;
 
+    virtualisation.libvirtd.enable = true;
+    programs.virt-manager.enable = true;
+
     system.stateVersion = "23.05";
     nixpkgs.hostPlatform = "x86_64-linux";
   };
