@@ -1,6 +1,9 @@
 {
   copperConfig.plate = {
     standaloneHomeManagerUsers = ["Cu3PO42"];
+    secureBootKeys = "op://Private/Malachite Secure Boot Keys/sbkeys";
+    hostKey = "op://Private/Malachite Host Key/private key";
+    diskEncryptionKey = "op://Private/Malachite Disk Encryption Key/password";
   };
 
   main = {
@@ -25,10 +28,16 @@
     # Networking configuration
     networking.hostId = "e4c27b74"; # Actually required for ZFS
 
-    # Enable the Plasma 5 Desktop Environment.
-    services.xserver.desktopManager.plasma5.enable = true;
+    services.desktopManager.plasma6.enable = true;
 
-    boot.zfs.devNodes = "/dev/mapper/root";
+    copper.feature.zfs = {
+      disko = {
+        disk = "/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_1TB_S5H9NS0N837254Z";
+        simpleZpool = true;
+        singleDiskFormat = true;
+      };
+    };
+    boot.zfs.devNodes = "/dev/disk/by-id";
 
     virtualisation.docker.enable = true;
 
@@ -40,7 +49,9 @@
     virtualisation.libvirtd.qemu.ovmf.enable = true;
     programs.virt-manager.enable = true;
 
-    system.stateVersion = "23.05";
+    hardware.bluetooth.enable = true;
+
+    system.stateVersion = "24.05";
     nixpkgs.hostPlatform = "x86_64-linux";
   };
 }
