@@ -193,6 +193,14 @@ unlock() {
     echo "$DEK_VALUE" | "${SSH_COMMAND[@]}"
 }
 
+bake() {
+    if ! command -v plate-bake &> /dev/null; then
+        echo "Error: plate-bake is not available in PATH." >&2
+        exit 1
+    fi
+    exec plate-bake "$@"
+}
+
 cmd="$1"
 shift
 case "$cmd" in 
@@ -204,6 +212,9 @@ case "$cmd" in
         ;;
     unlock)
         unlock "$@"
+        ;;
+    bake)
+        bake "$@"
         ;;
     *)
         echo "Usage: $0 <provision|update|unlock> <flake-uri>#<host>" >&2

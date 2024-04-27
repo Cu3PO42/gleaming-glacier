@@ -14,7 +14,8 @@
   plateModule = {config, ...}: {
     options = {
       target = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
+        default = null;
         example = "1.2.3.4";
         description = ''
           The host that should be installed and updated. Can be referred to by
@@ -98,6 +99,25 @@
           Additional arguments to pass to `nixos-anywhere` during provision.
         '';
       };
+
+      standaloneHomeManagerUsers = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = ["john"];
+        description = ''
+          A list of configured users that will manager their Home environment
+          via Home-Manager, but use it standalone rathar than via the NixOS
+          module.
+        '';
+      };
+
+      secureBootKeys = mkOption {
+        type = types.nullOr opRef;
+        default = null;
+        description = ''
+          A 1Password reference to a complete bundle of SecureBoot keys.
+        '';
+      };
     };
 
     config = {
@@ -114,7 +134,7 @@ in {
     type = with types; attrsOf (submodule ({config, ...}: {
       options.plate = mkOption {
         type = types.nullOr (submoduleWithAssertions plateModule);
-        apply = filterAttrs (name: _: name != "assertions" && name != "warnings");
+        apply = val: if val == null then null else filterAttrs (name: _: name != "assertions" && name != "warnings") val;
         default = null;
         description = ''
           Configuration for the `plate` tool.
