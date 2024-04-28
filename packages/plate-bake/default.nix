@@ -25,7 +25,7 @@
     dos2unix
     age
     coreutils
-    self.op-wsl-proxy
+    #self.op-wsl-proxy
   ];
 in stdenvNoCC.mkDerivation {
   name = "plate-bake";
@@ -45,7 +45,7 @@ in stdenvNoCC.mkDerivation {
     mkdir -p $out/support
 
     mv plate-bake.nu $out/bin/plate-bake
-    wrapProgram $out/bin/plate-bake --set PATH ${lib.makeBinPath runtimePath}
+    wrapProgram $out/bin/plate-bake --prefix PATH : ${lib.makeBinPath runtimePath}
 
     mv ./* $out/support 
     rm $out/support/default.nix

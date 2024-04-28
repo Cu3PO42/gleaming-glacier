@@ -118,6 +118,15 @@
           A 1Password reference to a complete bundle of SecureBoot keys.
         '';
       };
+
+      secureBootKeyLocation = mkOption {
+        type = types.str;
+        default = "/etc/secureboot";
+        description = ''
+          The location on the system where the key bundle will be stored. This
+          must match the `boot.lanzaboote.pkiBundle` setting of the host.
+        '';
+      };
     };
 
     config = {

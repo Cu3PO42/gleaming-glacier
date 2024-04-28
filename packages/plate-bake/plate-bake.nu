@@ -155,6 +155,14 @@ def gather_secrets [plateConfig, out: string] {
         }
     }
 
+    if $plateConfig.secureBootKeys != null {
+        ^mkdir -p $"($out)($plateConfig.secureBootKeyLocation)"
+        do {
+            cd $"($out)($plateConfig.secureBootKeyLocation)"
+            read_op $plateConfig.secureBootKeys | tar -x
+        }
+    }
+
     # TODO: potentially secure boot keys down the line
 }
 
