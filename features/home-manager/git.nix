@@ -7,6 +7,9 @@
     enable = true;
     delta.enable = true;
     lfs.enable = true;
+
+    userName = "Cu3PO42";
+    userEmail = "cu3po42@gmail.com";
   };
 
   programs.lazygit = {
