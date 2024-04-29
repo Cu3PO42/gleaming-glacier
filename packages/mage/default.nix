@@ -9,7 +9,7 @@ pkgs.writeShellApplication {
   name = "mage";
   runtimeInputs = with pkgs; [
     inputs.agenix.packages.agenix
-    self.op-wsl-proxy
+    self.op-proxy
     dos2unix
     gnused
   ];

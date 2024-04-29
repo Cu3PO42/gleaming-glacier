@@ -25,7 +25,7 @@
     dos2unix
     age
     coreutils
-    #self.op-wsl-proxy
+    self.op-proxy
   ];
 in stdenvNoCC.mkDerivation {
   name = "plate-bake";

@@ -9,7 +9,7 @@ pkgs.writeShellApplication {
   name = "plate";
   runtimeInputs = with pkgs; [
     openssh
-    self.op-wsl-proxy
+    self.op-proxy
     nixos-rebuild
     inputs.nixos-anywhere.packages.default
     jq
