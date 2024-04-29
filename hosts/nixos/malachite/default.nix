@@ -26,6 +26,8 @@
 
     boot.zfs.devNodes = "/dev/mapper/root";
 
+    virtualisation.docker.enable = true;
+
     # Enable the OpenSSH daemon.
     services.openssh.enable = true;
     security.pam.sshAgentAuth.enable = true;
