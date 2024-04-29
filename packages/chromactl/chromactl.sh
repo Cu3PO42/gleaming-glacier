@@ -3,19 +3,42 @@ THEMES_FILE="$CHROMA_FOLDER/themes.json"
 
 activateTheme()
 {
+    THEME="$1"
+    shift
+
+    DIRECT=0
+    # Systemd does not exist on macOS and launchd has no special handling for reloads
+    [[ "$OSTYPE" == "darwin"* ]] && DIRECT=1
+    if [ "$1" = "--direct" ]; then
+        DIRECT=1
+        shift
+    fi
+
     # Check that the theme exists
-    if jq -r "index(\"$1\") == null" "$THEMES_FILE" | grep -q "true"; then
-        echo "Theme $1 does not exist"
+    if jq -r "index(\"$THEME\") == null" "$THEMES_FILE" | grep -q "true"; then
+        echo "Theme $THEME does not exist"
         return 1
     fi
-    ln -sfn "$CHROMA_FOLDER/themes/$1" "$CHROMA_FOLDER/active"
-    "$CHROMA_FOLDER/active/activate"
-    "$CHROMA_FOLDER/active/reload"
+
+    ln -sfn "$CHROMA_FOLDER/themes/$THEME" "$CHROMA_FOLDER/active"
+
+    if [ $DIRECT -eq 1 ]; then
+        "$CHROMA_FOLDER/active/activate"
+        "$CHROMA_FOLDER/active/reload"
+    elif
+        if ! systemctl --user is-active --quiet chroma.service; then
+            echo "WARNING: Chroma user service is not running. No reload is taking place." >&2
+        elif
+            systemctl --user reload chroma.service
+        fi
+    fi
 }
 
-case $1 in
+COMMAND="$1"
+shift
+case $COMMAND in
     activate-theme)
-        activateTheme "$2"
+        activateTheme "$@"
         ;;
     list-themes)
         jq -r '.[]' "$THEMES_FILE"
@@ -23,12 +46,12 @@ case $1 in
     next-theme)
         ACTIVE_THEME="$(jq -r '.name' "$CHROMA_FOLDER/active/info.json")"
         THEME="$(jq -r --arg active "$ACTIVE_THEME" '.[(index($active) + 1) % length]' "$THEMES_FILE")"
-        activateTheme "$THEME"
+        activateTheme "$THEME" "$@"
         ;;
     previous-theme)
         ACTIVE_THEME="$(jq -r '.name' "$CHROMA_FOLDER/active/info.json")"
         THEME="$(jq -r --arg active "$ACTIVE_THEME" '.[(index($active) - 1) % length]' "$THEMES_FILE")"
-        activateTheme "$THEME"
+        activateTheme "$THEME" "$@"
         ;;
     *)
         echo "Usage: chromactl <command>"

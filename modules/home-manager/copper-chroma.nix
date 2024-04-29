@@ -379,6 +379,16 @@ in {
           Extra commands that will be run when a theme is activated.
         '';
       };
+
+      systemdTarget = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "hyprland-session.target";
+        description = ''
+          A systemd (user) target as part of which the activation script should
+          be run.
+        '';
+      };
     };
   };
 
@@ -401,22 +411,65 @@ in {
           message = "The file ${fileName} needs to be defined for ${prog} in theme ${name}.";
         }) theme.${prog}.file) (filter (prog: cfg.${prog}.enable) (attrNames cfg.programs))))
       cfg.themes);
+    
+    warnings = optional (pkgs.stdenv.hostPlatform.isLinux && (config.systemd.user.startServices != "sd-switch")) ''
+      You are not using sd-switch to manage your user services. If your active
+      Chroma theme changes, these might not apply until the next switch.
+    '';
 
     home.file."${cfg.themeDirectory}/themes".source = symlinkJoinInFolder {
       name = "chroma-themes";
       drvs = cfg.themePackages;
     };
+
     home.file."${cfg.themeDirectory}/themes.json".text = builtins.toJSON (builtins.attrNames cfg.themes);
-    home.activation.activateChroma = lib.hm.dag.entryAfter ["linkGeneration" "installPackages"] ''
+
+    home.activation.linkChromaDefault = lib.hm.dag.entryBetween ["reloadSystemd" "setupLaunchAgents"] ["linkGeneration" "installPackages"] ''
       # If no theme is currently active, activate the default theme.
       mkdir -p ${cfg.themeDirectory}
       if ! [ -d "${cfg.themeDirectory}/active" ]; then
         ln -s "${cfg.themeDirectory}/themes/${cfg.initialTheme}" "${cfg.themeDirectory}/active"
       fi
-
-      ${cfg.themeDirectory}/active/reload
-      ${cfg.themeDirectory}/active/activate
     '';
+
+    systemd.user.services.chroma = {
+      Unit = {
+        Description = "Set up theming scripts";
+        After = ["graphical-session-pre.target"];
+        X-SwitchMethod = "reload";
+        X-RestartTriggers = [
+          config.home.file."${cfg.themeDirectory}/themes".source
+        ];
+      };
+
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${cfg.themeDirectory}/active/activate";
+        ExecReload = [
+          "${cfg.themeDirectory}/active/reload"
+          "${cfg.themeDirectory}/active/activate"
+        ];
+        RemainAfterExit = true;
+      };
+
+      Install.WantedBy = mkIf (cfg.systemdTarget != null) [cfg.systemdTarget];
+    };
+
+    launchd.agents.chroma = {
+      enable = true;
+      config = {
+        Program = "${cfg.themeDirectory}/active/activate";
+        RunAtLoad = true;
+      };
+    };
+
+    # On Darwin, we have no reload script on the launch agent. Instead, we
+    # directly invoke the reload scripts. This is probably fine, because we
+    # (almost always) run in a graphical session.
+    home.activation.reloadChroma = mkIf (pkgs.stdenv.hostPlatform.isDarwin) (lib.hm.dag.entryAfter ["setupLaunchAgents"] ''
+      ${cfg.themeDirectory}/active/reload && ${cfg.themeDirectory}/active/activate || echo "Chroma activation failed" >&2
+    '');
+
 
     home.packages = [copper.packages.chromactl];
   };

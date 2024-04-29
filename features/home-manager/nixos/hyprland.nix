@@ -224,21 +224,7 @@ in {
 
       Install.WantedBy = ["hyprland-session.target"];
     };
-
-    systemd.user.services.chroma-launch = {
-      Unit = {
-        Description = "Set up theming scripts";
-        After = ["graphical-session-pre.target"];
-      };
-
-      Service = {
-        Type = "oneshot";
-        ExecStart = "${config.copper.chroma.themeDirectory}/active/activate";
-        Restart = "always";
-      };
-
-      Install.WantedBy = ["hyprland-session.target"];
-    };
+    copper.chroma.systemdTarget = "hyprland-session.target";
 
     services.network-manager-applet.enable = true;
     services.blueman-applet.enable = true;
