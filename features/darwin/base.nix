@@ -27,6 +27,11 @@
     '';
   };
 
-  # Defines the version of Nix-Darwin at which point the config was created. DO NOT UPDATE.
-  system.stateVersion = 4;
+  # Defines the version of Nix-Darwin at which point the config was created.
+  # Since this is a host-specific value and must not be updated, it needs to be
+  # included in the host configuration. This default was erroneously included
+  # here. It should not be relied upon.
+  system.stateVersion = let
+    msg = "You should always set `system.stateVersion` yourself because it is a host-specific property. Relying on a default is incorrect.";
+  in lib.mkDefault (lib.warn msg 4);
 }
