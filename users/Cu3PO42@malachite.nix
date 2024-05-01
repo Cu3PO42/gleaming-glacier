@@ -39,5 +39,7 @@
       qt.enable = true;
       vscode.enable = true;
     };
+
+    home.stateVersion = "24.05";
   })];
 }

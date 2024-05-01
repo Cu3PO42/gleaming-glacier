@@ -57,6 +57,8 @@
         "neovim"
         "lunarvim"
       ];
+
+      home.stateVersion = "23.11";
     };
 
     zramSwap.enable = true;
