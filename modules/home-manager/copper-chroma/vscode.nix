@@ -1,8 +1,5 @@
-{config, pkgs, lib, options, ...}: with lib; let
+{config, pkgs, lib, ...}: with lib; let
   cfg = config.copper.chroma;
-
-  optionalPackage = opt:
-    optional (opt != null && opt.package != null) opt.package;
 in {
   options = {
     copper.chroma.vscode = {
@@ -56,21 +53,27 @@ in {
         iconTheme = colorTheme;
       };
     
-      # TODO: restructure so jaq is only invoked once
-      activationCommand = {name, opts}: ''
-        ${pkgs.jaq}/bin/jaq -i '."settingsSync.ignoredSettings" |= (. // [] | . += ["workbench.colorTheme", "workbench.iconTheme"] | unique)' "${cfg.vscode.configFolder}/User/settings.json"
-      '' + (optionalString (opts.colorTheme != null) ''
+      activationCommand = {name, opts}: let
+        desiredSettings = (if opts.colorTheme != null then {
+          "workbench.colorTheme" = opts.colorTheme.name;
+        } else {}) // (if opts.iconTheme != null then {
+          "workbench.iconTheme" = opts.iconTheme.name;
+        } else {});
+        keys = builtins.attrNames desiredSettings;
+      in (optionalString (opts.colorTheme != null) ''
         ${cfg.vscode.codeBinary} --install-extension ${opts.colorTheme.extension.id} >/dev/null 2>&1
-        ${pkgs.jaq}/bin/jaq -i '."workbench.colorTheme" = "${opts.colorTheme.name}"' "${cfg.vscode.configFolder}/User/settings.json"
       '') + (optionalString (opts.iconTheme != null) ''
         ${cfg.vscode.codeBinary} --install-extension ${opts.iconTheme.extension.id} >/dev/null 2>&1
-        ${pkgs.jaq}/bin/jaq -i '."workbench.iconTheme" = "${opts.iconTheme.name}"' "${cfg.vscode.configFolder}/User/settings.json"
-      '');
+      '') + ''
+        # First make sure the settings file exists.
+        mkdir -p "${cfg.vscode.configFolder}/User"
+        if [ ! -f "${cfg.vscode.configFolder}/User/settings.json" ]; then
+          echo '{}' > "${cfg.vscode.configFolder}/User/settings.json"
+        fi
+
+        # Set all settings and ignore them for sync.
+        ${pkgs.jaq}/bin/jaq -i '. * ${builtins.toJSON desiredSettings} | (."settingsSync.ignoredSettings" |= (. // [] | . += ${builtins.toJSON keys} | unique))' "${cfg.vscode.configFolder}/User/settings.json"
+      '';
     };
   };
-
-  imports = [
-    (mkIf (cfg.enable && cfg.vscode.enable) {
-    })
-  ];
 }
