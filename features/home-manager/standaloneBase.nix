@@ -47,4 +47,7 @@
 
   # Symlink the flake to enable easier switches later
   copper.file.config."home-manager/flake.nix" = "flake.nix";
+
+  # Automatically start new services
+  systemd.user.startServices = "sd-switch";
 }

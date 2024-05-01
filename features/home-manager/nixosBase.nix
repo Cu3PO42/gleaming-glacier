@@ -16,4 +16,7 @@
 
   # Nix Flakes and Home-Manager often need Git
   programs.git.enable = true;
+
+  # Automatically start new services
+  systemd.user.startServices = "sd-switch";
 }
