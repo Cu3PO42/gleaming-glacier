@@ -1,9 +1,14 @@
-{origin, pkgs, config, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
+  imports = [
+    ../common/nix-settings.nix
+  ];
+
+  # Reflects the version at the time of initial setup, do not update
   home.stateVersion = "22.11";
-  
-  nixpkgs.config.allowUnfree = true;
-  # Workaround for the above setting not working.
-  nixpkgs.config.allowUnfreePredicate = _: true;
 
   # Persist Home Manager
   programs.home-manager.enable = true;

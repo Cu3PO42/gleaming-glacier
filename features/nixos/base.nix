@@ -6,21 +6,19 @@
   lib,
   ...
 }: {
-  # General Nix settings
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-  # We pin the system's nixpkgs to what we have in the Flake.
-  # Both in the Flake registry, so nixpkgs resolves to our version by default
-  # and when used with a command such as `nix run nixpkgs#hello`, but also
-  # create a channel pointing to the same version.
-  nix.registry.nixpkgs.flake = origin.inputs.nixpkgs;
-  nix.nixPath = [
-    "nixpkgs=/etc/channels/nixpkgs"
+  imports = [
+    ../common/nix-settings.nix
   ];
-  environment.etc."channels/nixpkgs".source = origin.inputs.nixpkgs.outPath;
 
-  # This modifies the packages that are available to install as part of this
-  # system configuration only.
-  nixpkgs.config.allowUnfree = true;
+  nix.settings = {
+    # Make every root user trusted. They could change the config anyway.
+    trusted-users = let
+      usernames = builtins.attrNames config.users.users;
+      pred = user: builtins.elem "wheel" config.users.users.${user}.extraGroups;
+      wheels = builtins.filter pred usernames;
+    in
+      wheels;
+  };
 
   # command-not-found relies on a programs.sqlite database that is only
   # available from channels, but not importing nixpkgs in a flake.
@@ -48,14 +46,6 @@
   system.stateVersion = let
     msg = "You should always set `system.stateVersion` yourself because it is a host-specific property. Relying on a default is incorrect.";
   in lib.mkDefault (lib.warn msg "23.05");
-
-  # Make every root user trusted.
-  nix.settings.trusted-users = let
-    usernames = builtins.attrNames config.users.users;
-    pred = user: builtins.elem "wheel" config.users.users.${user}.extraGroups;
-    wheels = builtins.filter pred usernames;
-  in
-    wheels;
 
   boot.loader = {
     # Use the systemd-boot EFI boot loader.

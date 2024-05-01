@@ -19,7 +19,6 @@
   home-manager.sharedModules =
     hmBaseModules
     ++ [{
-      copper.feature.nixosBase.enable = lib.mkDefault true;
-      copper.feature.standaloneBase.enable = false;
+      copper.feature.base.enable = lib.mkDefault true;
     }];
 }

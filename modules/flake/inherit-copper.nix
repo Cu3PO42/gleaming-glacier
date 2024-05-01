@@ -29,7 +29,7 @@
       })
       (mkIf config.copper.base.enable {
         nixos = [{ copper.feature.base.enable = lib.mkDefault true; }];
-        home = [{ copper.feature.standaloneBase.enable = lib.mkDefault true; }];
+        home = [{ copper.feature.base.enable = lib.mkDefault true; }];
         darwin = [{ copper.feature.base.enable = lib.mkDefault true; }];
       })
     ];

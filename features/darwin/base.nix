@@ -1,9 +1,12 @@
 {
   config,
-  origin,
   lib,
   ...
 }: {
+  imports = [
+    ../common/nix-settings.nix
+  ];
+
   copper.feature.known-hashes.enable = lib.mkDefault true;
 
   # Auto-update Nix
@@ -18,26 +21,10 @@
       trusted-users = [config.defaultUser];
     };
     extraOptions = ''
-      extra-nix-path = nixpkgs=flake:nixpkgs
       auto-allocate-uids = true
       build-users-group = nixbld
       experimental-features = nix-command flakes auto-allocate-uids
     '';
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 30d";
-    };
-
-    registry.nixpkgs.flake = origin.inputs.nixpkgs;
-    nixPath = [
-      "nixpkgs=/etc/channels/nixpkgs"
-    ];
-  };
-
-  environment.etc."channels/nixpkgs".source = origin.inputs.nixpkgs.outPath;
-
-  nixpkgs.config = {
-    allowUnfree = true;
   };
 
   # Defines the version of Nix-Darwin at which point the config was created. DO NOT UPDATE.
