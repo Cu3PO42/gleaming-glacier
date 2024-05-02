@@ -241,7 +241,7 @@ def handle_install [system: string] {
         do -c {
             nix flake archive --to 'local?root=/mnt&require-sigs=false' $flake_source
             rm -rf /mnt/etc/nixos
-            rsync -a $flake_source /mnt/etc/nixos
+            rsync -a --chmod=D0755,Fo+w $flake_source/ /mnt/etc/nixos
         }
     } catch {
         gum log -sl warn "Failed to copy your Flake to the new system. You may not be able to rebuild your system."
