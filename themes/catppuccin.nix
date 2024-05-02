@@ -9,6 +9,7 @@
   hyprlandOverrides ? p: {},
   waybarOverrides ? p: {},
   rofiOverrides ? p: {},
+  wallpapers ? null,
   ...
 }: let
   capitalize = str: "${pkgs.lib.toUpper (builtins.substring 0 1 str)}${builtins.substring 1 (builtins.stringLength str) str}";
@@ -112,6 +113,8 @@ in rec {
       # probably unlink the qtct config, copy, change it and see what happens
     };
   };
+
+  swim.wallpaperDirectory = wallpapers;
 
   kitty = {
     file."theme.conf".source = "${pkgs.kitty-themes}/share/kitty-themes/themes/Catppuccin-${Variant}.conf";

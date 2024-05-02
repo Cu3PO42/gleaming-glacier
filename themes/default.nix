@@ -21,6 +21,15 @@
       hover-highlight = palette.accents.rosewater;
       hover-text = palette.all.crust;
     };
+
+    wallpapers = "${pkgs.fetchgit {
+      url = "https://github.com/prasanthrangan/hyde-themes.git";
+      rev = "2b526598b76ae613d1de42fd3b089ba919ea6aec"; # Catpuccin-Latte
+      hash = "sha256-kjHjcNcktEKLusIey/L4rbychUiib/suxGStq4zg7Pw=";
+      sparseCheckout = [
+        "Configs/.config/hyde/themes/Catppuccin Latte/wallpapers"
+      ];
+    }}/Configs/.config/hyde/themes/Catppuccin Latte/wallpapers";
   });
 
   Catppuccin-Mocha = pkgs.callPackage ./catppuccin.nix (extraArgs // {
@@ -50,5 +59,14 @@
       hover-highlight = palette.accents.pink;
       hover-text = "313244";
     };
+
+    wallpapers = "${pkgs.fetchgit {
+      url = "https://github.com/prasanthrangan/hyde-themes.git";
+      rev = "d2052a18ed6e1f9e6d70c3431d27bf94f42be628"; # Catpuccin-Mocha
+      hash = "sha256-99wmu1R/Q9tuithyYBlxlEvkixY4Ea6S/Pgdimdqhj4=";
+      sparseCheckout = [
+        "Configs/.config/hyde/themes/Catppuccin Mocha/wallpapers"
+      ];
+    }}/Configs/.config/hyde/themes/Catppuccin Mocha/wallpapers";
   });
 }
