@@ -2,9 +2,15 @@
   config,
   pkgs,
   lib,
-  copper,
   ...
 }: {
+  assertions = [
+    {
+      assertion = config.copper.feature.nailgun.enable;
+      message = "Nailgun is required for our Rofi config to work properly.";
+    }
+  ];
+
   programs.rofi = {
     enable = true;
     package = pkgs.rofi-wayland;
@@ -21,14 +27,6 @@
     fi
   '';
 
-  home.packages = [copper.packages.rofi-launchers-hyprdots copper.packages.nailgun];
+  copper.feature.nailgun.enable = true;
   # TODO: icon theme, maybe font and such should be configured dynamically as well.
-
-  copper.chroma.extraActivationCommands = theme: ''
-    ${lib.getExe copper.packages.nailgun} thumbnails-for-theme "${config.copper.chroma.themeDirectory}/active/swim/wallpapers" >/dev/null &
-  '';
-
-  copper.swim.wallpaperActivationCommands = ''
-    ${lib.getExe copper.packages.nailgun} activate-wallpaper "$WALLPAPER" >/dev/null &
-  '';
 }

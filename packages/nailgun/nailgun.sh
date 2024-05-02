@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-ROFI_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/hyprdots/rofi"
-ROFI_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/hyprdots/rofi/store"
-mkdir -p "$ROFI_STATE_DIR" "$ROFI_CACHE_DIR"
+NAILGUN_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/nailgun"
+NAILGUN_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/nailgun/store"
+mkdir -p "$NAILGUN_STATE_DIR" "$NAILGUN_CACHE_DIR"
 
 # TODO: also build cache on file hash, maybe?
 cacheDir() {
     WP_HASH="$(echo -n "$(realpath "$1")" | sha256sum | cut -d' ' -f1)"
-    WP_CACHE_DIR="$ROFI_CACHE_DIR/$WP_HASH"
+    WP_CACHE_DIR="$NAILGUN_CACHE_DIR/$WP_HASH"
     if [ "$1" -nt "$WP_CACHE_DIR" ]; then
         rm -rf "$WP_CACHE_DIR"
     fi
@@ -17,6 +17,10 @@ cacheDir() {
 
 convertWallpaper() {
     WP_CACHE_DIR="$(cacheDir "$1")"
+
+    if [ ! -f "$WP_CACHE_DIR/png" ]; then
+        convert "$1" "PNG:$WP_CACHE_DIR/png"
+    fi
 
     # The following convert commands are originally from prasanthrangan's hyprdots, available under the terms of GPLv3
     makeThumbnail "$1" "$WP_CACHE_DIR"
@@ -52,7 +56,7 @@ makeThumbCache() {
 
     rm -f "$CACHE_DIR"/*
 
-    export ROFI_CACHE_DIR
+    export NAILGUN_CACHE_DIR
     export -f cacheDir
     export -f makeThumbnail
     export -f makeThumbnailForTheme
@@ -66,8 +70,8 @@ case "$1" in
         CACHE_DIR="$(convertWallpaper "$2")"
         # Use hardlinks instead of symlinks so that the cache can be deleted
         # without breaking the setup.
-        rm -rf "$ROFI_STATE_DIR/active-wallpaper"
-        cp -al "$CACHE_DIR" "$ROFI_STATE_DIR/active-wallpaper"
+        rm -rf "$NAILGUN_STATE_DIR/active-wallpaper"
+        cp -al "$CACHE_DIR" "$NAILGUN_STATE_DIR/active-wallpaper"
     ;;
     thumbnails-for-theme)
         makeThumbCache "$2/"
