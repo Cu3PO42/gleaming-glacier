@@ -6,7 +6,7 @@ wezterm.GLOBAL = {
 }
 
 local opts = {
-  font = {
+  font = wezterm.font {
     family = "JetBrainsMono Nerd Font",
     harfbuzz_features = {
       "cv06=1",
