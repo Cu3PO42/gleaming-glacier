@@ -9,6 +9,7 @@
       "link-config"
       "lunarvim"
       "chroma"
+      "wezterm"
       "nixos/argyrodite"
       "nixos/waybar-hyprdots"
       "nixos/hyprland"
