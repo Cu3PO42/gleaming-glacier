@@ -29,7 +29,6 @@ local opts = {
     saturation = 1.0,
     brightness = 0.8,
   },
-  color_scheme = wezterm.gui.get_appearance():find('dark') and "Catppuccin Mocha" or "Catppuccin Latte",
 
   tab_bar_at_bottom = true,
   tab_max_width = 22,

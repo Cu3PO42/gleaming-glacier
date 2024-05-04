@@ -120,6 +120,8 @@ in rec {
     file."theme.conf".source = "${pkgs.kitty-themes}/share/kitty-themes/themes/Catppuccin-${Variant}.conf";
   };
 
+  wezterm.name = "Catppuccin ${Variant}";
+
   vscode = {
     colorTheme = {
       extension.id = "Catppuccin.catppuccin-vsc";
