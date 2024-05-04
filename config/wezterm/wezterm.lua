@@ -1,9 +1,97 @@
 local wezterm = require("wezterm")
-local theme = require("theme")
 local act = wezterm.action
--- Thanks to winston for a lot of this config :)
--- Look for more of his setup at https://github.com/nekowinston/dotfiles
-require("bar").setup({
+
+wezterm.GLOBAL = {
+  enable_tar_bar = true,
+}
+
+local opts = {
+  font = {
+    family = "JetBrainsMono Nerd Font",
+    harfbuzz_features = {
+      "cv06=1",
+      "cv14=1",
+      "cv32=1",
+      "ss04=1",
+      "ss07=1",
+      "ss09=1",
+    },
+  },
+  font_size = 12,
+  window_decorations = "RESIZE",
+  window_padding = {
+    left = 10,
+    right = 10,
+    top = 10,
+    bottom = 10,
+  },
+  inactive_pane_hsb = {
+    saturation = 1.0,
+    brightness = 0.8,
+  },
+  color_scheme = wezterm.gui.get_appearance():find('dark') and "Catppuccin Mocha" or "Catppuccin Latte",
+
+  tab_bar_at_bottom = true,
+  tab_max_width = 22,
+  use_fancy_tab_bar = false,
+  hide_tab_bar_if_only_one_tab = true,
+  enable_tar_bar = wezterm.GLOBAL.tab_bar_hidden,
+
+  adjust_window_size_when_changing_font_size = false,
+  use_resize_increments = true,
+  audible_bell = "Disabled",
+  enable_scroll_bar = false,
+  check_for_updates = false,
+
+  mouse_bindings = {
+    {
+      event = { Down = { streak = 1, button = "Right" } },
+      mods = "NONE",
+      action = wezterm.action_callback(function(window, pane)
+        local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+        if has_selection then
+          window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+          window:perform_action(act.ClearSelection, pane)
+        else
+          window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+        end
+      end),
+    },
+
+    -- Change the default click behavior so that it only selects
+    -- text and doesn't open hyperlinks
+    {
+      event={Up={streak=1, button="Left"}},
+      mods="NONE",
+      action=act.CompleteSelection("PrimarySelection"),
+    },
+
+    -- and make CTRL-Click open hyperlinks
+    {
+      event={Up={streak=1, button="Left"}},
+      mods="CTRL",
+      action=act.OpenLinkAtMouseCursor,
+    },
+
+    -- Disable the 'Down' event of CTRL-Click to avoid weird program behaviors
+    {
+      event = { Down = { streak = 1, button = 'Left' } },
+      mods = 'CTRL',
+      action = act.Nop,
+    }
+  },
+
+  window_background_opacity = 0.90,
+  macos_window_background_blur = 20,
+  win32_system_backdrop = 'Acrylic',
+
+}
+for k, v in pairs(require("keybindings")) do
+  opts[k] = v
+end
+
+-- TODO: automatically clone the repo in HM config so our initial launch does not need internet?
+wezterm.plugin.require("https://github.com/nekowinston/wezterm-bar").apply_to_config(opts, {
   dividers = "slant_right", -- or "slant_left", "arrows", "rounded", false
   indicator = {
     leader = {
@@ -33,68 +121,5 @@ require("bar").setup({
     format = "%H:%M", -- use https://wezfurlong.org/wezterm/config/lua/wezterm.time/Time/format.html
   },
 })
-
-
-wezterm.GLOBAL = {
-  font = "jbmono",
-  enable_tar_bar = true,
-}
-local font = require("fonts").get_font(wezterm.GLOBAL.font)
-
-local opts = {
-  font = font.font,
-  font_size = font.size,
-  window_decorations = "RESIZE",
-  window_padding = {
-    left = 10,
-    right = 10,
-    top = 10,
-    bottom = 10,
-  },
-  inactive_pane_hsb = {
-    saturation = 1.0,
-    brightness = 0.6,
-  },
-  color_schemes = theme.custom_colorscheme(),
-  color_scheme = theme.scheme_for_appearance(wezterm.gui.get_appearance(), {
-    dark = "Catppuccin Americano",
-    light = "Catppuccin Latte",
-  }),
-  tab_bar_at_bottom = true,
-  tab_max_width = 22,
-  use_fancy_tab_bar = false,
-  window_background_opacity = 1.00,
-  hide_tab_bar_if_only_one_tab = false,
-  enable_tar_bar = wezterm.GLOBAL.tab_bar_hidden,
-  adjust_window_size_when_changing_font_size = false,
-  use_resize_increments = false,
-  audible_bell = "Disabled",
-  clean_exit_codes = { 130 },
-  default_cursor_style = "BlinkingBar",
-  enable_scroll_bar = false,
-  check_for_updates = true,
-
-  mouse_bindings = {
-    {
-      event = { Down = { streak = 1, button = "Right" } },
-      mods = "NONE",
-      action = wezterm.action_callback(function(window, pane)
-        local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-        if has_selection then
-          window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-          window:perform_action(act.ClearSelection, pane)
-        else
-          window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-        end
-      end),
-    },
-  },
-  --window_background_opacity = 0.6,
-  --win32_system_backdrop = 'Acrylic',
-  font_size = 12,
-}
-for k, v in pairs(require("keybindings")) do
-  opts[k] = v
-end
 
 return opts

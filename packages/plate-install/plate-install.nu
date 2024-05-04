@@ -200,6 +200,7 @@ def handle_hardware_config [] {
         let bootLines = $res.stdout | lines | where $it =~ '^\s*boot\.'
         let generatedBootConfig = nix eval --expr ('{' + ($bootLines | str join "\n") + '}') --json | from json
         let keysToCheck = ['initrd.availableKernelModules', 'initrd.kernelModules', 'kernelModules', 'extraModulePackages']
+        # FIXME: this check is potentially broken :-(
         if ($keysToCheck | any { |key|
             let cpath = $key | split row '.' | into cell-path
             not (check_subset ($config | get boot | get $cpath) ($generatedBootConfig | get boot | get $cpath))
