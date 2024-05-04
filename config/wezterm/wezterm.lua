@@ -18,6 +18,7 @@ local opts = {
     },
   },
   font_size = 12,
+
   window_decorations = "RESIZE",
   window_padding = {
     left = 10,
@@ -83,8 +84,15 @@ local opts = {
   window_background_opacity = 0.90,
   macos_window_background_blur = 20,
   win32_system_backdrop = 'Acrylic',
-
 }
+
+if wezterm.target_triple:find('linux') then
+  -- Transparency is handled via Hyprland rules
+  opts.window_background_opacity = 1
+  -- The resize decorations are horribly broken on Wayland
+  opts.window_decorations = "NONE"
+end
+
 for k, v in pairs(require("keybindings")) do
   opts[k] = v
 end
