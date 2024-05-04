@@ -9,7 +9,7 @@ activateTheme()
     DIRECT=0
     # Systemd does not exist on macOS and launchd has no special handling for reloads
     [[ "$OSTYPE" == "darwin"* ]] && DIRECT=1
-    if [ "$1" = "--direct" ]; then
+    if [ "${1:-}" = "--direct" ]; then
         DIRECT=1
         shift
     fi
@@ -25,10 +25,10 @@ activateTheme()
     if [ $DIRECT -eq 1 ]; then
         "$CHROMA_FOLDER/active/activate"
         "$CHROMA_FOLDER/active/reload"
-    elif
+    else
         if ! systemctl --user is-active --quiet chroma.service; then
             echo "WARNING: Chroma user service is not running. No reload is taking place." >&2
-        elif
+        else
             systemctl --user reload chroma.service
         fi
     fi
