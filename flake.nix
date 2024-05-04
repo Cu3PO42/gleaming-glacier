@@ -24,6 +24,13 @@
       inputs.systems.follows = "systems";
     };
 
+    wezterm = {
+      url = "github:Cu3PO42/wezterm?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.rust-overlay.follows = "rust-overlay";
+    };
+
     # NixOS inputs
     # Secure Boot
     lanzaboote = {
@@ -32,6 +39,7 @@
       inputs.flake-parts.follows = "flake-parts";
       inputs.flake-compat.follows = "flake-compat";
       inputs.flake-utils.follows = "flake-utils";
+      inputs.rust-overlay.follows = "rust-overlay";
     };
 
     # NixOS on WSL - Duh.
@@ -195,6 +203,12 @@
 
     systems-linux = {
       url = "github:nix-systems/default-linux";
+    };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
     };
 
     astal = {
