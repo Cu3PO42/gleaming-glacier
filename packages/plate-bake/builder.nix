@@ -6,6 +6,7 @@
   homeConfigs,
   plate-installer,
 }: let
+  diskoEnabled = targetSystem.options ? disko && targetSystem.config.disko.devices.disk != {};
   homeProfiles = builtins.map (c: {
     inherit (c) user;
     profile = targetFlake.homeConfigurations.${c.attribute}.activationPackage;
@@ -22,7 +23,7 @@
           recurse = flk: if (flk._type or "") == "flake" then [flk.sourceInfo.outPath] ++ lib.concatMap (recurse) (builtins.attrValues flk.inputs) else [flk.outPath];
         in [targetSystem.config.system.build.toplevel] ++ recurse targetFlake
           # For some reason the script is not included automatically. Do it manually.
-          ++ [targetSystem.config.system.build.diskoScript]
+          ++ lib.optional diskoEnabled targetSystem.config.system.build.diskoScript
           # HM configs probably behave the same way.
           ++ builtins.map (e: e.profile) homeProfiles;
 
@@ -38,7 +39,7 @@
               secureBoot = if targetSystem.options ? boot.lanzaboote && targetSystem.config.boot.lanzaboote.enable then {
                 inherit (targetSystem.config.boot.lanzaboote) pkiBundle;
               } else null;
-              disko = if targetSystem.options ? disko && targetSystem.config.disko.devices.disk != {} then {
+              disko = if diskoEnabled then {
                 devices = let disks = targetSystem.config.disko.devices.disk; in builtins.map (name: disks.${name}.device) (builtins.attrNames disks);
                 script = targetSystem.config.system.build.diskoScript;
                 encryption = targetSystem.config.copper.feature.zfs.hasDiskEncryption;
