@@ -633,8 +633,6 @@
           "hyprland-plugins"
         ],
         "nixpkgs": [
-          "hyprspace",
-          "hyprland",
           "nixpkgs"
         ]
       },

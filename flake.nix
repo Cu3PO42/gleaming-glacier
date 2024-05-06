@@ -104,6 +104,7 @@
 
     hyprspace = {
       url = "github:KZDKM/Hyprspace";
+      inputs.nixpkgs.follows = "nixpkgs";
       inputs.hyprland.follows = "hyprland";
       inputs.hyprlandPlugins.follows = "hyprland-plugins";
     };
