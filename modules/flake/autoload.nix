@@ -116,7 +116,7 @@ in {
     perSystem = {pkgs, system, config, options, inputs', ...}: let
       extraPkgArgs = {
         self = config.packages // config.legacyPackages;
-        inputs = inputs';
+        inputs = inputs' // lib.filterAttrs (name: value: !(value._type or "" == "flake")) inputs;
       };
     in {
       apps = loadApps base pkgs;
