@@ -23,6 +23,8 @@ in {
   in {
     copper.mage.secretFolder = mkIf (copperConfig ? mage) copperConfig.mage.secrets;
   } // optionalAttrs (options ? age) {
+    # TODO: this isn't totally DRY because we duplicate the hostKeyLocation default
+    age.identityPaths = mkIf (copperConfig.plate.hostKey or null != null) (mkDefault [(copperConfig.plate.hostKeyLocation or "/etc/ssh/ssh_host_ed25519_key")]);
     age.secrets = mkIf (cfg.secretFolder != null) (genAttrs secrets (name: {file = cfg.secretFolder + "/${name}.age";}));
   };
 }
