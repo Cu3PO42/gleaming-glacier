@@ -100,13 +100,39 @@ in rec {
       entry = import path;
       modules' =
         [
-          (if isNewHost entry then setDefaultModuleLocation path entry.main else warn "Specifying a host directly is deprecated." entry)
+          (
+            if isNewHost entry then
+              setDefaultModuleLocation path entry.main
+            else
+              warn "Gleaming Autoload: defining a host via an unwrapped module is deprecated." entry
+          )
           ({options, lib, ...}: {
-            config = {
-              networking.hostName = lib.mkOverride 999 (lib.removeSuffix ".nix" name);
-            } // lib.optionalAttrs (options ? copper.mage) {
-              copper.mage.secretFolder = mkIf (isNewHost entry && entry ? copperConfig.mage.secrets) entry.copperConfig.mage.secrets;
+            options.gleaming.autoload = with lib; {
+              path = mkOption {
+                type = types.str;
+                readOnly = true;
+                description = "The path at which the module for the host is located.";
+              };
+
+              name = mkOption {
+                type = types.str;
+                readOnly = true;
+                description = "The name of the host.";
+              };
+
+              entry = mkOption {
+                type = types.anything;
+                readOnly = true;
+                description = "The host definition itself.";
+              };
             };
+
+            config.gleaming.autoload = {
+              inherit path name;
+              entry = if isNewHost entry then entry else { main = entry; };
+            };
+
+            config.networking.hostName = lib.mkDefault (lib.removeSuffix ".nix" name);
           })
         ]
         ++ modules;

@@ -17,7 +17,12 @@ in {
     };
   };
 
-  config = lib.optionalAttrs (options ? age) {
-    age.secrets = lib.mkIf (cfg.secretFolder != null) (lib.genAttrs secrets (name: {file = cfg.secretFolder + "/${name}.age";}));
+
+  config = let
+    copperConfig = config.gleaming.autoload.entry.copperConfig or {};
+  in {
+    copper.mage.secretFolder = mkIf (copperConfig ? mage) copperConfig.mage.secrets;
+  } // optionalAttrs (options ? age) {
+    age.secrets = mkIf (cfg.secretFolder != null) (genAttrs secrets (name: {file = cfg.secretFolder + "/${name}.age";}));
   };
 }
