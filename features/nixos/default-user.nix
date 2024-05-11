@@ -7,7 +7,16 @@ in {
       default = "Cu3PO42";
       description = "The default user to create";
     };
+
+    publicKeys = mkOption {
+      type = with types; listOf str;
+      default = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMEAQlWNszj4j05lq9qjjwYE3oe7JO97Ck9ovw/QUWmJ"
+      ];
+      description = "Public keys to set for authorization of this user.";
+    };
   };
+
   config = {
     users.users.${cfg.user} = {
       isNormalUser = true;
@@ -17,9 +26,8 @@ in {
         ++ lib.optional config.virtualisation.docker.enable "docker"
         ++ lib.optional config.virtualisation.libvirtd.enable "libvirt";
       shell = pkgs.fish;
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMEAQlWNszj4j05lq9qjjwYE3oe7JO97Ck9ovw/QUWmJ"
-      ];
+      openssh.authorizedKeys.keys = cfg.publicKeys;
+      hashedPasswordFile = mkIf (config ? age.secrets."${cfg.user}-password") config.age.secrets."${cfg.user}-password".path;
       icon = ../../assets/Cu3PO42.png;
     };
   };
