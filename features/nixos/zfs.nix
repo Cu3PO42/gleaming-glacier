@@ -76,6 +76,13 @@ in {
       }
     ];
 
+    warnings = lib.mkIf (!config.boot.initrd.systemd.enable) [
+      ''
+        I have observed various breakages, including kernel panics, when using
+        ZFS with the old initrd. I strongly recommend against it.
+      ''
+    ];
+
     boot.supportedFilesystems = ["zfs"];
     # Since ZFS lives out of tree, we can't always run the latest kernel
     boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;

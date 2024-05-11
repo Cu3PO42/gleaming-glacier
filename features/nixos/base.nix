@@ -52,10 +52,14 @@
     systemd-boot.enable = lib.mkDefault true;
     # Disable command line editing because it allows root access
     systemd-boot.editor = false;
-    timeout = 1;
+    timeout = lib.mkDefault 1;
     efi.efiSysMountPoint = "/boot/efi";
     efi.canTouchEfiVariables = true;
   };
+
+  # In my experience the new initrd is more stable and generally works better
+  # than the old script-based one.
+  boot.initrd.systemd.enable = lib.mkDefault true;
 
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
@@ -69,7 +73,12 @@
   programs.fish.enable = true;
   programs.zsh.enable = true;
 
+  # Fix section. These can hopefully be removed in the future.
+
   # Enable auth via SSH agent only with system-managed keys.
   # This is a fix for nixpkgs#31611.
   security.pam.sshAgentAuth.authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
+
+  # This is a fix for "Failed Virtual Console Startup" during boot.
+  console.earlySetup = lib.mkIf config.boot.initrd.systemd.enable true;
 }
