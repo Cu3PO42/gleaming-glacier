@@ -58,7 +58,7 @@
     };
 
     hyprland = {
-      url = "github:hyprwm/Hyprland";
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
