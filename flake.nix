@@ -25,7 +25,7 @@
     };
 
     wezterm = {
-      url = "github:Cu3PO42/wezterm?dir=nix";
+      url = "github:wez/wezterm?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
       inputs.rust-overlay.follows = "rust-overlay";
@@ -104,9 +104,7 @@
 
     hyprspace = {
       url = "github:KZDKM/Hyprspace";
-      inputs.nixpkgs.follows = "nixpkgs";
       inputs.hyprland.follows = "hyprland";
-      inputs.hyprlandPlugins.follows = "hyprland-plugins";
     };
 
     hy3 = {
@@ -120,7 +118,7 @@
     };
 
     ags = {
-      url = "github:Cu3PO42/ags/polkit";
+      url = "github:Cu3PO42/ags/new-polkit";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -128,12 +126,13 @@
       url = "github:Aylur/dotfiles";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+      inputs.nix-darwin.follows = "nix-darwin";
       inputs.ags.follows = "ags";
       inputs.hyprland.follows = "hyprland";
       inputs.hyprland-plugins.follows = "hyprland-plugins";
+      inputs.hyprland-hyprspace.follows = "hyprspace";
       inputs.astal.follows = "astal";
       inputs.matugen.follows = "matugen";
-      inputs.stm.follows = "stm";
     };
 
     # Support for erasing / on every boot
@@ -219,11 +218,6 @@
 
     matugen = {
       url = "github:InioX/matugen";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    stm = {
-      url = "github:Aylur/stm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
