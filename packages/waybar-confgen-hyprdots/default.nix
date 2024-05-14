@@ -4,10 +4,10 @@
   dconf,
   gawk,
   gnused,
-  hyprland,
   systemd,
   procps,
   lib,
+  inputs,
   ...
 }:
 pkgs.writeShellApplication {
@@ -17,7 +17,7 @@ pkgs.writeShellApplication {
     dconf
     gawk
     gnused
-    hyprland
+    inputs.hyprland.packages.default
     systemd
     procps
   ];

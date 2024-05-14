@@ -1,7 +1,6 @@
 {
   symlinkJoin,
   writeShellApplication,
-  hyprland,
   gnused,
   gawk,
   rofi-wayland,
@@ -9,6 +8,7 @@
   dconf,
   cliphist,
   self,
+  inputs,
   lib,
   ...
 }:
@@ -18,7 +18,7 @@ symlinkJoin {
     writeShellApplication {
       name = f;
       runtimeInputs = [
-        hyprland
+        inputs.hyprland.packages.default
         gnused
         gawk
         rofi-wayland

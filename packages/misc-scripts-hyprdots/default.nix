@@ -1,7 +1,6 @@
 {
   symlinkJoin,
   writeShellApplication,
-  hyprland,
   gnused,
   gawk,
   dunst,
@@ -24,7 +23,7 @@ symlinkJoin {
       runtimeInputs = [
         dunst
         brightnessctl
-        hyprland
+        inputs.hyprland.packages.default
         jq
         gnused
         gawk
