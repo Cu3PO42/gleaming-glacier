@@ -31,7 +31,7 @@ mainbox {
     orientation:                 horizontal;
     children:                    [ "inputbar" , "mode-switcher" , "listbox" ];
     background-color:            transparent;
-    background-image:            url("~/.local/state/hyprdots/rofi/active-wallpaper/blur", height);
+    background-image:            url("~/.local/state/nailgun/active-wallpaper/blur", height);
 }
 
 
@@ -40,7 +40,7 @@ inputbar {
     enabled:                     true;
     width:                       180px;
     children:                    [ "entry" ];
-    background-image:            url("~/.local/state/hyprdots/rofi/active-wallpaper/rofi", height);
+    background-image:            url("~/.local/state/nailgun/active-wallpaper/rofi", height);
 }
 entry {
     enabled:                     false;

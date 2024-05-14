@@ -47,7 +47,7 @@ listbox {
     spacing:                     5px;
     orientation:                 horizontal;
     children:                    [ "mode-switcher" , "listview" ];
-    background-image:            url("~/.local/state/hyprdots/rofi/active-wallpaper/blur", height);
+    background-image:            url("~/.local/state/nailgun/active-wallpaper/blur", height);
 }
 listview {
     padding:                     20px;

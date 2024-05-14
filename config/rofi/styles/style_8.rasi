@@ -31,7 +31,7 @@ mainbox {
     orientation:                 horizontal;
     children:                    [ "listmode" , "inputbar" ];
     background-color:            transparent;
-    background-image:            url("~/.local/state/hyprdots/rofi/active-wallpaper/rofi", height);
+    background-image:            url("~/.local/state/nailgun/active-wallpaper/rofi", height);
 }
 
 
@@ -40,7 +40,7 @@ listmode {
     enabled:                     true;
     children:                    [ "listbox" , "mode-switcher" ];
     background-color:            transparent;
-    background-image:            url("~/.local/state/hyprdots/rofi/active-wallpaper/blur", height);
+    background-image:            url("~/.local/state/nailgun/active-wallpaper/blur", height);
 }
 listbox {
     spacing:                     5px;
