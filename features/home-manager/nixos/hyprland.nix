@@ -185,7 +185,16 @@ in {
       };
     };
 
-    home.packages = [copper.packages.systemctl-toggle pkgs.procps pkgs.btop pkgs.cliphist pkgs.wl-clipboard];
+    home.packages = with pkgs; [
+      copper.packages.systemctl-toggle
+      procps
+      btop
+      cliphist
+      wl-clipboard
+      pamixer
+      brightnessctl
+      playerctl
+    ];
 
     systemd.user.services.polkit-authentication-agent = mkIf cfg.defaultPolkitAgent.enable {
       Unit = {
