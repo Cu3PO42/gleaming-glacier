@@ -46,8 +46,8 @@
   dots = fetchFromGitHub {
     owner = "Cu3PO42";
     repo = "end-4-dots-hyprland";
-    rev = "d52578c7c4278656f25643f4d2b7c4a022507eb5";
-    hash = "sha256-K7iG+6+6tWThcKDSTdJHRD911UYjBL5wyLIFdWTZX2E=";
+    rev = "d214a074374f9a41fcf05a5e16ba6466b67c4ff3";
+    hash = "sha256-p6XSyTyN6HMAnjEKWpWwG0uSlgrBPiuyZg7fKK6+aLM=";
   };
   # Note: the main 'interesting' folder is the .config one
   # At the top-level, there is a .local/bin folder with additional binaries
@@ -117,7 +117,9 @@
       (
         shopt -s globstar
         for file in $out/scripts/**/*.{sh,py}; do
+          if [ -x "$file" ]; then
           echo "$file"
+          fi
         done
       ) | while read -r file; do
         wrapProgram "$file" --set PATH ${lib.makeBinPath runtimeDeps}
@@ -174,10 +176,12 @@
     pythonEnv
     gojq
     gnome.gnome-system-monitor
+    gnome-usage
+    ddcutil
   ];
 
 in (writeShellApplication {
-  name = "ags-end-4";
+  name = "illogical-impulse";
   runtimeInputs = runtimeDeps;
 
   text = ''
