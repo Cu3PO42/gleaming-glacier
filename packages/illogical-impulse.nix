@@ -44,10 +44,10 @@
 
   # TODO: disable color generation script / integrate with chroma or something
   dots = fetchFromGitHub {
-    owner = "Cu3PO42";
-    repo = "end-4-dots-hyprland";
-    rev = "d214a074374f9a41fcf05a5e16ba6466b67c4ff3";
-    hash = "sha256-p6XSyTyN6HMAnjEKWpWwG0uSlgrBPiuyZg7fKK6+aLM=";
+    owner = "end-4";
+    repo = "dots-hyprland";
+    rev = "2fa9e495856dd5c08f36c9783a97940b08e96458";
+    hash = "sha256-dwxPV30CMf47vGT0YRnrV8aTao+AuWroAc/PRlJQhVI=";
   };
   # Note: the main 'interesting' folder is the .config one
   # At the top-level, there is a .local/bin folder with additional binaries
@@ -79,10 +79,10 @@
         shopt -s globstar
         for file in **/*.{js,sh}; do
           substituteInPlace "$file" \
-            --replace-quiet '$XDG_CACHE_HOME/ags' "$XDG_CACHE_HOME/illogical-impulse" \
+            --replace-quiet '$XDG_CACHE_HOME/ags' '$XDG_CACHE_HOME/illogical-impulse' \
             --replace-quiet 'get_user_cache_dir()}/ags' 'get_user_cache_dir()}/illogical-impulse' \
             --replace-quiet 'USER_CACHE_DIR}/ags' 'USER_CACHE_DIR}/illogical-impulse' \
-            --replace-quiet '$XDG_STATE_HOME/ags' "$XDG_STATE_HOME/illogical-impulse" \
+            --replace-quiet '$XDG_STATE_HOME/ags' '$XDG_STATE_HOME/illogical-impulse' \
             --replace-quiet 'get_user_state_dir()}/ags' 'get_user_state_dir()}/illogical-impulse'
         done
       )
@@ -101,7 +101,7 @@
 
         for file in ./scripts/**/*.sh; do
           substituteInPlace "$file" \
-            --replace-quiet 'CONFIG_DIR="$XDG_CONFIG_HOME/ags"' "CONFIG_DIR=$out"
+            --replace-quiet '$XDG_CONFIG_HOME/ags' "$out"
         done
       )
 
@@ -118,7 +118,7 @@
         shopt -s globstar
         for file in $out/scripts/**/*.{sh,py}; do
           if [ -x "$file" ]; then
-          echo "$file"
+            echo "$file"
           fi
         done
       ) | while read -r file; do
@@ -142,7 +142,7 @@
   }));
 
   agsWrapped = writeScriptBin "ags" ''
-    exec ${ags}/bin/ags -b illogical-impulse "$@"
+    exec ${ags}/bin/ags -b illogicalimpulse "$@"
   '';
 
   sharePaths = with pkgs; [
@@ -178,6 +178,7 @@
     gnome.gnome-system-monitor
     gnome-usage
     ddcutil
+    gnused
   ];
 
 in (writeShellApplication {
@@ -190,4 +191,6 @@ in (writeShellApplication {
   '';
 }).overrideAttrs (old: {
   propagatedUserEnvPkgs = sharePaths;
-})
+}) // {
+  config = agsConfig;
+}
