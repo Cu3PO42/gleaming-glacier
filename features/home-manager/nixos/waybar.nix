@@ -14,4 +14,6 @@
   programs.waybar.style = ''
       @import "${config.xdg.configHome}/waybar/style.mine.css";
   '';
+
+  copper.desktopEnvironment.systemTray = "waybar";
 }

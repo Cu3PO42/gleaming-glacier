@@ -44,10 +44,10 @@
 
   # TODO: disable color generation script / integrate with chroma or something
   dots = fetchFromGitHub {
-    owner = "end-4";
-    repo = "dots-hyprland";
-    rev = "2fa9e495856dd5c08f36c9783a97940b08e96458";
-    hash = "sha256-dwxPV30CMf47vGT0YRnrV8aTao+AuWroAc/PRlJQhVI=";
+    owner = "Cu3PO42";
+    repo = "end-4-dots-hyprland";
+    rev = "66284ac04bca5eadbd937db4ce2cda730c5ce6db";
+    hash = "sha256-GYhaAHF+32g90fFdumjZ8dpGu1plfGEF7LK24My3Xmw=";
   };
   # Note: the main 'interesting' folder is the .config one
   # At the top-level, there is a .local/bin folder with additional binaries

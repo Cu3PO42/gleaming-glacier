@@ -13,5 +13,7 @@ in {
     notificationDaemon = mkConflictOption "notification daemon";
 
     polkitAgent = mkConflictOption "polkit agent";
+
+    systemTray = mkConflictOption "system tray";
   };
 }
