@@ -31,6 +31,8 @@
 
   # Required by end-4's AGS config. I'm not sure what for.
   users.users.${config.copper.feature.default-user.user}.extraGroups = ["video" "input"];
+  # To control backlight via DDC.
+  hardware.i2c.enable = true;
 
   services = {
     gvfs.enable = true;
