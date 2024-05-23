@@ -1,0 +1,7 @@
+builds:
+  exclude:
+    - nixosConfigurations.installer
+  include:
+    - '*.x86_64-linux.*'
+    - homeConfigurations.*
+    - nixosConfigurations.*
