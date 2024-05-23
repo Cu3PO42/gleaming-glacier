@@ -5,11 +5,6 @@ in {
     suspend.enable = mkEnableOption "Automatic sleep via Hypridle";
   };
 
-  imports = [
-    origin.inputs.hypridle.homeManagerModules.default
-    origin.inputs.hyprlock.homeManagerModules.default
-  ];
-
   config = {
     assertions = [
       {
