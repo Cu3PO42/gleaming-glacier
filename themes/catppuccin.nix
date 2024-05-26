@@ -73,6 +73,24 @@ in rec {
   };
 
   hyprland.colorOverrides = hyprlandOverrides palette;
+  hyprland.hyprcursor = {
+    package = pkgs.stdenv.mkDerivation {
+      name = "Bibata-Modern-Ice";
+      src = pkgs.fetchzip {
+        url = "https://github.com/LOSEARDES77/Bibata-Cursor-hyprcursor/releases/download/1.0/hypr_Bibata-Original-Ice.tar.gz";
+        hash = "sha256-7uTGsyXo1UQWfT1ih8ccUlaPGCaHib10MUa1K0ti1wY=";
+        stripRoot = false;
+      };
+      dontConfigure = true;
+      dontBuild = true;
+      installPhase = ''
+        mkdir -p $out/share/icons/Bibata-Original-Ice
+        mv ./* $out/share/icons/Bibata-Original-Ice
+      '';
+    };
+    name = "Bibata-Original-Ice";
+    size = 20;
+  };
 
   waybar.colorOverrides = waybarOverrides palette;
 
