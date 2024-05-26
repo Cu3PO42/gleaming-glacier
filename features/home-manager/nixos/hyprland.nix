@@ -16,7 +16,7 @@ in {
   };
 
   config = {
-    copper.file.config = lib.genAttrs ["hypr/animations.conf" "hypr/entry.conf" "hypr/keybindings.conf" "hypr/nvidia.conf" "hypr/windowrules.conf"] (n: "config/${n}");
+    copper.file.config = lib.genAttrs ["hypr/animations.conf" "hypr/entry.conf" "hypr/keybindings.conf" "hypr/nvidia.conf" "hypr/windowrules.conf" "hypr/1password.conf"] (n: "config/${n}");
     wayland.windowManager.hyprland = {
       enable = true;
       # TODO: this also installs a hyprland package, how does this conflict with the global install
@@ -34,8 +34,12 @@ in {
           "XDG_CONFIG_DIRS"
           "PATH"
         ];
+      settings.source = lib.mkMerge [
       # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
-      settings.source = lib.mkMerge [(lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"]) ["${config.xdg.configHome}/hypr/entry.conf"]];
+        (lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"])
+        (lib.mkIf (config.copper.feature.nixos._1password.enable) ["${config.xdg.configHome}/hypr/1password.conf"])
+        ["${config.xdg.configHome}/hypr/entry.conf"]
+      ];
       settings.exec-once = "[workspace special:terminal silent;float;center;size 1200 800] kitty";
       # Move/Resize windows with SUPER + mouse buttons
       settings.bindm = [
@@ -177,6 +181,7 @@ in {
               };
             };
             "b" = mkBind "Toggle Bar" "exec,systemctl-toggle --user waybar.service";
+            "alt p" = lib.mkIf (config.copper.feature.nixos._1password.enable) (mkBind "Toggle 1Password" "togglespecialworkspace,password");
           };
         };
         "super ctrl shift alt q" = mkBind "Quit Hyprland" "exit" // { global = true; activeWhileLocked = true; };
