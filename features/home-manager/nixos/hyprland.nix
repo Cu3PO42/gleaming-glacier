@@ -35,7 +35,7 @@ in {
           "PATH"
         ];
       settings.source = lib.mkMerge [
-      # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
+        # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
         (lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"])
         (lib.mkIf (config.copper.feature.nixos._1password.enable) ["${config.xdg.configHome}/hypr/1password.conf"])
         ["${config.xdg.configHome}/hypr/entry.conf"]
@@ -224,6 +224,7 @@ in {
 
     systemd.user.services.argyrodite.Install.WantedBy = ["hyprland-session.target"];
     systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];
+    systemd.user.services.illogical-impulse.Install.WantedBy = ["hyprland-session.target"];
 
     systemd.user.services.hyprdots-batterynotify = {
       Unit = {
