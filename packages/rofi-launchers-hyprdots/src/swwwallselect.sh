@@ -28,5 +28,4 @@ done | rofi -dmenu -theme-str "${r_override}" -config "${RofiConf}" -select "$(b
 # apply wallpaper
 if [ ! -z "${RofiSel}" ] ; then
     swimctl select "${RofiSel}"
-    dunstify "t1" -a " ${RofiSel}" -i "${CACHE_DIR}/${RofiSel}/thumb" -r 91190 -t 2200
 fi
