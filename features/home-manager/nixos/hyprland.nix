@@ -161,6 +161,8 @@ in {
             };
             "shift p" = mkBind "Power Menu" "exec,wlogout-launcher-hyprland 1";
             "p" = mkBind "Pin on all workspaces" "pin,active";
+            "o" = mkBind "Workspace  overview (single monitor)" "overview:toggle";
+            "shift o" = mkBind "Workspace overview (all monitors)" "overview:toggle,all";
             "shift s" = mkBind "Toggle Scratchpad Terminal" "togglespecialworkspace,terminal";
             "g" = {
               name = "Create Groups";
