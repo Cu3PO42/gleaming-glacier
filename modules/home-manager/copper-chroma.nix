@@ -61,47 +61,50 @@ with lib; let
     };
   });
 
-  themeForProgramType = programOpts:
-    types.submodule ({config, ...}: {
-      options =
-        {
-          themeName = mkOption {
-            type = types.str;
-            visible = false;
-            # FIXME: setting this to readOnly shouldn't be a problem, but it is
-            #readOnly = true;
-            example = "Catppuccin-Latte";
-            description = ''
-              The name of the theme as part of which this set of options was
-              defined.
-            '';
-          };
+  themeForProgramType = programOpts: let
+    baseOptions.options = {
+      themeName = mkOption {
+        type = types.str;
+        visible = false;
+        # FIXME: setting this to readOnly shouldn't be a problem, but it is
+        #readOnly = true;
+        example = "Catppuccin-Latte";
+        description = ''
+          The name of the theme as part of which this set of options was
+          defined.
+        '';
+      };
 
-          file = mkOption {
-            type = types.attrsOf fileType;
-            default = {};
-            example = literalExpression ''{ "theme.conf".source = ./themes/Catppuccin-Latte/kitty/theme.conf; }'';
-            description = ''
-              Which files need to be linked for the config of the particular program.
-              It is generally expected that the module setting up the config for this
-              program makes sure that these files are included.
-            '';
-          };
+      file = mkOption {
+        type = types.attrsOf fileType;
+        default = {};
+        example = literalExpression ''{ "theme.conf".source = ./themes/Catppuccin-Latte/kitty/theme.conf; }'';
+        description = ''
+          Which files need to be linked for the config of the particular program.
+          It is generally expected that the module setting up the config for this
+          program makes sure that these files are included.
+        '';
+      };
 
-          extraActivationCommands = mkOption {
-            type = types.str;
-            default = "";
-            description = ''
-              Extra code that will be run when this particular theme is activtated.
-              This should probably be seldomly needed and instead handled in the
-              generic activation commands.
-            '';
-          };
-        }
-        // programOpts.themeOptions;
-
-      config = programOpts.themeConfig {inherit config; opts = cfg.themes.${config.themeName}; };
-    });
+      extraActivationCommands = mkOption {
+        type = types.str;
+        default = "";
+        description = ''
+          Extra code that will be run when this particular theme is activtated.
+          This should probably be seldomly needed and instead handled in the
+          generic activation commands.
+        '';
+      };
+    };
+  in types.submoduleWith {
+    modules = [
+      baseOptions
+      { options = programOpts.themeOptions; }
+      ({config, ...}: { config._module.args.opts = cfg.themes.${config.themeName}; })
+      programOpts.themeConfig
+    ];
+    shorthandOnlyDefinesConfig = true;
+  };
 
   themeType = types.submodule ({
     name,
@@ -183,7 +186,7 @@ with lib; let
       };
 
       themeConfig = mkOption {
-        type = with types; functionTo anything;
+        type = types.deferredModule;
         default = {...}: {};
         example = literalExpression ''{ config, ... }: { file."wallpapers".source = config.wallpaperDirectory; }'';
         description = ''

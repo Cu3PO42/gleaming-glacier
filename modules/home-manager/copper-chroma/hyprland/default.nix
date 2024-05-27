@@ -71,8 +71,7 @@ in {
       };
 
       themeConfig = {config, opts, ...}: {
-        # FIXME: this causes a variety of errors for reasons unknown
-        /*hyprcursor = let
+        hyprcursor = let
           cursor = opts.desktop.cursorTheme;
         in mkIf (cursor != null) (mkDefault {
           package = let
@@ -96,12 +95,11 @@ in {
                 hyprcursor-util --extract "$src/share/icons/$theme" -o .
                 extractDir="$PWD/extracted_$theme"
                 echo "$manifest" > "$extractDir/manifest.hl"
-                hyprcursor-util --create "$extractDir"
-              '';
+                hyprcursor-util --create "$extractDir"'';
 
               installPhase = ''
                 mkdir -p $out/share/icons
-                for theme in ./theme_*; do
+                for theme in theme_*; do
                   mv "$theme" "$out/share/icons/''${theme#theme_}"
                 done
               '';
@@ -111,11 +109,9 @@ in {
             name = "${cursor.package.pname}-hyprcursor-${cursor.package.version}";
             paths = map translate availableThemes;
           };
-          package = pkgs.bash;
 
           inherit (cursor) name size;
-        });*/
-
+        });
 
         file."entry.conf".text = let
           inherit (opts.desktop) cursorTheme;
