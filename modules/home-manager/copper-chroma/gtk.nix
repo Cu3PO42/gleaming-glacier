@@ -266,7 +266,7 @@ in {
 
       home.sessionVariables.GTK2_RC_FILES = "${config.xdg.configHome}/gtk-2.0/gtkrc";
 
-      home.packages = concatLists (mapAttrsToList (name: opts: with opts.gtk; concatMap optionalPackage [theme documentFont]) cfg.themes);
+      home.packages = (concatLists (mapAttrsToList (name: opts: with opts.gtk; concatMap optionalPackage [theme documentFont]) cfg.themes)) ++ [pkgs.gnome.gnome-themes-extra];
 
       nixpkgs.overlays = mkIf (cfg.gtk.gtk4.libadwaitaSupport == "patch-overlay") [
         (final: prev: {
