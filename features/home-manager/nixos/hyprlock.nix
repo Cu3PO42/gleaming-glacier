@@ -113,7 +113,7 @@ in {
           after_sleep_cmd = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch dmps on";
 
           before_sleep_cmd = "${pkgs.systemd}/bin/loginctl lock-session";
-          lock_cmd = lib.getExe config.programs.hyprlock.package;
+          lock_cmd = "pidof hyprlock || ${lib.getExe config.programs.hyprlock.package}";
         };
   
         listener = [
