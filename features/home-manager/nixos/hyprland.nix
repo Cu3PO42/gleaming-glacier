@@ -23,7 +23,7 @@ in {
       package = copper.inputs.hyprland;
       plugins = [
         copper.inputs.hy3
-        copper.inputs.hyprspace.Hyprspace
+        copper.inputs.hyprland-plugins.hyprexpo
       ];
       systemd.enable = true;
       # Needed so that waybar, etc. have a complete environment
