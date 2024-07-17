@@ -4,8 +4,6 @@
   # Needed so localectl can work
   services.xserver.exportConfiguration = true;
 
-  # Enable sound.
-  sound.enable = true;
   # Allow user processes to acquire realtime scheduling priority. Important so things don't get choppy.
   security.rtkit.enable = true;
   services.pipewire = {

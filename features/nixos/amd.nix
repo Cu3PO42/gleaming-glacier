@@ -7,7 +7,5 @@
   hardware.opengl = {
     # Acceleration via Mesa
     enable = true;
-    # Direct Redering Interface, enables Vulkan in particular
-    driSupport = true;
   };
 }
