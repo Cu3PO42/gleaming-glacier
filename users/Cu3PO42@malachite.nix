@@ -24,7 +24,7 @@
     copper.feature.nixos._1password.gitSigning.enable = false;
 
     home.packages = with pkgs; [
-      gnome.nautilus
+      nautilus
       vscode
       firefox
     ];

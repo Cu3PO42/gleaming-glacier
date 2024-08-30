@@ -115,7 +115,7 @@ in {
       # TODO: other modules assert that the base module is enabled; handle it in a unified way
       qt = {
         enable = true;
-        platformTheme = "qtct";
+        platformTheme.name = "qtct";
         # TODO: is this needed if we use qtct to set kvantum?
         style.name = "kvantum";
       };

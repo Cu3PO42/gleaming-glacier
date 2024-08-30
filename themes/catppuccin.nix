@@ -98,7 +98,7 @@ in rec {
 
   desktop = {
     # Note: this propagatedInputs override should be upstreamed to nixpkgs
-    iconTheme.package = pkgs.tela-icon-theme.overrideAttrs (final: prev: {propagatedBuildInputs = prev.propagatedBuildInputs ++ [pkgs.gnome.adwaita-icon-theme pkgs.libsForQt5.breeze-icons];});
+    iconTheme.package = pkgs.tela-icon-theme.overrideAttrs (final: prev: {propagatedBuildInputs = prev.propagatedBuildInputs ++ [pkgs.adwaita-icon-theme pkgs.libsForQt5.breeze-icons];});
     iconTheme.name = "Tela-${telaMap.${accent}}";
     cursorTheme.package = pkgs.bibata-cursors;
     cursorTheme.name = "Bibata-Original-Ice";
