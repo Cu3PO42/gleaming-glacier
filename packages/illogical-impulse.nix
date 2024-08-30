@@ -46,8 +46,8 @@
   dots = fetchFromGitHub {
     owner = "Cu3PO42";
     repo = "end-4-dots-hyprland";
-    rev = "66284ac04bca5eadbd937db4ce2cda730c5ce6db";
-    hash = "sha256-GYhaAHF+32g90fFdumjZ8dpGu1plfGEF7LK24My3Xmw=";
+    rev = "02fbd4e395174e483d3bea5ef307f167cc9aa9a0";
+    hash = "sha256-85x57AafaKexeGg0quJ90ugwOxlGUwGFmKvr9Yq8y3U=";
   };
   # Note: the main 'interesting' folder is the .config one
   # At the top-level, there is a .local/bin folder with additional binaries

@@ -38,7 +38,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
       inputs.flake-compat.follows = "flake-compat";
-      inputs.flake-utils.follows = "flake-utils";
       inputs.rust-overlay.follows = "rust-overlay";
     };
 
@@ -46,8 +45,8 @@
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
       inputs.flake-compat.follows = "flake-compat";
+      inputs.flake-utils.follows = "flake-utils";
     };
 
     # The Window Manager I use + tooling
@@ -55,14 +54,22 @@
       url = "github:hyprwm/hyprlang";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
+      inputs.hyprutils.follows = "hyprutils";
+    };
+
+    hyprutils = {
+      url = "github:hyprwm/hyprutils";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
     };
 
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      url = "git+https://github.com/hyprwm/Hyprland?rev=ef33198e8f9fa874b3ad2e2775f8474af62d7fee&submodules=1";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprcursor.follows = "hyprcursor";
+      inputs.hyprutils.follows = "hyprutils";
     };
 
     hyprland-plugins = {
@@ -83,6 +90,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
+      inputs.hyprutils.follows = "hyprutils";
     };
 
     hyprlock = {
@@ -90,6 +98,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
+      inputs.hyprutils.follows = "hyprutils";
     };
 
     hyprfocus = {
@@ -126,7 +135,6 @@
       url = "github:Aylur/dotfiles";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
-      inputs.nix-darwin.follows = "nix-darwin";
       inputs.ags.follows = "ags";
       inputs.hyprland.follows = "hyprland";
       inputs.hyprland-plugins.follows = "hyprland-plugins";
@@ -208,7 +216,6 @@
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
     };
 
     astal = {
@@ -219,6 +226,7 @@
     matugen = {
       url = "github:InioX/matugen";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
     };
   };
 
