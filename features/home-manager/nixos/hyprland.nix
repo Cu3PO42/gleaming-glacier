@@ -111,7 +111,7 @@ in {
             };
             "f" = mkBind "Toggle Float" "togglefloating";
             "shift f" = mkBind "Toggle Fullscreen" "fullscreen";
-            "ctrl f" = mkBind "Toggle Fake Fullsrceen" "fakefullscreen";
+            "ctrl f" = mkBind "Toggle Fake Fullsrceen" "fullscreenstate,0 3";
             "shift m" = {
               name = "Move active window on workspace";
               submap.binds = genDirections "Move" "" mkBind {
@@ -161,8 +161,7 @@ in {
             };
             "shift p" = mkBind "Power Menu" "exec,wlogout-launcher-hyprland 1";
             "p" = mkBind "Pin on all workspaces" "pin,active";
-            "o" = mkBind "Workspace  overview (single monitor)" "overview:toggle";
-            "shift o" = mkBind "Workspace overview (all monitors)" "overview:toggle,all";
+            "o" = mkBind "Workspace  overview" "hyprexpo:expo,toggle";
             "shift s" = mkBind "Toggle Scratchpad Terminal" "togglespecialworkspace,terminal";
             "g" = {
               name = "Create Groups";
@@ -223,6 +222,7 @@ in {
     copper.desktopEnvironment.polkitAgent = mkIf cfg.defaultPolkitAgent.enable "pantheon";
 
     systemd.user.services.argyrodite.Install.WantedBy = ["hyprland-session.target"];
+    # FIXME: this setting should only be set if the unit is already otherwise present
     systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];
     systemd.user.services.illogical-impulse.Install.WantedBy = ["hyprland-session.target"];
 
