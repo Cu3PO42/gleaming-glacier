@@ -114,7 +114,7 @@ in rec {
   gtk = {
     theme.package = pkgs.catppuccin-gtk.override {inherit variant; accents = [accent];};
     # FIXME: find generic way to include gnome-themes-extra
-    theme.name = "Catppuccin-${Variant}-Standard-${Accent}-${Luminance}";
+    theme.name = "catppuccin-${variant}-${accent}-standard";
     documentFont = desktop.font;
     colorScheme = "prefer-${luminance}";
   };
