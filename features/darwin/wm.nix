@@ -80,7 +80,7 @@
     "sf-symbols"
   ];
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     copper.packages.sketchybar-app-font
     copper.packages.liga-sfmono-nerd-font
     font-awesome

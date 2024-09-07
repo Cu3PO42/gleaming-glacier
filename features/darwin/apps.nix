@@ -26,8 +26,7 @@
     "Microsoft Remote Desktop" = 1295203466;
   };
 
-  fonts.fontDir.enable = true;
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     fira-mono
     fira-code
     nerdfonts
