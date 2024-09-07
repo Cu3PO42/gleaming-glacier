@@ -64,7 +64,10 @@
     };
 
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?rev=ef33198e8f9fa874b3ad2e2775f8474af62d7fee&submodules=1";
+      type = "git";
+      url = "https://github.com/hyprwm/Hyprland";
+      submodules = true;
+      ref = "refs/tags/v0.41.2";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
@@ -73,7 +76,7 @@
     };
 
     hyprland-plugins = {
-      url = "github:hyprwm/Hyprland-plugins";
+      url = "github:hyprwm/Hyprland-plugins/v0.41.2";
       inputs.hyprland.follows = "hyprland";
       inputs.systems.follows = "systems-linux";
     };
@@ -117,7 +120,7 @@
     };
 
     hy3 = {
-      url = "github:outfoxxed/hy3";
+      url = "github:outfoxxed/hy3/hl0.41.2";
       inputs.hyprland.follows = "hyprland";
     };
 
@@ -139,7 +142,8 @@
       inputs.hyprland.follows = "hyprland";
       inputs.hyprland-plugins.follows = "hyprland-plugins";
       inputs.hyprland-hyprspace.follows = "hyprspace";
-      inputs.astal.follows = "astal";
+      # The upstream is no longer available, but also not needed by the flake.
+      inputs.astal.follows = "";
       inputs.matugen.follows = "matugen";
     };
 
@@ -215,11 +219,6 @@
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    astal = {
-      url = "github:Aylur/astal";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

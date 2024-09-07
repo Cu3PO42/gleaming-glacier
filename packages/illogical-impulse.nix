@@ -157,7 +157,6 @@
   runtimeDeps = with pkgs; [
     coreutils
     bash
-    inputs.hyprland.packages.default
     agsWrapped
     dart-sass
     swappy
