@@ -6,7 +6,7 @@
     diskEncryptionKey = "op://Private/Malachite Disk Encryption Key/password";
   };
 
-  main = {
+  main = {pkgs, ...}: {
     copper.features = [
       "base"
       "default-user"
@@ -50,6 +50,11 @@
     programs.virt-manager.enable = true;
 
     hardware.bluetooth.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      jetbrains.idea-community
+      jdk17
+    ];
 
     system.stateVersion = "24.05";
     nixpkgs.hostPlatform = "x86_64-linux";
