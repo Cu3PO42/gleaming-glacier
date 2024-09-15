@@ -63,6 +63,13 @@
       inputs.systems.follows = "systems-linux";
     };
 
+    xdg-desktop-portal-hyprland = {
+      url = "github:hyprwm/xdg-desktop-portal-hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems-linux";
+      inputs.hyprlang.follows = "hyprlang";
+    };
+
     hyprland = {
       type = "git";
       url = "https://github.com/hyprwm/Hyprland";
@@ -73,6 +80,7 @@
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprcursor.follows = "hyprcursor";
       inputs.hyprutils.follows = "hyprutils";
+      inputs.xdph.follows = "xdg-desktop-portal-hyprland";
     };
 
     hyprland-plugins = {

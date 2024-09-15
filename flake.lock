@@ -495,7 +495,9 @@
         "systems": [
           "systems-linux"
         ],
-        "xdph": "xdph"
+        "xdph": [
+          "xdg-desktop-portal-hyprland"
+        ]
       },
       "locked": {
         "lastModified": 1719317162,
@@ -546,22 +548,20 @@
     "hyprland-protocols": {
       "inputs": {
         "nixpkgs": [
-          "hyprland",
-          "xdph",
+          "xdg-desktop-portal-hyprland",
           "nixpkgs"
         ],
         "systems": [
-          "hyprland",
-          "xdph",
+          "xdg-desktop-portal-hyprland",
           "systems"
         ]
       },
       "locked": {
-        "lastModified": 1714869498,
-        "narHash": "sha256-vbLVOWvQqo4n1yvkg/Q70VTlPbMmTiCQfNTgcWDCfJM=",
+        "lastModified": 1721326555,
+        "narHash": "sha256-zCu4R0CSHEactW9JqYki26gy8h9f6rHmSwj4XJmlHgg=",
         "owner": "hyprwm",
         "repo": "hyprland-protocols",
-        "rev": "e06482e0e611130cd1929f75e8c1cf679e57d161",
+        "rev": "5a11232266bf1a1f5952d5b179c3f4b2facaaa84",
         "type": "github"
       },
       "original": {
@@ -1134,7 +1134,8 @@
         "rust-overlay": "rust-overlay",
         "systems": "systems",
         "systems-linux": "systems-linux",
-        "wezterm": "wezterm"
+        "wezterm": "wezterm",
+        "xdg-desktop-portal-hyprland": "xdg-desktop-portal-hyprland"
       }
     },
     "rust-overlay": {
@@ -1240,28 +1241,25 @@
         "type": "github"
       }
     },
-    "xdph": {
+    "xdg-desktop-portal-hyprland": {
       "inputs": {
         "hyprland-protocols": "hyprland-protocols",
         "hyprlang": [
-          "hyprland",
           "hyprlang"
         ],
         "nixpkgs": [
-          "hyprland",
           "nixpkgs"
         ],
         "systems": [
-          "hyprland",
-          "systems"
+          "systems-linux"
         ]
       },
       "locked": {
-        "lastModified": 1718619174,
-        "narHash": "sha256-FWW68AVYmB91ZDQnhLMBNCUUTCjb1ZpO2k2KIytHtkA=",
+        "lastModified": 1725228143,
+        "narHash": "sha256-kbSiPA5oXiz1+1eVoRslMi5wylHD6SDT8dS9eZAxXAM=",
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
-        "rev": "c7894aa54f9a7dbd16df5cd24d420c8af22d5623",
+        "rev": "11e15b437e7efc39e452f36e15a183225d6bfa39",
         "type": "github"
       },
       "original": {
