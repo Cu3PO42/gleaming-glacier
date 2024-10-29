@@ -174,7 +174,7 @@
     wlsunset
     pythonEnv
     gojq
-    gnome.gnome-system-monitor
+    gnome-system-monitor
     gnome-usage
     ddcutil
     gnused

@@ -35,7 +35,6 @@
 
   # Enable NixOS to run non-NixOS binaries with a custom dynamic linker.
   programs.nix-ld.enable = true;
-  programs.nix-ld.package = copper.inputs.nix-ld-rs;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

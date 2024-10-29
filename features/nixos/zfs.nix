@@ -84,8 +84,6 @@ in {
     ];
 
     boot.supportedFilesystems = ["zfs"];
-    # Since ZFS lives out of tree, we can't always run the latest kernel
-    boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
     copper.patches.fish = [{
       patch = pkgs.fetchpatch {

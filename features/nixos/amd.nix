@@ -4,8 +4,5 @@
   boot.kernelParams = [ "amdgpu.freesync_video=1" ];
 
   # Enable 3D acceleration
-  hardware.opengl = {
-    # Acceleration via Mesa
-    enable = true;
-  };
+  hardware.graphics.enable = true;
 }
