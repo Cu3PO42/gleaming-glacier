@@ -121,7 +121,7 @@ in rec {
 
   qt = {
     kvantum = {
-      package = pkgs.catppuccin-kvantum.override {variant = Variant;};
+      package = pkgs.catppuccin-kvantum.override {variant = variant;};
       name = "Catppuccin-${Variant}-Blue";
     };
 
