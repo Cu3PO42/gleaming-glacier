@@ -111,7 +111,7 @@ in {
             };
             "f" = mkBind "Toggle Float" "togglefloating";
             "shift f" = mkBind "Toggle Fullscreen" "fullscreen";
-            "ctrl f" = mkBind "Toggle Fake Fullsrceen" "fakefullscreen";
+            "ctrl f" = mkBind "Toggle Fake Fullsrceen" "fullscreenstate,-1,2";
             "shift m" = {
               name = "Move active window on workspace";
               submap.binds = genDirections "Move" "" mkBind {
