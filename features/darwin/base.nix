@@ -27,6 +27,8 @@
     '';
   };
 
+  nixpkgs.overlays = [ origin.config.flake.overlays.updates ];
+
   # Defines the version of Nix-Darwin at which point the config was created.
   # Since this is a host-specific value and must not be updated, it needs to be
   # included in the host configuration. This default was erroneously included

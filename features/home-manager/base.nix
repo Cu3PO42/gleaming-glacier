@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  origin,
   ...
 }: {
   imports = [
@@ -28,6 +29,8 @@
 
   # Nix Flakes and Home-Manager often need Git
   programs.git.enable = true;
+
+  nixpkgs.overlays = [ origin.config.flake.overlays.updates ];
 
   # Automatically start new services
   systemd.user.startServices = "sd-switch";

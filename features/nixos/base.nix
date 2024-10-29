@@ -20,6 +20,8 @@
       wheels;
   };
 
+  nixpkgs.overlays = [ origin.config.flake.overlays.updates ];
+
   # command-not-found relies on a programs.sqlite database that is only
   # available from channels, but not importing nixpkgs in a flake.
   # While it is possible to manually extract and supply this file, it is now
