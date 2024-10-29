@@ -15,7 +15,7 @@ in {
       settings = {
         # Allow Flakes. nix-command is required for the intuitive Flake CLI
         # interface. Repl-flake allows us to load Flakes in `nix repl`.
-        experimental-features = ["nix-command" "flakes" "repl-flake"];
+        experimental-features = ["nix-command" "flakes"];
 
         # This enables the use of binary caches so we need to build less.
         extra-substituters = [
