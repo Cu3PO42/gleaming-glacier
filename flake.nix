@@ -68,6 +68,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
+      inputs.hyprland-protocols.follows = "hyprland/hyprland-protocols";
     };
 
     hyprland = {
