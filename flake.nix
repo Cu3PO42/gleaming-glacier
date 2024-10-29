@@ -71,10 +71,7 @@
     };
 
     hyprland = {
-      type = "git";
-      url = "https://github.com/hyprwm/Hyprland";
-      submodules = true;
-      ref = "refs/tags/v0.41.2";
+      url = "github:hyprwm/Hyprland/v0.44.1";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
@@ -84,7 +81,7 @@
     };
 
     hyprland-plugins = {
-      url = "github:hyprwm/Hyprland-plugins/v0.41.2";
+      url = "github:hyprwm/Hyprland-plugins/v0.44.0";
       inputs.hyprland.follows = "hyprland";
       inputs.systems.follows = "systems-linux";
     };
@@ -125,10 +122,11 @@
     hyprspace = {
       url = "github:KZDKM/Hyprspace";
       inputs.hyprland.follows = "hyprland";
+      inputs.systems.follows = "systems-linux";
     };
 
     hy3 = {
-      url = "github:outfoxxed/hy3/hl0.41.2";
+      url = "github:outfoxxed/hy3/hl0.44.0";
       inputs.hyprland.follows = "hyprland";
     };
 
@@ -170,14 +168,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
       inputs.flake-parts.follows = "flake-parts";
-    };
-
-    # Loading of 'normal' binaries
-    nix-ld-rs = {
-      url = "github:nix-community/nix-ld-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.flake-compat.follows = "flake-compat";
     };
 
     # Provides a pre-built index database describing which binaries are
