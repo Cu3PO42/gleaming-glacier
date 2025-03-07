@@ -15,6 +15,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
       inputs.flake-utils.follows = "flake-utils";
+      inputs.nix-filter.follows = "nix-filter";
     };
 
     agenix = {
@@ -36,6 +37,7 @@
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.pre-commit-hooks-nix.follows = "pre-commit-hooks";
       inputs.flake-parts.follows = "flake-parts";
       inputs.flake-compat.follows = "flake-compat";
       inputs.rust-overlay.follows = "rust-overlay";
@@ -46,7 +48,6 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
-      inputs.flake-utils.follows = "flake-utils";
     };
 
     # The Window Manager I use + tooling
@@ -69,12 +70,15 @@
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprland-protocols.follows = "hyprland/hyprland-protocols";
+      inputs.hyprutils.follows = "hyprutils";
+      inputs.hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
     };
 
     hyprland = {
-      url = "github:hyprwm/Hyprland/v0.44.1";
+      url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems-linux";
+      inputs.pre-commit-hooks.follows = "pre-commit-hooks";
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprcursor.follows = "hyprcursor";
       inputs.hyprutils.follows = "hyprutils";
@@ -100,6 +104,8 @@
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprutils.follows = "hyprutils";
+      inputs.hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
+      inputs.hyprland-protocols.follows = "hyprland/hyprland-protocols";
     };
 
     hyprlock = {
@@ -108,11 +114,14 @@
       inputs.systems.follows = "systems-linux";
       inputs.hyprlang.follows = "hyprlang";
       inputs.hyprutils.follows = "hyprutils";
+      inputs.hyprgraphics.follows = "hyprland/hyprgraphics";
+      inputs.hyprwayland-scanner.follows = "hyprland/hyprwayland-scanner";
     };
 
     hyprfocus = {
       url = "github:pyt0xic/hyprfocus";
       inputs.hyprland.follows = "hyprland";
+      inputs.nix-filter.follows = "nix-filter";
     };
 
     hypr-contrib = {
@@ -127,7 +136,7 @@
     };
 
     hy3 = {
-      url = "github:outfoxxed/hy3/hl0.44.0";
+      url = "github:outfoxxed/hy3";
       inputs.hyprland.follows = "hyprland";
     };
 
@@ -188,7 +197,6 @@
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
       inputs.nix-darwin.follows = "nix-darwin";
     };
 
@@ -219,6 +227,16 @@
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-compat.follows = "flake-compat";
+    };
+
+    nix-filter = {
+      url = "github:numtide/nix-filter";
     };
 
     matugen = {
