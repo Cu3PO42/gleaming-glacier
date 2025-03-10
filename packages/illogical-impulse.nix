@@ -33,6 +33,7 @@
       mv OneUI-dark $out/share/icons
       mv OneUI-light $out/share/icons
     '';
+    dontCheckForBrokenSymlinks = true;
   };
 
   extraFonts = google-fonts.override {
