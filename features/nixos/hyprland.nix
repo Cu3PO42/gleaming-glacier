@@ -2,6 +2,7 @@
   config,
   origin,
   pkgs,
+  lib,
   copper,
   ...
 }: {
@@ -21,9 +22,7 @@
 
   services.blueman.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    nerdfonts
-  ];
+  environment.systemPackages = builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
   # Required to allow swaylock/hyprlock to unlock.
   security.pam.services.swaylock = {};

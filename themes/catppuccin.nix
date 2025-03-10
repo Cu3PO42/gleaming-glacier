@@ -108,7 +108,7 @@ in rec {
     font.package = pkgs.cantarell-fonts;
     monospaceFont.name = "CaskaydiaCove Nerd Font Mono";
     monospaceFont.size = 9;
-    monospaceFont.package = pkgs.nerdfonts;
+    monospaceFont.package = pkgs.nerd-fonts.caskaydia-cove;
   };
 
   gtk = {

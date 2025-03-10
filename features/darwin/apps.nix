@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, lib, ...}: {
   homebrew.enable = true;
   homebrew.casks = [
     "1password"
@@ -29,8 +29,7 @@
   fonts.packages = with pkgs; [
     fira-mono
     fira-code
-    nerdfonts
     victor-mono
     ibm-plex
-  ];
+  ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 }

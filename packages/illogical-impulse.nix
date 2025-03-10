@@ -148,7 +148,8 @@
   sharePaths = with pkgs; [
     jetbrains-mono
     material-symbols
-    nerdfonts
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.space-mono
     rubik
     bibata-cursors
     extraFonts
