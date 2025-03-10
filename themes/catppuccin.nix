@@ -14,6 +14,29 @@
 }: let
   capitalize = str: "${pkgs.lib.toUpper (builtins.substring 0 1 str)}${builtins.substring 1 (builtins.stringLength str) str}";
 
+  addPropagatedBuildInputs = drv: inputs: pkgs.stdenvNoCC.mkDerivation {
+    inherit (drv) name meta;
+    extraBuildInputs = inputs;
+    phases = ["installPhase"];
+    installPhase = ''
+      mkdir -p $out
+      ln -s ${drv}/* $out/
+      if [ -d ${drv}/nix-support ]; then
+        rm $out/nix-support
+        mkdir $out/nix-support
+        ln -s ${drv}/nix-support/* $out/nix-support
+      fi
+      if [ -f ${drv}/nix-support/propagated-build-inputs ]; then
+        rm $out/nix-support/propagated-build-inputs
+        cp ${drv}/nix-support/propagated-build-inputs $out/nix-support/propagated-build-inputs
+        chmod +w $out/nix-support/propagated-build-inputs
+      else
+        touch $out/nix-support/propagated-build-inputs
+      fi
+      echo "$extraBuildInputs" >> $out/nix-support/propagated-build-inputs
+    '';
+  };
+
   telaMap = {
     "blue" = "blue";
     "flamingo" = "pink";
@@ -98,7 +121,7 @@ in rec {
 
   desktop = {
     # Note: this propagatedInputs override should be upstreamed to nixpkgs
-    iconTheme.package = pkgs.tela-icon-theme.overrideAttrs (final: prev: {propagatedBuildInputs = prev.propagatedBuildInputs ++ [pkgs.adwaita-icon-theme pkgs.libsForQt5.breeze-icons];});
+    iconTheme.package = addPropagatedBuildInputs pkgs.tela-icon-theme [pkgs.adwaita-icon-theme pkgs.libsForQt5.breeze-icons];
     iconTheme.name = "Tela-${telaMap.${accent}}";
     cursorTheme.package = pkgs.bibata-cursors;
     cursorTheme.name = "Bibata-Original-Ice";
