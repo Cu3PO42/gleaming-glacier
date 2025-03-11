@@ -6,10 +6,6 @@
   copper,
   ...
 }: {
-  imports = [
-    origin.inputs.hyprland.nixosModules.default
-  ];
-
   copper.feature.desktop.enable = true;
 
   programs.hyprland = {

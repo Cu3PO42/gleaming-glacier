@@ -19,11 +19,9 @@ in {
     copper.file.config = lib.genAttrs ["hypr/animations.conf" "hypr/entry.conf" "hypr/keybindings.conf" "hypr/nvidia.conf" "hypr/windowrules.conf" "hypr/1password.conf"] (n: "config/${n}");
     wayland.windowManager.hyprland = {
       enable = true;
-      # TODO: this also installs a hyprland package, how does this conflict with the global install
-      package = copper.inputs.hyprland;
-      plugins = [
-        copper.inputs.hy3
-        copper.inputs.hyprland-plugins.hyprexpo
+      plugins = with pkgs.hyprlandPlugins; [
+        hy3
+        hyprexpo
       ];
       systemd.enable = true;
       # Needed so that waybar, etc. have a complete environment

@@ -6,6 +6,7 @@
   gnused,
   systemd,
   procps,
+  hyprland,
   lib,
   inputs,
   ...
@@ -17,7 +18,7 @@ pkgs.writeShellApplication {
     dconf
     gawk
     gnused
-    inputs.hyprland.packages.default
+    hyprland
     systemd
     procps
   ];

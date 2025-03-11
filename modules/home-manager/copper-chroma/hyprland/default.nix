@@ -78,7 +78,7 @@ in {
             translate = theme: pkgs.stdenv.mkDerivation {
               pname = "${cursor.package.pname}-hyprcursor-${theme}";
               inherit (cursor.package) version;
-              nativeBuildInputs = [copper.inputs.hyprcursor pkgs.xcur2png];
+              nativeBuildInputs = [pkgs.hyprcursor pkgs.xcur2png];
 
               src = cursor.package;
               dontUnpack = true;

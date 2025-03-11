@@ -15,7 +15,6 @@ in {
 
     programs.hyprlock = {
       enable = true;
-      package = copper.inputs.hyprlock;
 
       # This configuration is derived from the config at
       # https://github.com/TheRiceCold/dots/blob/main/home/wolly/kaizen/desktop/wayland/hyprland/ecosystem/hyprlock/default.nix
@@ -106,7 +105,6 @@ in {
 
     services.hypridle = {
       enable = true;
-      package = copper.inputs.hypridle;
       settings = {
         general = {
           # From Hyprland Wiki: to avoid having to press two keys to turn the display on.

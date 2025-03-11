@@ -7,6 +7,7 @@
   dunst,
   dconf,
   cliphist,
+  hyprland,
   self,
   inputs,
   lib,
@@ -18,7 +19,7 @@ symlinkJoin {
     writeShellApplication {
       name = f;
       runtimeInputs = [
-        inputs.hyprland.packages.default
+        hyprland
         gnused
         gawk
         rofi-wayland
