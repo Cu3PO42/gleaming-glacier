@@ -104,8 +104,8 @@ in {
 
     system.activationScripts.postActivation.text =
       optionalString cfg.useWrapper ''
-        mkdir -p $(dirname "${cfg.wrapperPath}")
-        cp ${mkWrapper cfg.users}/bin/shell-wrapper "${cfg.wrapperPath}"
+        mkdir -p "$(dirname "${cfg.wrapperPath}")"
+        cp "${mkWrapper cfg.users}/bin/shell-wrapper" "${cfg.wrapperPath}"
         chown root:wheel "${cfg.wrapperPath}"
         chmod 0755 "${cfg.wrapperPath}"
       ''

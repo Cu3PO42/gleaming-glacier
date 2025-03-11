@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  origin,
   ...
 }: {
   imports = [
@@ -9,10 +10,8 @@
 
   copper.feature.known-hashes.enable = lib.mkDefault true;
 
-  # Auto-update Nix
-  services.nix-daemon.enable = true;
-
   nix = {
+    enable = true;
     # Configure Nix in accordance with what the Determinate Systems installer sets
     settings = {
       # Setting this to true causes various build issues due to links.
