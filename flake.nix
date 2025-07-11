@@ -22,6 +22,7 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+      inputs.darwin.follows = "nix-darwin";
       inputs.systems.follows = "systems";
     };
 
@@ -87,8 +88,6 @@
     # Install Homebrew via Nix
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-darwin.follows = "nix-darwin";
     };
 
     # To create re-usable Flake logic
