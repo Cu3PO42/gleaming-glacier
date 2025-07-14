@@ -6,7 +6,7 @@
 }: let
   hasFish = config.programs.fish.enable;
 in {
-  home.packages = [pkgs.github-copilot-cli];
+  home.packages = [pkgs.gh-copilot];
 
   programs.fish.shellAliases.",," = "__copilot_what-the-shell";
   programs.fish.plugins = with pkgs.fishPlugins; [
