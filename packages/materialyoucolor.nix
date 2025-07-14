@@ -12,7 +12,8 @@
     hash = "sha256-J35//h3tWn20f5ej6OXaw4NKnxung9q7m0E4Zf9PUw4=";
   };
 
-  build-system = with python3Packages; [build installer wheel];
+  build-system = with python3Packages; [setuptools];
+  pyproject = true;
   # Tests are currently broken.
   doCheck = false;
 
