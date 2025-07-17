@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env -S bun
 
 import { readFileSync } from "fs";
 
