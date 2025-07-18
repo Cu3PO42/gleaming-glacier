@@ -6,13 +6,12 @@
 
   config = lib.mkIf config.services.autokbisw.enable {
     launchd.user.agents.autokbisw = {
-      program = "${pkgs.autokbisw}/bin/autokbisw";
       serviceConfig = {
+        ProgramArguments = [ "${pkgs.autokbisw}/bin/autokbisw" ];
         KeepAlive = true;
-        RunAtLoad = true;
-        StandardOutPath = "/var/log/autokbisw.log";
-        StandardErrorPath = "/var/log/autokbisw.log";
+        ProcessType = "Interactive";
       };
+      managedBy = "services.autokbisw.enable";
     };
   };
 }
