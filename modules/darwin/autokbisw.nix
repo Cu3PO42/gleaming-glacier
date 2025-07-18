@@ -5,7 +5,7 @@
   };
 
   config = lib.mkIf config.services.autokbisw.enable {
-    launchd.daemons.autokbisw = {
+    launchd.user.agents.autokbisw = {
       program = "${pkgs.autokbisw}/bin/autokbisw";
       serviceConfig = {
         KeepAlive = true;
