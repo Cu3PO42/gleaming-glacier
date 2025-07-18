@@ -9,6 +9,8 @@
   homebrew.casks = [
     "karabiner-elements"
   ];
+  # Allows switching between QWERTZ for my Moonlander and Neo for everything else
+  services.autokbisw.enable = true;
 
   # Ideally, we'd like to enable the keyboard layouts Neo2 and Unicode Hex Input
   # Also, we want to enable the hotkeys for switching layouts. This can be done
