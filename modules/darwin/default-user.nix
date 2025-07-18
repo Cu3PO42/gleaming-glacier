@@ -13,6 +13,6 @@ with lib; {
   };
 
   config = {
-    system.primaryUser = mkDefault config.defaultUser;
+    system.primaryUser = lib.trace "setting primaryUser" config.defaultUser;
   };
 }
