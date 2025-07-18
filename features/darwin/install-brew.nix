@@ -16,7 +16,7 @@
 
   # Workaround for nix-homebrew#3
   # TODO: remove once the issue above is fixed
-  system.activationScripts.extraUserActivation.text = lib.mkOrder 1501 (lib.concatStringsSep "\n" (lib.mapAttrsToList (prefix: d:
+  system.activationScripts.setup-homebrew.text = lib.mkOrder 1501 (lib.concatStringsSep "\n" (lib.mapAttrsToList (prefix: d:
     if d.enable
     then ''
       sudo chown -R ${config.nix-homebrew.user} ${prefix}/bin
