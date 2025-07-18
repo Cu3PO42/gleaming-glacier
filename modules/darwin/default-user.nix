@@ -1,4 +1,4 @@
-{lib, ...}:
+{lib, config, ...}:
 with lib; {
   options = {
     defaultUser = mkOption {
@@ -10,5 +10,9 @@ with lib; {
         The user must exist and is not automatically created.
       '';
     };
+  };
+
+  config = {
+    system.primaryUser = mkDefault config.defaultUser;
   };
 }
