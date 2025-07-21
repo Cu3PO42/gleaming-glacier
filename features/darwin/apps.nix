@@ -14,6 +14,7 @@
     "utm"
     "visual-studio-code"
     "wezterm"
+    "zen"
   ];
   homebrew.taps = [
     "1password/tap"
