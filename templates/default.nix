@@ -12,6 +12,10 @@
       dotfiles, you will still need to create your own configuration files for
       each system that you want to manage. Please see the accompanying
       README for more instructions.
+
+      TODO: make sure this is accurate
+      Please make sure to adjust the namespace in flake.nix. You may use the
+      ./welcome.sh script to do so.
     '';
   };
 }

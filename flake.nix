@@ -132,7 +132,7 @@
 
   outputs = inputs: let
     lib = import ./lib inputs;
-  in lib.mkGleamingFlake inputs ./. "copper" (flakeModules: {
+  in lib.mkGleamingFlake inputs ./. "copper" (flakeModules: {config, inputs, ...}: {
     imports = [
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
@@ -146,6 +146,10 @@
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
+
+        docs = pkgs.mkShell {
+          nativeBuildInputs = [pkgs.nodejs];
+        };
       };
     };
   });

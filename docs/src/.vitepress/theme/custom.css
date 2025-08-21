@@ -1,0 +1,9 @@
+.gleaming-text {
+    background-clip: text;
+    text-fill-color: transparent;
+    background-image: linear-gradient(90deg, rgb(90,51,104), rgb(215, 80, 124));
+}
+:root {
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: linear-gradient(120deg, rgb(19,134,194)/*rgb(90,51,104)*/, rgb(215, 80, 124));
+}

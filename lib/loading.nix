@@ -161,7 +161,8 @@ in rec {
             home.username = lib.mkDefault username;
           })
         ]
-        ++ user.modules or [];
+        ++ (if user ? main then [user.main] else [])
+        ++ (if user ? modules then nixpkgs.lib.warn user.modules "The modules property for home configurations is deprecated. Please use 'main' instead which accepts a single module." else []);
     in
       home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${user.system};
