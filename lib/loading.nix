@@ -162,7 +162,7 @@ in rec {
           })
         ]
         ++ (if user ? main then [user.main] else [])
-        ++ (if user ? modules then nixpkgs.lib.warn user.modules "The modules property for home configurations is deprecated. Please use 'main' instead which accepts a single module." else []);
+        ++ (if user ? modules then nixpkgs.lib.warn "The modules property for home configurations is deprecated. Please use 'main' instead which accepts a single module." user.modules else []);
     in
       home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${user.system};
