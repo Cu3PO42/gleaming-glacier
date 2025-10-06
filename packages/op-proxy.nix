@@ -1,6 +1,6 @@
 {
   pkgs,
-  _1password,
+  _1password-cli,
   lib,
   ...
 }: (pkgs.writeShellScriptBin "op" ''
@@ -17,7 +17,7 @@
     exec op "$@"
   fi
 
-  exec ${_1password}/bin/op "$@"
+  exec ${_1password-cli}/bin/op "$@"
 '') // {
   meta = with lib; {
     description = "Forward 1Password CLI commands to the best available implementation.";
