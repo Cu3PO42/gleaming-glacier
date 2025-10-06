@@ -18,7 +18,7 @@
     };
   };
 
-  patchedPath = copper.legacyPackages.replace-dependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
+  patchedPath = pkgs.replaceDependencies { drv = path; replacements = cfg.replaceRuntimeDependencies; };
 in {
   options = {
     home.replaceRuntimeDependencies = mkOption {
