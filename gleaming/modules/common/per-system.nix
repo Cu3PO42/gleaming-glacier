@@ -21,7 +21,7 @@ in {
       system = pkgs.stdenv.hostPlatform.system or pkgs.system;
       perSystem = origin.getSystemIgnoreWarning (system);
       # This is included via flake-parts' withSystem
-      perSystemWithOurPkgs = sys.allModuleArgs.extendModules ({
+      perSystemWithOurPkgs = (perSystem.allModuleArgs.extendModules {
         modules = [{
           _module.args.pkgs = lib.mkForce pkgs;
         }];
