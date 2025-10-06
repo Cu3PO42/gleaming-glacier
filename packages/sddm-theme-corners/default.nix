@@ -39,5 +39,6 @@ stdenvNoCC.mkDerivation {
     homepage = "https://github.com/aczw/sddm-theme-corners";
     maintainers = ["Cu3PO42"];
     license = licenses.gpl3Only;
+    broken = true;
   };
 }
