@@ -1,6 +1,6 @@
 {
   system = "x86_64-linux";
-  modules = [({pkgs, ...}: {
+  main = {pkgs, ...}: {
     copper.features = [
       "cli"
       "fish"
@@ -41,5 +41,5 @@
     };
 
     home.stateVersion = "24.05";
-  })];
+  };
 }
