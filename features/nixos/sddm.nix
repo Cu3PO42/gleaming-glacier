@@ -4,6 +4,7 @@
     wayland.enable = true;
 
     theme = "catppuccin-sddm-corners";
+    extraPackages = [pkgs.qt6.qt5compat];
 
     # This is a fix for a huge onscreen keyboard appearing and hiding everything.
     settings.General.InputMethod = "";
