@@ -13,7 +13,7 @@
 
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
     terminal = "${pkgs.kitty}/bin/kitty";
     font = "JetBrainsMono Nerd Font 10";
     # FIXME: by default location, xoffset, yoffset are set; we probably don't want these set here

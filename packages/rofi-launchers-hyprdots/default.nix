@@ -3,7 +3,7 @@
   writeShellApplication,
   gnused,
   gawk,
-  rofi-wayland,
+  rofi,
   dunst,
   dconf,
   cliphist,
@@ -22,7 +22,7 @@ symlinkJoin {
         hyprland
         gnused
         gawk
-        rofi-wayland
+        rofi
         dunst
         dconf
         cliphist

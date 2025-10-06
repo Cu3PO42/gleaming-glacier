@@ -7,7 +7,7 @@
     enable = true;
     settings = {
       global = {
-        dmenu = "${pkgs.rofi-wayland}/bin/rofi -dmenu -p dunst";
+        dmenu = "${pkgs.rofi}/bin/rofi -dmenu -p dunst";
         browser = "${pkgs.xdg-utils}/bin/xdg-open";
       };
 
