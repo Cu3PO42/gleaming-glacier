@@ -415,7 +415,7 @@ in {
         }) theme.${prog}.file) (filter (prog: cfg.${prog}.enable) (attrNames cfg.programs))))
       cfg.themes);
     
-    warnings = optional (pkgs.stdenv.hostPlatform.isLinux && (config.systemd.user.startServices != "sd-switch")) ''
+    warnings = optional (pkgs.stdenv.hostPlatform.isLinux && !config.systemd.user.startServices) ''
       You are not using sd-switch to manage your user services. If your active
       Chroma theme changes, these might not apply until the next switch.
     '';
