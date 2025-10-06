@@ -4,7 +4,11 @@
   copper,
   ...
 }: {
-  programs.ssh.enable = true;
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks."*" = {};
+  };
 
   programs.tmux = {
     enable = true;
