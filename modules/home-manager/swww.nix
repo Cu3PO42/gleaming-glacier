@@ -34,13 +34,8 @@ in {
       };
 
       Service = {
-        # We must use this more complicated setup compared to spawning
-        # swww-daemon directly, because initialization doesn't happen
-        # otherwise.
-        Type = "forking";
         Environment = "PATH=${cfg.package}/bin";
-        ExecStart = "${cfg.package}/bin/swww init";
-        ExecStop = "${cfg.package}/bin/swww kill";
+        ExecStart = "${cfg.package}/bin/swww-daemon";
       };
 
       Install.WantedBy = mkIf (cfg.systemd.installTarget != null) [cfg.systemd.installTarget];
