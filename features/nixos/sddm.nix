@@ -1,7 +1,10 @@
 {config, lib, copper, pkgs, ...}: {
   services.displayManager.sddm = {
     enable = true;
-    theme = "corners";
+    wayland.enable = true;
+
+    theme = "catppuccin-sddm-corners";
+
     # This is a fix for a huge onscreen keyboard appearing and hiding everything.
     settings.General.InputMethod = "";
 
@@ -23,6 +26,6 @@
   };
 
   environment.systemPackages = [
-    copper.packages.sddm-theme-corners
+    pkgs.catppuccin-sddm-corners
   ];
 }
