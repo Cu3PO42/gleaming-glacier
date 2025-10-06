@@ -1,0 +1,129 @@
+From 912ab4282cd8afdc7b54d8b279d20549161caaf4 Mon Sep 17 00:00:00 2001
+From: Cu3PO42 <cu3po42@gmail.com>
+Date: Mon, 6 Oct 2025 13:54:20 +0200
+Subject: [PATCH] chore: upgrade to Qt6
+
+---
+ corners/Main.qml                      | 6 +++---
+ corners/components/DateTimePanel.qml  | 4 ++--
+ corners/components/LoginPanel.qml     | 6 +++---
+ corners/components/PasswordPanel.qml  | 4 ++--
+ corners/components/PowerPanel.qml     | 6 +++---
+ corners/components/SessionPanel.qml   | 6 +++---
+ corners/components/UserFieldPanel.qml | 6 +++---
+ corners/components/UserPanel.qml      | 8 ++++----
+ 8 files changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/corners/Main.qml b/corners/Main.qml
+index cb7b43b..9531c90 100644
+--- a/corners/Main.qml
++++ b/corners/Main.qml
+@@ -1,6 +1,6 @@
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
+-import QtQuick.Window 2.15
++import QtQuick
++import QtQuick.Controls
++import QtQuick.Window
+ 
+ import "./components"
+ 
+diff --git a/corners/components/DateTimePanel.qml b/corners/components/DateTimePanel.qml
+index 3f0e647..52bfce8 100644
+--- a/corners/components/DateTimePanel.qml
++++ b/corners/components/DateTimePanel.qml
+@@ -1,5 +1,5 @@
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import QtQuick
++import QtQuick.Controls
+ 
+ Column {
+     spacing: config.DateTimeSpacing
+diff --git a/corners/components/LoginPanel.qml b/corners/components/LoginPanel.qml
+index 2786fbc..7a9fc37 100644
+--- a/corners/components/LoginPanel.qml
++++ b/corners/components/LoginPanel.qml
+@@ -1,6 +1,6 @@
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
+-import QtQuick.Window 2.15
++import QtQuick
++import QtQuick.Controls
++import QtQuick.Window
+ 
+ Item {
+     property string user: userPanel.username
+diff --git a/corners/components/PasswordPanel.qml b/corners/components/PasswordPanel.qml
+index a9d27a6..4258678 100644
+--- a/corners/components/PasswordPanel.qml
++++ b/corners/components/PasswordPanel.qml
+@@ -1,5 +1,5 @@
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import QtQuick
++import QtQuick.Controls
+ 
+ TextField {
+     id: passwordField
+diff --git a/corners/components/PowerPanel.qml b/corners/components/PowerPanel.qml
+index 58395df..be65fb7 100644
+--- a/corners/components/PowerPanel.qml
++++ b/corners/components/PowerPanel.qml
+@@ -1,6 +1,6 @@
+-import QtGraphicalEffects 1.15
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import Qt5Compat.GraphicalEffects
++import QtQuick
++import QtQuick.Controls
+ 
+ Item {
+     implicitHeight: powerButton.height
+diff --git a/corners/components/SessionPanel.qml b/corners/components/SessionPanel.qml
+index 16bae45..0273b90 100644
+--- a/corners/components/SessionPanel.qml
++++ b/corners/components/SessionPanel.qml
+@@ -1,6 +1,6 @@
+-import QtQml.Models 2.15
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import QtQml.Models
++import QtQuick
++import QtQuick.Controls
+ 
+ Item {
+     property int session: sessionList.currentIndex
+diff --git a/corners/components/UserFieldPanel.qml b/corners/components/UserFieldPanel.qml
+index 4b5c580..e933a9c 100644
+--- a/corners/components/UserFieldPanel.qml
++++ b/corners/components/UserFieldPanel.qml
+@@ -1,6 +1,6 @@
+-import QtGraphicalEffects 1.12
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import Qt5Compat.GraphicalEffects
++import QtQuick
++import QtQuick.Controls
+ 
+ TextField {
+     id: usernameField
+diff --git a/corners/components/UserPanel.qml b/corners/components/UserPanel.qml
+index 8db378e..445b84b 100644
+--- a/corners/components/UserPanel.qml
++++ b/corners/components/UserPanel.qml
+@@ -1,7 +1,7 @@
+-import QtGraphicalEffects 1.12
+-import QtQml.Models 2.15
+-import QtQuick 2.15
+-import QtQuick.Controls 2.15
++import Qt5Compat.GraphicalEffects
++import QtQml.Models
++import QtQuick
++import QtQuick.Controls
+ 
+ Column {
+     property var username: usernameField.text
+-- 
+2.49.0
+

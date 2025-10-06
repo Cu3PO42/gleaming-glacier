@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  libsForQt5,
+  qt6,
   fetchFromGitHub,
   lib,
   ...
@@ -10,23 +10,28 @@ stdenvNoCC.mkDerivation {
   src = fetchFromGitHub {
     owner = "aczw";
     repo = "sddm-theme-corners";
-    rev = "a76d4517f163bbc7787f51ab074a0357bbf5e527";
-    hash = "sha256-nqQdEdGDc8CHc8m5IypqvYSb4jPen8sH+tr0mMsz9ls=";
+    rev = "6ff0ff455261badcae36cd7d151a34479f157a3c";
+    hash = "sha256-CPK3kbc8lroPU8MAeNP8JSStzDCKCvAHhj6yQ1fWKkY=";
   };
+  patches = [ ./0001-chore-upgrade-to-Qt6.patch ];
 
-  nativeBuildInputs = [libsForQt5.qt5.wrapQtAppsHook];
-
-  buildInputs = [
-    libsForQt5.qt5.qtquickcontrols
-    libsForQt5.qt5.qtquickcontrols2
-    libsForQt5.qt5.qtgraphicaleffects
-    libsForQt5.qt5.qtsvg
+  propagatedUserEnvPkgs = with qt6; [
+    qtwayland
+    qtquick3d
+    qt5compat
+    qtsvg
   ];
 
+  dontConfigure = true;
   dontBuild = true;
+  dontWrapQtApps = true;
   installPhase = ''
+    runHook preInstall
+
     mkdir -p $out/share/sddm/themes
     mv ./corners $out/share/sddm/themes
+    
+    runHook postInstall
   '';
 
   meta = with lib; {
