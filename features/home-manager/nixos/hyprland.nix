@@ -224,21 +224,6 @@ in {
     systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];
     systemd.user.services.illogical-impulse.Install.WantedBy = ["hyprland-session.target"];
 
-    systemd.user.services.hyprdots-batterynotify = {
-      Unit = {
-        Description = "Battery notification from hyprdots";
-        Documentation = "https://github.com/prasanthrangan/hyprdots";
-        After = ["graphical-session-pre.target"];
-        PartOf = ["graphical-session.target"];
-      };
-
-      Service = {
-        ExecStart = "${copper.packages.misc-scripts-hyprdots}/bin/batterynotify.sh";
-        Restart = "always";
-      };
-
-      Install.WantedBy = ["hyprland-session.target"];
-    };
     copper.chroma.systemdTarget = "hyprland-session.target";
 
     services.network-manager-applet.enable = true;
