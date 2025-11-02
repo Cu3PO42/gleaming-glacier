@@ -221,7 +221,6 @@ in {
 
     systemd.user.services.argyrodite.Install.WantedBy = ["hyprland-session.target"];
     # FIXME: this setting should only be set if the unit is already otherwise present
-    systemd.user.services.asztal.Install.WantedBy = ["hyprland-session.target"];
     systemd.user.services.illogical-impulse.Install.WantedBy = ["hyprland-session.target"];
 
     copper.chroma.systemdTarget = "hyprland-session.target";

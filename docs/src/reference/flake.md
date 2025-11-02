@@ -33,7 +33,6 @@ For convenience (and legacy reasons), there is also an option `copper.features` 
 
 * `_1password`: installs the 1Password GUI and CLI
 * `amd`: support for (modern) AMD GPUs
-* `asztal-greeter`: a greeter based on greetd using AGS as the frontend; be aware it is limited in the features it supports
 * `base`: this mostly sets up Nix settings and installs some basic packages I want on every system
 * `default-user`: sets up my user with my keys and default settings
 * `hetzner-server`: system-specific settings generic to all Hetzner Cloud servers
@@ -84,7 +83,6 @@ For convenience (and legacy reasons), there is also an option `copper.features` 
 * `darwin/wm`: configures Yabai, Sketchybar, and skhd
 * `nixos/_1password`: configures SSH and Git commit signing via 1Password
 * `nixos/argyrodite`: my very own AGS config
-* `nixos/asztal`: enables Aylur's AGS config
 * `nixos/dunst`: sets up Dunst as a notification daemon
 * `nixos/hyprland`: configures Hyprland to my liking, including multi-modal keybindings
 * `nixos/hyprlock`: configues Hypridle and Hyprlock
