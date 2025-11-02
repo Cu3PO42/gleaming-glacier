@@ -17,7 +17,7 @@
     };
 
     copper.swim.wallpaperActivationCommands = ''
-      ${copper.packages.illogical-impulse-qs}/share/ii/scripts/colors/switchwall.sh "$WALLPAPER"
+      ${copper.packages.illogical-impulse-qs}/share/ii/scripts/colors/switchwall.sh "$(realpath "$WALLPAPER")"
     '';
 
     copper.desktopEnvironment = {

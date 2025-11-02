@@ -89,7 +89,7 @@ in stdenv.mkDerivation {
       --set ILLOGICAL_IMPULSE_VIRTUAL_ENV ${pythonEnv.fakeVenv} \
       --set MATUGEN_DIR $out/share/matugen \
       --set II_SCRIPT_DIR $out/share/ii/scripts \
-      --prefix PATH : $out/bin/support:${lib.makeBinPath runtimeDependencies}
+      --prefix PATH : $out/bin/support:${lib.makeBinPath runtimeDependencies} \
     '';
   in ''
     mkdir -p $out/share/ii
@@ -109,6 +109,9 @@ in stdenv.mkDerivation {
     makeWrapper ${quickshell}/bin/qs $out/bin/ii \
       ${wrapperArgs} \
       --add-flags "-p $out/share/ii"
+
+    wrapProgram $out/share/ii/scripts/colors/switchwall.sh \
+      ${wrapperArgs}
   '';
 
   meta = with lib; {
