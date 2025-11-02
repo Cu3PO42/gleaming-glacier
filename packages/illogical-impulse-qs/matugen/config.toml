@@ -1,0 +1,9 @@
+[config]
+version_check = false
+[templates.m3colors]
+input_path = 'II_SHARE_DIR/matugen/colors.json'
+output_path = '~/.local/state/quickshell/user/generated/colors.json'
+
+[templates.wallpaper]
+input_path = 'II_SHARE_DIR/matugen/wallpaper.txt'
+output_path = '~/.local/state/quickshell/user/generated/wallpaper/path.txt'
