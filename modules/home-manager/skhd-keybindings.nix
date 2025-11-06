@@ -74,10 +74,19 @@ in {
   config = mkIf cfg.enable {
     xdg.configFile."skhd/skhdrc".text = skhdrc;
 
+    launchd.agents.maestro-keybind-helper = {
+      enable = true;
+      config = {
+        Program = "${copper.packages.mac-keybind-helper}/bin/keybind-helper-daemon";
+        RunAtLoad = true;
+      };
+    };
+
     programs.maestro = mkIf cfg.maestroIntegration {
       enable = true;
       cancelKeymapCommand = "/run/current-system/sw/bin/skhd -k \"${exitKey}\"";
-      helpCommand = "exec ${copper.packages.mac-wm-helpers}/bin/show-keybind-helper ${pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.keybinds.binds)} \"$KEYMAP\"";
+      helpCommand = "exec ${copper.packages.mac-keybind-helper}/bin/keybind-helper-client show \"$KEYMAP\" ${pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.keybinds.binds)}";
+      cancelHelpCommand = "exec ${copper.packages.mac-keybind-helper}/bin/keybind-helper-client hide";
       keymapTimeout = cfg.keybinds.submapSettings.timeout;
       helpTimeout = cfg.keybinds.submapSettings.helpTimeout;
     };

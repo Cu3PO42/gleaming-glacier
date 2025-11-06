@@ -21,6 +21,10 @@ This is the Mac-equivalent of the well-known `ifstat` on Linux.
 
 A command line tool to read from the local calendar on your Mac.
 
+### mac-keybind-helper
+
+A SwiftUI application for visualizing keybinds used by [Maestro](/features/mage), a `which-key.nvim` inspired way of organizing keybinds.
+
 ### mac-shell-wrapper
 
 A tiny stub that is intended to be set as a user's login shell and `exec`s the real shell.
@@ -36,7 +40,7 @@ You should not use this package directly, but through my `chsh` nix-darwin modul
 ### mac-wm-helpers
 
 A variety of scripts that are used as part of my configuration on macOS.
-It enables switching of the active workspace, showing iTerm as a drop-down terminal as well as showing `which-key.nvim` inspired help menus.
+It enables switching of the active workspace and showing iTerm as a drop-down terminal.
 
 ### sketchybar-app-font
 
