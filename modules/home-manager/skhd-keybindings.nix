@@ -1,5 +1,5 @@
 {config, lib, pkgs, origin, copper, ...}: with lib; let
-  cfg = config.programs.skhd;
+  cfg = config.services.skhd;
   dispatchOption = mkOption {
     type = types.str;
     example = "open-iterm-window";
@@ -64,16 +64,37 @@
   '';
 in {
   options = {
-    programs.skhd = {
-      enable = mkEnableOption "skhd keybinds";
+    services.skhd = {
       maestroIntegration = mkEnableOption "skhd maestro integration" // { default = true; };
       keybinds = keybindOptions;
+      extraPackages = mkOption {
+        type = types.listOf types.package;
+        default = [ config.services.skhd.package ];
+        description = ''
+          Additional packages to be made available to skhd.
+        '';
+      };
     };
   };
 
   config = mkIf cfg.enable {
-    xdg.configFile."skhd/skhdrc".text = skhdrc;
+    services.skhd.config = mkIf (cfg.keybinds.binds.binds != {}) skhdrc;
+    # TODO: we need our whole Nix path + custom additions; find a better way to do this
+    launchd.agents.skhd.config.EnvironmentVariables.PATH = concatStringsSep ":" [
+      (makeBinPath config.services.skhd.extraPackages)
+      "/opt/homebrew/bin"
+      "/opt/homebrew/sbin"
+      "${config.home.homeDirectory}/.nix-profile/bin"
+      "/run/current-system/sw/bin"
+      "/nix/var/nix/profiles/default/bin"
+      "/usr/local/bin"
+      "/usr/bin"
+      "/bin"
+      "/usr/sbin"
+      "/sbin"
+    ];
 
+    # TODO: this is a general mac keybind thing
     launchd.agents.maestro-keybind-helper = {
       enable = true;
       config = {
