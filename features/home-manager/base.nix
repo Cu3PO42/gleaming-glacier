@@ -23,7 +23,7 @@
 
   # Set basic settings
   home.homeDirectory =
-    if pkgs.lib.strings.hasSuffix "linux" pkgs.system
+    if pkgs.lib.strings.hasSuffix "linux" pkgs.stdenv.hostPlatform.system
     then "/home/${config.home.username}"
     else "/Users/${config.home.username}";
 
