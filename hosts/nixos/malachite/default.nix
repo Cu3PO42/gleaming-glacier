@@ -51,7 +51,7 @@
     hardware.bluetooth.enable = true;
 
     environment.systemPackages = with pkgs; [
-      jetbrains.idea-community
+      jetbrains.idea
       jdk17
     ];
 
