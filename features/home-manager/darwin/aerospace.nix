@@ -4,12 +4,16 @@
     launchd.enable = true;
     userSettings = {
       "after-startup-command" = ["exec-and-forget borders"];
+      "exec-on-workspace-change" = ["/bin/bash" "-c" "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"];
       gaps = {
         inner.horizontal = 10;
         inner.vertical = 10;
         outer.left = 10;
         outer.right = 10;
-        outer.top = 18;
+        outer.top = [
+          { monitor."built-in" = 18; }
+          48
+        ];
         outer.bottom = 10;
       };
     };
