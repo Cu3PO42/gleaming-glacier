@@ -2,6 +2,8 @@
   pkgs,
   origin,
   copper,
+  config,
+  lib,
   ...
 }: {
   programs.ssh = {
@@ -28,6 +30,8 @@
     ];
   };
 
+  home.sessionVariables.NH_FLAKE = lib.mkDefault "${config.home.homeDirectory}/dotfiles";
+
   # nix-index provides a command-not-found implementation as well as
   # nix-locate, which helps with finding the package a binary is contained in.
   programs.nix-index.enable = true;
@@ -51,6 +55,7 @@
     fastfetch
     nil
     copper.inputs.nix-search-cli
+    nh
     nnn
     nurl
     copper.packages.plate
