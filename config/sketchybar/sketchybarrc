@@ -92,14 +92,14 @@ sketchybar --add bracket appleg apple.logo --set appleg "${bracket_defaults[@]}"
 
 sketchybar --add item sep.3 left --set sep.3 "${sep_defaults[@]}"
 
-source "$ITEM_DIR/spaces.sh"
-if [ $SKETCHYBAR_WM = "yabai" ]; then
-  source "$ITEM_DIR/yabai.sh"
-fi
-if [ $SKETCHYBAR_WM = "aerospace" ]; then
+if [ "$SKETCHYBAR_WM" = "aerospace" ]; then
   source "$ITEM_DIR/aerospace.sh"
+else
+  source "$ITEM_DIR/spaces.sh"
+  if [ "$SKETCHYBAR_WM" = "yabai" ]; then
+    source "$ITEM_DIR/yabai.sh"
+  fi
 fi
-source "$ITEM_DIR/yabai.sh"
 source "$ITEM_DIR/front_app.sh"
 
 # Center
