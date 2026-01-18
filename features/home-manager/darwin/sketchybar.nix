@@ -65,7 +65,13 @@ in {
       xdg.configFile."sketchybar/sketchybarrc" = {
         text = ''
           #!${getExe lua}
-          require("./impl")
+
+          -- Add the impl directory so the rest of the imports line up
+          local USER = os.getenv("USER")
+          package.path = package.path .. ";/Users/" .. USER .. "/.config/sketchybar/impl/?.lua;/Users/" .. USER .. "/.config/sketchybar/impl/?/init.lua"
+
+          -- Load the main implementation
+          require("./impl/sketchybarrc")
         '';
         executable = true;
       };

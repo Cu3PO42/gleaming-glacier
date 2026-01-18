@@ -5,6 +5,9 @@
     userSettings = {
       "after-startup-command" = ["exec-and-forget borders"];
       "exec-on-workspace-change" = ["/bin/bash" "-c" "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"];
+      "on-mode-changed" = [
+        "exec-and-forget sketchybar --trigger aerospace_mode_change"
+      ];
       gaps = {
         inner.horizontal = 10;
         inner.vertical = 10;

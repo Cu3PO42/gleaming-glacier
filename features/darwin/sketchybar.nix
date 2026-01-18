@@ -10,6 +10,7 @@
     copper.packages.ifstat
     copper.packages.sketchybar-helper
     copper.packages.mac-wm-helpers
+    nowplaying-cli
   ];
 
   # Keep process logs for debugging
@@ -34,6 +35,8 @@
 
   homebrew.casks = [
     "sf-symbols"
+    "font-sf-pro"
+    "font-sf-mono"
   ];
 
   environment.systemPackages = with pkgs; [
