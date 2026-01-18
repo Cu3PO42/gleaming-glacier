@@ -1,0 +1,7 @@
+-- require("items.apple")
+-- require("items.menus")
+require("items.workspaces")
+require("items.calendar")
+require("items.vpn")
+require("items.widgets")
+require("items.media")
