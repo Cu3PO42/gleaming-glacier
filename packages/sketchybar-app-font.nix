@@ -6,11 +6,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "sketchybar-app-font";
-  version = "2.0.39";
+  version = "2.0.51";
 
   src = fetchurl {
     url = "https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v${version}/sketchybar-app-font.ttf";
-    hash = "sha256-kaZv8lrjxsxJQ4/oElnaPype+JpIIyd8U2eYoHmgBM4=";
+    hash = "sha256-Fp4jiSACIZskyn6T7ru21TtA4q78PLLqtWLjkOqyAq8=";
   };
 
   dontUnpack = true;
@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation rec {
     runHook preInstall
 
     mkdir -p $out/share/fonts/truetype
-    cp ${src} $out/share/fonts/truetype
+    cp ${src} $out/share/fonts/truetype/sketchybar-app-font.ttf
 
     runHook postInstall
   '';
