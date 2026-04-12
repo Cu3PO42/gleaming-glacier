@@ -58,7 +58,11 @@
     };
 
     # Support for erasing / on every boot
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     # Declerative disk formatting
     disko = {
