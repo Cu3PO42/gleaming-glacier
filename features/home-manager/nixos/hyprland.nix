@@ -161,7 +161,8 @@ in {
             };
             "shift p" = mkBind "Power Menu" "exec,wlogout-launcher-hyprland 1";
             "p" = mkBind "Pin on all workspaces" "pin,active";
-            "o" = mkBind "Workspace  overview" "hyprexpo:expo,toggle";
+            # Disable since the plugin is not installed currently.
+            #"o" = mkBind "Workspace  overview" "hyprexpo:expo,toggle";
             "shift s" = mkBind "Toggle Scratchpad Terminal" "togglespecialworkspace,terminal";
             "g" = {
               name = "Create Groups";
