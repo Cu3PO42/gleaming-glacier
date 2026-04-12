@@ -156,8 +156,8 @@ in {
     systemd.user.services.swim-activation = mkIf cfg.systemd.enable {
       Unit = {
         Description = "swim wallpaper manager activation";
-        Requires = ["swww.service"];
-        After = ["swww.service"];
+        Requires = ["awww.service"];
+        After = ["awww.service"];
       };
 
       Service = {

@@ -5,13 +5,13 @@
   ...
 }:
 with lib; let
-  cfg = config.programs.swww;
+  cfg = config.programs.awww;
 in {
   options = {
-    programs.swww = {
-      enable = mkEnableOption "swww";
-      package = mkPackageOption pkgs "swww" {};
-      systemd.enable = mkEnableOption "swww systemd user service";
+    programs.awww = {
+      enable = mkEnableOption "awww";
+      package = mkPackageOption pkgs "awww" {};
+      systemd.enable = mkEnableOption "awww systemd user service";
       systemd.installTarget = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -26,16 +26,16 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = [cfg.package];
-    systemd.user.services.swww = mkIf cfg.systemd.enable {
+    systemd.user.services.awww = mkIf cfg.systemd.enable {
       Unit = {
-        Description = "swww wallpaper daemon";
+        Description = "awww wallpaper daemon";
         After = ["graphical-session-pre.target"];
         PartOf = ["graphical-session.target"];
       };
 
       Service = {
         Environment = "PATH=${cfg.package}/bin";
-        ExecStart = "${cfg.package}/bin/swww-daemon";
+        ExecStart = "${cfg.package}/bin/awww-daemon";
       };
 
       Install.WantedBy = mkIf (cfg.systemd.installTarget != null) [cfg.systemd.installTarget];

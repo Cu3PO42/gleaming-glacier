@@ -4,7 +4,7 @@
   config,
   ...
 }: {
-  programs.swww = {
+  programs.awww = {
     enable = true;
     systemd = {
       enable = true;

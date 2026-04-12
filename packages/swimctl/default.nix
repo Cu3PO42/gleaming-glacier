@@ -1,13 +1,13 @@
 {
   writeShellApplication,
   jq,
-  swww,
+  awww,
   lib,
   ...
 }:
 writeShellApplication {
   name = "swimctl";
-  runtimeInputs = [jq swww];
+  runtimeInputs = [jq awww];
   text = builtins.readFile ./swimctl.sh;
 
   meta = with lib; {
