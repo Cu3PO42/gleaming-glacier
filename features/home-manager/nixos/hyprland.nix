@@ -20,8 +20,10 @@ in {
     wayland.windowManager.hyprland = {
       enable = true;
       plugins = with pkgs.hyprlandPlugins; [
-        hy3
-        hyprexpo
+        # I wasn't really using hy3 anyway.
+        #hy3
+        # Currently broken upstream :( reenable soon!
+        #hyprexpo
       ];
       systemd.enable = true;
       # Needed so that waybar, etc. have a complete environment
