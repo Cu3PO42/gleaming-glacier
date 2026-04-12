@@ -48,7 +48,7 @@
     htop
     httpie
     jq
-    neofetch
+    fastfetch
     nil
     copper.inputs.nix-search-cli
     nnn
