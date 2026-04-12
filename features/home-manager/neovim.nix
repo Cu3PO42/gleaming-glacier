@@ -14,6 +14,8 @@ in {
   # TODO: git blame in nvim?
   home.sessionVariables.EDITOR = "nv";
   programs.neovim.enable = true;
+  programs.neovim.withPython3 = true;
+  programs.neovim.withRuby = true;
   programs.neovim.extraPackages = with pkgs; [
     # Needed by our configuration
     fd
