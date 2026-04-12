@@ -1,4 +1,4 @@
-{config, pkgs, lib, origin, ...}: with lib; let
+{config, pkgs, lib, origin, copper, ...}: with lib; let
   cfg = config.wayland.windowManager.hyprland.keybinds;
 
   dispatchOption = mkOption {
@@ -90,15 +90,13 @@ in {
     wayland.windowManager.hyprland.extraConfig = "source = ${pkgs.writeText "hyprland-keybinds.conf" keybindSettings}";
 
     programs.maestro = mkIf cfg.maestroIntegration (let
-      agsBin = "${config.programs.ags.finalPackage}/bin/ags -b argyrodite";
-      ifAgsEnabled = optionalString config.copper.feature.nixos.argyrodite.enable;
-      maestroJs = ''(await import('file://${config.xdg.configHome}/argyrodite/maestro.js'))'';
       keymapJson = pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.binds);
+      maestroQsBin = "${copper.packages.maestro-qs}/bin/maestro-qs-ipc";
     in {
       enable = true;
       cancelKeymapCommand = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl submap reset";
-      helpCommand = ifAgsEnabled ''${agsBin} --run-js "${maestroJs}.showHelp('${keymapJson}', '$KEYMAP')"'';
-      cancelHelpCommand = ifAgsEnabled ''${agsBin} --run-js "${maestroJs}.closeHelp()"'';
+      helpCommand = "${maestroQsBin} call maestro showHelp ${keymapJson} \"$KEYMAP\"";
+      cancelHelpCommand = "${maestroQsBin} call maestro hideHelp";
       keymapTimeout = cfg.submapSettings.timeout;
       helpTimeout = cfg.submapSettings.helpTimeout;
     });

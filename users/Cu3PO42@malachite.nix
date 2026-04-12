@@ -9,7 +9,7 @@
       "link-config"
       "chroma"
       "wezterm"
-      "nixos/argyrodite"
+      "nixos/maestro-qs"
       "nixos/illogical-impulse"
       "nixos/hyprland"
       "nixos/rofi"
@@ -20,6 +20,7 @@
     ];
 
     copper.feature.nixos._1password.gitSigning.enable = false;
+    copper.feature.nixos.maestro-qs.systemd.installTarget = "hyprland-session.target";
 
     home.packages = with pkgs; [
       nautilus
