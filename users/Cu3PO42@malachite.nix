@@ -7,7 +7,6 @@
       "neovim"
       "git"
       "link-config"
-      "lunarvim"
       "chroma"
       "wezterm"
       "nixos/argyrodite"
