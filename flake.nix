@@ -32,6 +32,7 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.rust-overlay.follows = "rust-overlay";
+      inputs.pre-commit.follows = "pre-commit-hooks";
     };
 
     # NixOS on WSL - Duh.
@@ -75,7 +76,6 @@
       url = "github:numtide/nixos-anywhere";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
-      inputs.flake-parts.follows = "flake-parts";
     };
 
     # Provides a pre-built index database describing which binaries are
