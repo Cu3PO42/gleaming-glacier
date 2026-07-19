@@ -9,6 +9,7 @@
   stdenv,
   fetchFromGitHub,
   pkgs,
+  llvmPackages,
   ...
 }: stdenv.mkDerivation rec {
     pname = "icallBuddy";
@@ -22,9 +23,10 @@
     };
 
     buildInputs = [pkgs.perl];
+    nativeBuildInputs = [llvmPackages.lld];
     buildPhase = ''
-      # Allow native builds rather than only x86_64
-      sed -i 's/-arch x86_64//g' Makefile
+      # Allow native builds rather than only x86_64 and fix minimum macOS version, also LLD workaround
+      sed -i 's/-mmacosx-version-min=10.5  -arch x86_64/-mmacosx-version-min=10.6 -fuse-ld=lld/g' Makefile
       make  icalBuddy icalBuddy.1 icalBuddyLocalization.1 icalBuddyConfig.1
     '';
 
