@@ -60,7 +60,12 @@ in {
       copper.file.config."sketchybar" = "config/sketchybar";
     })
     (mkIf (cfg.implementation == "lua") (let
-      lua = pkgs.lua5_4.withPackages (ps: [luaposix ps.cjson pkgs.sbarlua]);
+      # since luaposix is not supported in Lua 5.5, we need to downgrade to 5.4
+      lua = pkgs.lua5_4.withPackages (ps: [
+        luaposix
+        ps.cjson
+        (pkgs.sbarlua.override {lua55Packages = pkgs.lua54Packages;})
+      ]);
     in {
       xdg.configFile."sketchybar/sketchybarrc" = {
         text = ''
