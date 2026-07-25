@@ -2,7 +2,7 @@
   programs.aerospace = {
     enable = true;
     launchd.enable = true;
-    userSettings = {
+    settings = {
       "after-startup-command" = ["exec-and-forget borders"];
       "exec-on-workspace-change" = ["/bin/bash" "-c" "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"];
       "on-mode-changed" = [
@@ -21,6 +21,7 @@
       };
     };
   };
+
   # We use skhd for keybindings, even though aerospace has built-in support,
   # because aerospace binds via key code rather than key symbol, which causes
   # problems with my mixed layouts.
