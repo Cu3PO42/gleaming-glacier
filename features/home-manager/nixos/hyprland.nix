@@ -34,6 +34,7 @@ in {
           "XDG_CONFIG_DIRS"
           "PATH"
         ];
+      configType = "hyprlang";
       settings.source = lib.mkMerge [
         # TODO: nvidia patches are no longer needed, but does that extend to the nvidia conf file?
         (lib.mkIf false ["${config.xdg.configHome}/hypr/nvidia.conf"])
