@@ -24,6 +24,7 @@ in {
 
     luajit # Used by some neovim packages
   ];
+  programs.neovim.sideloadInitLua = true;
 
   home.packages = with pkgs; [
     # Scipt to treat a directory argument as the working directory
