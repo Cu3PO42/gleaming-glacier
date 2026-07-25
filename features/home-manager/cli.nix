@@ -9,7 +9,7 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks."*" = {};
+    settings."*" = {};
   };
 
   programs.tmux = {

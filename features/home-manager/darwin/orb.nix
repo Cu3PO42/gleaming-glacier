@@ -1,5 +1,5 @@
 {...}: {
-  programs.ssh.matchBlocks = {
+  programs.ssh.settings = {
     orb = {
       hostname = "localhost";
       user = "default";
