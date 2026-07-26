@@ -48,7 +48,7 @@ in {
     '')
   ];
 
-  imports = [
+  configImports = [
     (mkIf config.copper.file.symlink.enable {
       copper.file.config."nvim" = "config/nvim";
     })

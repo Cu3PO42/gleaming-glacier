@@ -4,8 +4,8 @@
   lib,
   ...
 }: {
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
+  configImports = [
+    (import (modulesPath + "/profiles/qemu-guest.nix") {})
   ];
 
   featureOptions = with lib; {

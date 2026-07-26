@@ -55,7 +55,7 @@ in {
 
   config = {};
 
-  imports = [
+  configImports = [
     (mkIf (cfg.implementation == "bash") {
       copper.file.config."sketchybar" = "config/sketchybar";
     })

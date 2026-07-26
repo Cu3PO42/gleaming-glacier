@@ -24,8 +24,9 @@
         modCfg =
           if hasOptions
           then baseConfig.config
-          else builtins.removeAttrs baseConfig ["imports"];
-        imports = baseConfig.imports or [];
+          else builtins.removeAttrs baseConfig ["imports" "configImports"];
+        configImports = baseConfig.configImports or [];
+        imports = (baseConfig.imports or []) ++ map (mod: lib.mkIf enable mod) configImports;
       in {
         # We would like this to be an optional import activated only when
         # enable is true. However, that leads to an infinite recursion error:

@@ -2,10 +2,12 @@
   config,
   lib,
   origin,
+  options,
+  pkgs,
   ...
 }: {
-  imports = [
-    ../common/nix-settings.nix
+  configImports = [
+    (import ../common/nix-settings.nix { inherit options pkgs config lib origin; }).config
   ];
 
   copper.feature.known-hashes.enable = lib.mkDefault true;

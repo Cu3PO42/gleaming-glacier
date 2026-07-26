@@ -1,13 +1,14 @@
 {
   origin,
+  options,
   config,
   pkgs,
   copper,
   lib,
   ...
 }: {
-  imports = [
-    ../common/nix-settings.nix
+  configImports = [
+    (import ../common/nix-settings.nix { inherit options pkgs config lib origin; }).config
   ];
 
   nix.settings = {

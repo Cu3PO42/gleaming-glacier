@@ -3,10 +3,11 @@
   config,
   lib,
   origin,
+  options,
   ...
 }: {
-  imports = [
-    ../common/nix-settings.nix
+  configImports = [
+    (import ../common/nix-settings.nix { inherit options pkgs config lib origin; }).config
   ];
 
   # This value determines the Home-Manager release with which your
