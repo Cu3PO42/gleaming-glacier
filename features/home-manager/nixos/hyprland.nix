@@ -122,7 +122,7 @@ in {
                 right = "movewindow,r";
               } // moveFocusBinds;
             };
-            "t" = mkBind "Toggle Split Direction" "togglesplit";
+            "t" = mkBind "Toggle Split Direction" "layoutmsg, togglesplit";
             "s" = {
               name = "Create a screenshot";
               submap.binds = {

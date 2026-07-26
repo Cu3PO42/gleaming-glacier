@@ -1,0 +1,101 @@
+
+# █▄▀ █▀▀ █▄█ █▄▄ █ █▄░█ █▀▄ █ █▄░█ █▀▀ █▀
+# █░█ ██▄ ░█░ █▄█ █ █░▀█ █▄▀ █ █░▀█ █▄█ ▄█
+
+
+# See https://wiki.hyprland.org/Configuring/Keywords/ for more
+# Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
+
+# Main modifier
+$mainMod = SUPER # windows key
+
+# assign apps
+$term = kitty
+$editor = code
+$file = nautilus
+$browser = firefox
+
+# Window/Session actions
+bind = $mainMod, Q, killactive
+bind = $mainMod, W, togglefloating, # toggle the window on focus to float
+bind = $mainMod, G, togglegroup, # toggle the window on focus to float
+bind = ALT, return, fullscreen, # toggle the window on focus to fullscreen
+bind = $mainMod, L, exec, hyprlock # lock screen
+bind = $mainMod, backspace, exec, wlogout-launcher-hyprland 1 # logout menu
+
+# Application shortcuts
+bind = $mainMod, T, exec, $term  # open terminal
+bind = $mainMod, E, exec, $file # open file manager
+bind = $mainMod, C, exec, $editor # open vscode
+bind = $mainMod, F, exec, $browser # open browser
+
+# Rofi is toggled on/off if you repeat the key presses
+bind = $mainMod, A, exec, pkill -x rofi || rofilaunch.sh d # launch desktop applications
+bind = $mainMod, tab, exec, pkill -x rofi || rofilaunch.sh w # switch between desktop applications
+bind = $mainMod, R, exec, pkill -x rofi || rofilaunch.sh f # browse system files
+bind = $mainMod SHIFT, T, exec, pkill -x rofi || themeselect.sh # theme select menu
+bind = $mainMod SHIFT, A, exec, pkill -x rofi || rofiselect.sh # rofi style select menu
+bind = $mainMod SHIFT, W, exec, pkill -x rofi || swwwallselect.sh # rofi wall select menu
+bind = $mainMod, V, exec, pkill -x rofi || cliphist.sh c  # open Pasteboard in screen center
+
+# Wallpaper control
+bind = $mainMod ALT, right, exec, swimctl next # next wallpaper
+bind = $mainMod ALT, left, exec, swimctl previous # previous wallpaper
+
+# Audio control
+bindl  = , XF86AudioMute, exec, pamixer -t # toggle audio mute
+bindl  = , XF86AudioMicMute, exec, pamixer -t --default-source # toggle microphone mute
+bindel = , XF86AudioLowerVolume, exec, pamixer -d 5 # decrease volume
+bindel = , XF86AudioRaiseVolume, exec, pamixer -i 5 # increase volume
+bindl  = , XF86AudioPlay, exec, playerctl play-pause
+bindl  = , XF86AudioPause, exec, playerctl play-pause
+bindl  = , XF86AudioNext, exec, playerctl next
+bindl  = , XF86AudioPrev, exec, playerctl previous
+
+# Brightness control
+bindel = , XF86MonBrightnessUp, exec, brightnessctl set 5%+ # increase brightness
+bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%- # decrease brightness
+
+# Switch workspaces with mainMod + [0-9]
+bind = $mainMod, 1, workspace, 1
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5
+bind = $mainMod, 6, workspace, 6
+bind = $mainMod, 7, workspace, 7
+bind = $mainMod, 8, workspace, 8
+bind = $mainMod, 9, workspace, 9
+bind = $mainMod, 0, workspace, 10
+
+# Switch workspaces relative to the active workspace with mainMod + CTRL + [←→]
+bind = $mainMod CTRL, right, workspace, r+1 
+bind = $mainMod CTRL, left, workspace, r-1
+
+# move to the first empty workspace instantly with mainMod + CTRL + [↓]
+bind = $mainMod CTRL, down, workspace, empty 
+
+# Move active window to a relative workspace with mainMod + CTRL + ALT + [←→]
+bind = $mainMod CTRL ALT, right, movetoworkspace, r+1
+bind = $mainMod CTRL ALT, left, movetoworkspace, r-1
+
+# Move active window around current workspace with mainMod + SHIFT + CTRL [←→↑↓]
+bind = $mainMod SHIFT $CONTROL, left, movewindow, l
+bind = $mainMod SHIFT $CONTROL, right, movewindow, r
+bind = $mainMod SHIFT $CONTROL, up, movewindow, u
+bind = $mainMod SHIFT $CONTROL, down, movewindow, d
+
+# Scroll through existing workspaces with mainMod + scroll
+bind = $mainMod, mouse_down, workspace, e+1
+bind = $mainMod, mouse_up, workspace, e-1
+
+# Move/Resize windows with mainMod + LMB/RMB and dragging
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow
+
+# Special workspaces (scratchpad)
+bind = $mainMod ALT, S, movetoworkspacesilent, special
+bind = $mainMod, S, togglespecialworkspace,
+
+# Toggle Layout
+bind = $mainMod, J, layoutmsg, togglesplit # dwindle
