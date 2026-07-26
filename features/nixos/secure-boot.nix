@@ -12,8 +12,6 @@
   # Lanzaboote currently replaces systemd-boot, thus we must disable the old
   # implementation.
   boot.loader.systemd-boot.enable = lib.mkForce false;
-  # Generate JSON files describing boot configurations. Required for Lanzaboote
-  boot.bootspec.enable = true;
   # Enable Lanzaboote
   boot.lanzaboote = {
     enable = true;
