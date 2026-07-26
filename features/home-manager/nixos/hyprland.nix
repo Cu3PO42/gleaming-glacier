@@ -223,9 +223,12 @@ in {
     };
     copper.desktopEnvironment.polkitAgent = mkIf cfg.defaultPolkitAgent.enable "pantheon";
 
-    systemd.user.services.argyrodite.Install.WantedBy = ["hyprland-session.target"];
-    # FIXME: this setting should only be set if the unit is already otherwise present
-    systemd.user.services.illogical-impulse.Install.WantedBy = ["hyprland-session.target"];
+    systemd.user.services.argyrodite = mkIf config.copper.feature.nixos.argyrodite.enable {
+      Install.WantedBy = ["hyprland-session.target"];
+    };
+    systemd.user.services.illogical-impulse = mkIf config.copper.feature.nixos.illogical-impulse.enable {
+      Install.WantedBy = ["hyprland-session.target"];
+    };
 
     copper.chroma.systemdTarget = "hyprland-session.target";
 
