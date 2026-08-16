@@ -8,11 +8,11 @@
       "Gabarito"
       "Readex Pro"
       "Space Grotesk"
+      "JetBrains Mono"
     ];
   };
 
   fonts = with pkgs; [
-    jetbrains-mono
     material-symbols
     nerd-fonts.jetbrains-mono
     nerd-fonts.space-mono
