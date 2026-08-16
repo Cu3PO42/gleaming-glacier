@@ -46,7 +46,7 @@ in {
       '';
 
       reloadCommand = ''
-        ( ${config.xdg.configFile."hypr/hyprland.conf".onChange} ) >/dev/null 2>&1
+        ( ${config.xdg.configFile."hypr/hyprland.lua".onChange} ) >/dev/null 2>&1
       '';
 
       themeOptions = {
@@ -113,26 +113,26 @@ in {
           inherit (cursor) name size;
         });
 
-        file."entry.conf".text = let
+        file."entry.lua".text = let
           inherit (opts.desktop) cursorTheme;
         in ''
-          source = ${cfg.themeDirectory}/active/hyprland/theme.conf
+          require('${cfg.themeDirectory}/active/hyprland/theme.lua')
 
           ${optionalString (cursorTheme != null) ''
-          env=XCURSOR_THEME,${cursorTheme.name}
-          env=XCURSOR_SIZE,${toString cursorTheme.size}
+          hl.env("XCURSOR_THEME", "${cursorTheme.name}")
+          hl.env("XCURSOR_SIZE", "${toString cursorTheme.size}")
           ''}
           ${optionalString (opts.hyprland.hyprcursor != null) ''
-          env=HYPRCURSOR_THEME,${opts.hyprland.hyprcursor.name}
-          env=HYPRCURSOR_SIZE,${toString opts.hyprland.hyprcursor.size}
+          hl.env("HYPRCURSOR_THEME", "${opts.hyprland.hyprcursor.name}")
+          hl.env("HYPRCURSOR_SIZE", "${toString opts.hyprland.hyprcursor.size}")
           ''}
         '';
 
-        file."theme.conf" = {
+        file."theme.lua" = {
           required = true;
 
           source = mkDefault (opts.palette.generateDynamic {
-            template = ./theme.conf.dyn;
+            template = ./theme.lua.dyn;
             paletteOverrides = config.colorOverrides;
           });
         };
@@ -140,9 +140,7 @@ in {
     };
 
     wayland.windowManager.hyprland = mkIf (cfg.enable && config.copper.chroma.hyprland.enable) {
-      settings = {
-        source = ["${cfg.themeDirectory}/active/hyprland/entry.conf"];
-      };
+      extraConfig = "require('${cfg.themeDirectory}/active/hyprland/entry.lua')";
     };
 
     home.packages = mkIf (cfg.enable && config.copper.chroma.hyprland.enable)

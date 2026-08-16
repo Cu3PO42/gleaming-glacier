@@ -2,83 +2,78 @@
   cfg = config.wayland.windowManager.hyprland.keybinds;
 
   dispatchOption = mkOption {
-    type = with types; either str (submodule ({
-      options = {
-        type = mkOption {
-          type = types.str;
-          example = "exec";
-          description = ''
-            The Hyprland dispatcher to use for the keybind.
-          '';
-        };
-
-        arg = mkOption {
-          type = types.str;
-          default = "";
-          example = "rofi";
-          description = ''
-            The arguments passed to the dispatcher.
-            This is not checked for validity against the specified dispatcher.
-          '';
-        };
-      };
-    }));
-    apply = v: if v == null then null else
-      if isString v then let
-        elems = splitString "," v;
-        type = head elems;
-        arg = concatStringsSep "," (tail elems);
-      in { inherit type arg; } else v;
+    type = types.str;
+    example = ''hl.dsp.exec_cmd("kitty")'';
+    description = ''
+      The Lua dispatcher expression to use for the keybind.
+    '';
   };
 
   inherit (origin.self.lib.keybinds dispatchOption) keybindOptions collectSubmaps serializeMapInfo;
 
   maestroctl = "${config.programs.maestro.package}/bin/maestro";
+  toLua = generators.toLua {};
+  luaInline = generators.mkLuaInline;
+
+  renderLuaTable = value: toLua value;
+  renderSubmapDispatcher = name: "hl.dsp.submap(${renderLuaTable (if name == "$root" then "reset" else name)})";
+  renderMaestroDispatcher = command: "hl.dsp.exec_cmd(${renderLuaTable "${maestroctl} ${command}"})";
 
   renderKey = key: let
     actualKey = key.key;
     modifiers = attrNames (filterAttrs (name: value: value) key.modifiers);
-  in "${concatStringsSep " " modifiers},${actualKey}";
+  in concatStringsSep " + " (map (mod: toUpper mod) modifiers ++ [actualKey]);
 
-  renderDispatch = action: "${action.type},${action.arg}";
+  renderComposite = actions:
+    if length actions == 1 then head actions else ''
+      function()
+        ${concatMapStringsSep "\n" (action: "hl.dispatch(${action})") actions}
+      end
+    '';
 
-  renderMapName = name: if name == "$root" then "reset" else name;
-  renderMaestroSubmapActivation = name: "exec,${maestroctl} ${if name == "$root" then "exit" else ''activate "${name}"''}";
+  renderBindOptions = bind: (optionalAttrs bind.global { submap_universal = true; }) //
+    (optionalAttrs bind.passthrough { non_consuming = true; }) //
+    (optionalAttrs bind.repeat { repeating = true; }) //
+    (optionalAttrs bind.activeWhileLocked { locked = true; });
 
-  renderBind = bind: let
-    mods = (optionalString bind.global "t") + (optionalString bind.passthrough "n") + (optionalString bind.repeat "e") + (optionalString bind.activeWhileLocked "l");
-    bindPrefix = "bind${mods}=${renderKey bind.key},";
+  renderLuaBind = key: action: options: {
+    _args = [(renderKey key) (luaInline action)] ++ optional (options != {}) options;
+  };
 
-    maestroSubmap = optionalString cfg.maestroIntegration "${bindPrefix}${renderMaestroSubmapActivation bind.submap.id}\n";
-    submap = "submap,${bind.submap.id}";
-
-    dispatch = renderDispatch bind.dispatch;
-    maestroUse = optionalString cfg.maestroIntegration "\n${bindPrefix}exec,${maestroctl} ${if bind.remain then "use" else "exit"}";
-    reset = optionalString (!bind.remain) "\n${bindPrefix}submap,reset";
-
+  renderBindAction = bind: let
+    dispatch = bind.dispatch;
+    maestro = optional cfg.maestroIntegration (renderMaestroDispatcher (if bind.remain then "use" else "exit"));
+    reset = optional (!bind.remain) (renderSubmapDispatcher "reset");
   in if bind.dispatch != null then
-    "${bindPrefix}${dispatch}${maestroUse}${reset}"
+    renderComposite ([dispatch] ++ maestro ++ reset)
   else
-    "${maestroSubmap}${bindPrefix}${submap}";
+    renderComposite (
+      optional cfg.maestroIntegration (renderMaestroDispatcher (if bind.submap.id == "$root" then "exit" else ''activate "${bind.submap.id}"''))
+      ++ [(renderSubmapDispatcher bind.submap.id)]
+    );
+
+  renderBind = bind: renderLuaBind bind.key (renderBindAction bind) (renderBindOptions bind);
+
+  renderNavigationBind = key: actions: renderLuaBind key (renderComposite actions) {};
 
   renderSubmap = submap: let
-    parentKey = renderKey cfg.submapSettings.parentMapKey;
-    exitKey = renderKey cfg.submapSettings.exitKey;
-  in ''
-    submap=${renderMapName submap.id}
-    ${concatMapStringsSep "\n" renderBind (filter (b: b.enabled) (attrValues submap.binds))}
-    ${optionalString (submap.id != "$root" && cfg.maestroIntegration) ''
-      bind=${parentKey},${renderMaestroSubmapActivation submap.parentId}
-      bind=${exitKey},exec,${maestroctl} exit
-    ''}
-    ${optionalString (submap.id != "$root") ''
-      bind=${parentKey},submap,${renderMapName submap.parentId}
-      bind=${exitKey},submap,reset
-      bind=,catchall,exec,true
-    ''}
-    submap=reset
-  '';
-  keybindSettings = concatMapStringsSep "\n" renderSubmap (collectSubmaps cfg.binds);
+    parentBind = optional (cfg.submapSettings.parentMapKey != null) (
+      renderNavigationBind cfg.submapSettings.parentMapKey (
+        optional cfg.maestroIntegration (renderMaestroDispatcher (if submap.parentId == "$root" then "exit" else ''activate "${submap.parentId}"''))
+        ++ [(renderSubmapDispatcher submap.parentId)]
+      )
+    );
+    exitBind = renderNavigationBind cfg.submapSettings.exitKey (
+      optional cfg.maestroIntegration (renderMaestroDispatcher "exit")
+      ++ [(renderSubmapDispatcher "reset")]
+    );
+    catchallBind = renderNavigationBind { key = "catchall"; modifiers = {}; } ["hl.dsp.exec_cmd(\"true\")"];
+  in nameValuePair submap.id {
+    settings.bind = map renderBind (filter (bind: bind.enabled) (attrValues submap.binds)) ++ parentBind ++ [exitBind catchallBind];
+  };
+
+  submaps = listToAttrs (map renderSubmap (collectSubmaps cfg.binds));
+  submapsWithoutRoot = lib.removeAttrs submaps ["$root"];
 in {
   options = {
     wayland.windowManager.hyprland.keybinds = keybindOptions // {
@@ -87,14 +82,18 @@ in {
   };
 
   config = mkIf config.wayland.windowManager.hyprland.enable {
-    wayland.windowManager.hyprland.extraConfig = "source = ${pkgs.writeText "hyprland-keybinds.conf" keybindSettings}";
+    wayland.windowManager.hyprland = {
+      # Render the top-level binds seperately to make sure they don't have navigation attributes.
+      settings.bind = map renderBind (filter (bind: bind.enabled) (attrValues cfg.binds.binds));
+      submaps = submapsWithoutRoot;
+    };
 
     programs.maestro = mkIf cfg.maestroIntegration (let
       keymapJson = pkgs.writeText "keybind-info.json" (serializeMapInfo cfg.binds);
       maestroQsBin = "${copper.packages.maestro-qs}/bin/maestro-qs-ipc";
     in {
       enable = true;
-      cancelKeymapCommand = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl submap reset";
+      cancelKeymapCommand = "${config.wayland.windowManager.hyprland.package}/bin/hyprctl dispatch 'hl.dsp.submap(\"reset\")'";
       helpCommand = "${maestroQsBin} call maestro showHelp ${keymapJson} \"$KEYMAP\"";
       cancelHelpCommand = "${maestroQsBin} call maestro hideHelp";
       keymapTimeout = cfg.submapSettings.timeout;
