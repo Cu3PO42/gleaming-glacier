@@ -115,4 +115,6 @@ in {
     # Used by forgit plugin.
     pkgs.gawk
   ];
+
+  home.sessionVariables.DEVENV_SHELL_TYPE = "fish";
 }
