@@ -13,7 +13,7 @@ in {
   };
 
   programs.bash.initExtra = wslAgentScript;
-  programs.zsh.initExtra = wslAgentScript;
+  programs.zsh.initContent = wslAgentScript;
 
   home.sessionVariables.WINHOME = "/mnt/c/Users/${config.home.username}/";
 
