@@ -147,7 +147,9 @@ in rec {
     specialArgs,
     dir,
   }:
-    loadDir dir ({
+    # Keep configurations lazy: loadDir's null filter must only force the
+    # wrapper, not evaluate every home's assertions and evaluation-time builds.
+    nixpkgs.lib.mapAttrs (_: entry: entry.value) (loadDir dir ({
       path,
       name,
       ...
@@ -164,11 +166,13 @@ in rec {
         ++ (if user ? main then [user.main] else [])
         ++ (if user ? modules then nixpkgs.lib.warn "The modules property for home configurations is deprecated. Please use 'main' instead which accepts a single module." user.modules else []);
     in
-      home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${user.system};
-        modules = modules';
-        extraSpecialArgs = specialArgs;
-      });
+      {
+        value = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${user.system};
+          modules = modules';
+          extraSpecialArgs = specialArgs;
+        };
+      }));
 
   loadConfig = dir: let
     load = dir: loadDir dir ({path, ...}: let
