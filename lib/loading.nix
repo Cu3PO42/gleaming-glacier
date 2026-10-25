@@ -1,6 +1,8 @@
 {nixpkgs, home-manager, ...}@inputs: let
   inherit (import ./modules.nix inputs) mkFeatureModule injectArgs importInjectArgs;
 in rec {
+  # Discover names from the filesystem only. Values stay lazy, just like a
+  # manually written attribute set; null values are retained rather than filtered.
   loadDir = with nixpkgs.lib;
     dir: f: let
       contents = if builtins.pathExists dir then builtins.readDir dir else {};
@@ -16,8 +18,7 @@ in rec {
           path = dir + "/${name}";
         };
       }) validImports;
-      nnImported = filter (v: v.value != null) imported;
-    in listToAttrs nnImported;
+    in listToAttrs imported;
 
   loadDirRec = dir: f:
     with nixpkgs.lib; let
@@ -44,15 +45,16 @@ in rec {
         loadedFiles ++ loadedDirs;
 
       files = if builtins.pathExists dir then impl dir "" else [];
-      nnFiles = filter (v: v.value != null) files;
     in
-      listToAttrs nnFiles;
+      listToAttrs files;
   
   importIfExists = path: nixpkgs.lib.mkIf (builtins.pathExists path) (import path);
   importIfExistsApply = path: args: nixpkgs.lib.mkIf (builtins.pathExists path) (import path args);
 
   loadPackages' = path: pkgs: extra: loadDir path ({path, ...}: pkgs.callPackage path extra);
 
+  # Platform filtering intentionally inspects each package's metadata. Unlike
+  # directory discovery, this cannot determine names without evaluating values.
   loadPackages = lib: system: path: pkgs: extra: lib.filterAttrs (_: lib.meta.availableOn {inherit system;}) (
     loadPackages' path pkgs extra
   );
@@ -147,9 +149,7 @@ in rec {
     specialArgs,
     dir,
   }:
-    # Keep configurations lazy: loadDir's null filter must only force the
-    # wrapper, not evaluate every home's assertions and evaluation-time builds.
-    nixpkgs.lib.mapAttrs (_: entry: entry.value) (loadDir dir ({
+    loadDir dir ({
       path,
       name,
       ...
@@ -166,13 +166,11 @@ in rec {
         ++ (if user ? main then [user.main] else [])
         ++ (if user ? modules then nixpkgs.lib.warn "The modules property for home configurations is deprecated. Please use 'main' instead which accepts a single module." user.modules else []);
     in
-      {
-        value = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${user.system};
-          modules = modules';
-          extraSpecialArgs = specialArgs;
-        };
-      }));
+      home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${user.system};
+        modules = modules';
+        extraSpecialArgs = specialArgs;
+      });
 
   loadConfig = dir: let
     load = dir: loadDir dir ({path, ...}: let

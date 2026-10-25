@@ -10,6 +10,12 @@ This sacrifices some flexibility, but at the same time ensures your configuratio
 
 I use this functionality in my own Flake, and it also available for you to use via the `flakeModules.autoload` module.
 
+Directory discovery reads file names without evaluating their contents, like a manually written attribute set of imports.
+Selecting one configuration does not evaluate unrelated configurations.
+The `loadDir` and `loadDirRec` helpers retain entries whose values are `null`; they do not evaluate values to decide which names to include.
+Package platform filtering is an exception: it inspects every package's metadata to determine which packages are available on the requested system.
+Modules included in a selected configuration are still evaluated as required by the module system.
+
 The following outputs are populated:
 
 ### Host Configurations
@@ -136,3 +142,21 @@ This follows a similar structure as the `packages` output, i.e. it is first inde
 This output contains additional configuration for tools developed in this crate, in particular [Copper Plate](/features/plate) and [Copper Mage](/features/mage).
 This output is automatically filled for hosts loaded by this mechanism.
 See [above](#host-configurations).
+
+### Testing the loaders
+
+The loader regression tests use [nix-unit](https://nix-community.github.io/nix-unit/) and are included in `nix flake check`.
+Run all flake checks from the repository root with:
+
+```sh
+nix flake check -L
+```
+
+To run only the unit test check on an Apple Silicon Mac:
+
+```sh
+nix build .#checks.aarch64-darwin.nix-unit --no-link -L
+```
+
+On Linux, replace `aarch64-darwin` with your system, such as `x86_64-linux`.
+The tests are exposed under `tests.loading`; add new cases in `tests/loading.nix` using nix-unit's `expr` and `expected` attributes.
