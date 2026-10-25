@@ -65,10 +65,8 @@
       url = "https://raw.githubusercontent.com/catppuccin/palette/823bd0179d491facf8ca368451dddb713926bc0e/palette.json";
       sha256 = "1q1x4j35km0k1nlvsip4hzbjdg306vfjig92nnsnz7kqp9bxb202";
     };
-    palette = pkgs.runCommand "catppuccin-${variant}-palette" { inherit variant; } ''
-      ${lib.getExe pkgs.jq} ".$variant.colors | map_values(.hex[1:])" ${source} > $out
-    '';
-  in builtins.fromJSON (builtins.readFile palette);
+    palette = builtins.fromJSON (builtins.readFile source);
+  in builtins.mapAttrs (_: color: lib.removePrefix "#" color.hex) palette.${variant}.colors;
 
 in rec {
   palette = {
