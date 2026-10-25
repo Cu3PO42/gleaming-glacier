@@ -107,6 +107,11 @@
       url = "github:hercules-ci/flake-parts";
     };
 
+    nix-unit = {
+      url = "github:nix-community/nix-unit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Only for deduplication of other transitive dependencies
     flake-compat = {
       url = "github:edolstra/flake-compat";
@@ -149,12 +154,23 @@
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
       flakeModules.allow-unfree
+      inputs.nix-unit.modules.flake.default
     ];
+
+    flake.tests.loading = import ./tests/loading.nix { inherit (inputs.nixpkgs) lib; };
 
     # We don't want to inherit our own modules!
     copper.inheritModules = false;
 
     perSystem = {system, pkgs, ...}: {
+      nix-unit = {
+        package = pkgs.nix-unit;
+        inputs = {
+          inherit (inputs) nixpkgs flake-parts nix-unit;
+          "flake-parts/nixpkgs-lib" = inputs.flake-parts.inputs.nixpkgs-lib;
+        };
+      };
+
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
