@@ -8,7 +8,7 @@
   makeFontsConf,
   stdenv,
 
-  python312,
+  python3,
   xkeyboard_config,
   qt6,
   kdePackages,
@@ -20,7 +20,7 @@
   ...
 }: let
   oneUiIcons = callPackage ./oneui.nix {};
-  pythonEnv = callPackage ./python-env.nix { python = python312; };
+  pythonEnv = callPackage ./python-env.nix { python = python3; };
   fontConfig = callPackage ./fonts.nix {};
   packages = (callPackage ./packages.nix {}).allPackages;
 
