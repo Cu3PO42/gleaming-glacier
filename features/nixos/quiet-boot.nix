@@ -16,8 +16,6 @@
   ];
   # Silence dmesg
   boot.consoleLogLevel = 3;
-  # Remove extra NixOS logging from the initrd
-  boot.initrd.verbose = false;
 
   # Show a splash screen during boot
   boot.plymouth = let

@@ -59,10 +59,6 @@
     efi.canTouchEfiVariables = true;
   };
 
-  # In my experience the new initrd is more stable and generally works better
-  # than the old script-based one.
-  boot.initrd.systemd.enable = lib.mkDefault true;
-
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
     vim
@@ -82,5 +78,5 @@
   security.pam.sshAgentAuth.authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
 
   # This is a fix for "Failed Virtual Console Startup" during boot.
-  console.earlySetup = lib.mkIf config.boot.initrd.systemd.enable true;
+  console.earlySetup = true;
 }

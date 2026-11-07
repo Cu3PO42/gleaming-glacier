@@ -44,23 +44,8 @@ in {
           in
             lib.concatMap (user: config.users.users.${user}.openssh.authorizedKeys.keys) wheels;
           
-          extraConfig = lib.mkIf config.boot.initrd.systemd.enable "ForceCommand systemd-tty-ask-password-agent --watch";
+          extraConfig = "ForceCommand systemd-tty-ask-password-agent --watch";
         };
-
-        postCommands = lib.mkIf (config.copper.feature.zfs.enable && !config.boot.initrd.systemd.enable) ''
-          cat <<EOF > /root/.profile
-          if pgrep -x "zfs" > /dev/null
-          then
-            if zfs load-key -a; then
-              killall zfs
-            else
-              echo "zfs passphrase invalid. Please try again."
-            fi
-          else
-            echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
-          fi
-          EOF
-        '';
       };
 
       systemd.network = lib.mkDefault config.systemd.network;
