@@ -10,6 +10,8 @@
 
   programs.hyprland = {
     enable = true;
+    # Enable only so we hit the upstream Nix cache. (This setting causes a deviation override.)
+    withUWSM = true;
   };
   # xdg-desktop-portal-hyprland is implicitly included by the Hyprland module
   xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
