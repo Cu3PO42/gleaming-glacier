@@ -14,8 +14,8 @@
   programs.rofi = {
     enable = true;
     package = pkgs.rofi;
-    terminal = "${pkgs.kitty}/bin/kitty";
-    font = "JetBrainsMono Nerd Font 10";
+    settings.terminal = "${pkgs.kitty}/bin/kitty";
+    settings.font = "JetBrainsMono Nerd Font 10";
     # FIXME: by default location, xoffset, yoffset are set; we probably don't want these set here
     imports = ["${config.xdg.configHome}/rofi/config.style.rasi"];
   };
