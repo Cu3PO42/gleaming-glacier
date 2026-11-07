@@ -1,6 +1,7 @@
 {
   python,
   writeTextFile,
+  kde-material-you-colors,
 }: let
   pythonEnv = python.withPackages (ps: with ps; [
     build
