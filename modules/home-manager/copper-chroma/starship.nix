@@ -1,7 +1,5 @@
 {config, pkgs, lib, ...}: with lib; let
   cfg = config.copper.chroma;
-
-  tomlFormat = pkgs.formats.toml {};
 in {
   options = {
     copper.chroma.starship.enable = mkEnableOption "Chroma integration for starship" // { default = config.programs.starship.enable; };
@@ -33,9 +31,17 @@ in {
         };
 
         themeConfig = { opts, ... }: {
-          file."starship.toml".source = tomlFormat.generate "starship-chroma-config" (config.programs.starship.settings // {
-            palette = opts.starship.palette.name;
-          } // builtins.fromTOML (builtins.readFile (opts.starship.palette.file)));
+          # Read fetched palettes at build time so evaluating an aarch64
+          # configuration does not require an aarch64 builder.
+          file."starship.toml".source = let
+            settingsFile = (pkgs.formats.toml {}).generate "starship-settings.toml"
+              (config.programs.starship.settings // {
+                palette = opts.starship.palette.name;
+              });
+          in pkgs.runCommand "starship.toml" {nativeBuildInputs = [pkgs.remarshal];} ''
+            cat ${settingsFile} ${opts.starship.palette.file} > $out
+            toml2json $out > /dev/null # fail the build on invalid TOML, e.g. duplicate tables
+          '';
         };
       };
     })
