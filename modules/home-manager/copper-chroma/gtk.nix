@@ -198,7 +198,13 @@ in {
           ${pkgs.flatpak}/bin/flatpak --user override --env=ICON_THEME="${opts.iconTheme.name}"
         '';
       
-      reloadCommand = "${lib.getExe copper.packages.gtkrc-reload}";
+      # Gtk 2 is slated for deprecation and by default refuses to evaluate on modern nixpkgs.
+      # If nixpkgs allows evaluating it, we wire up the reload support.
+      reloadCommand = let
+          gtk2Allowed = builtins.elem
+            (lib.attrByPath [ "problems" "handlers" "gtk+" "broken" ] null pkgs.config)
+            [ "warn" "ignore" ];
+      in lib.mkIf gtk2Allowed "${lib.getExe copper.packages.gtkrc-reload}";
 
       themeConfig = {config, opts, ...}: {
         file."gtk-3.0/settings.ini".text =
