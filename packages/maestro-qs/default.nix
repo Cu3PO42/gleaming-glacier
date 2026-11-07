@@ -36,5 +36,6 @@ in stdenv.mkDerivation {
     description = "Quickshell-based keybind popup for maestro";
     license = licenses.gpl3Only;
     mainProgram = "maestro-qs";
+    platforms = platforms.linux;
   };
 }

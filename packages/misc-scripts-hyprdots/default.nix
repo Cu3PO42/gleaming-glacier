@@ -47,4 +47,6 @@ symlinkJoin {
         platforms = platforms.linux;
       };
     }) (builtins.attrNames (builtins.readDir ./src));
+
+  meta.platforms = lib.platforms.linux;
 }

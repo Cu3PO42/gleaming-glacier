@@ -192,6 +192,7 @@ in (writeShellApplication {
   '';
 }).overrideAttrs (old: {
   propagatedUserEnvPkgs = sharePaths;
+  meta = (old.meta or {}) // { platforms = lib.platforms.linux; };
 }) // {
   config = agsConfig;
 }

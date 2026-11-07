@@ -119,5 +119,6 @@ in stdenv.mkDerivation {
     homepage = "https://ii.clsty.link/en/";
     license = licenses.gpl3Only;
     mainProgram = "ii";
+    platforms = platforms.linux;
   };
 }

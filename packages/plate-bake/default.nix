@@ -50,4 +50,6 @@ in stdenvNoCC.mkDerivation {
     mv ./* $out/support 
     rm $out/support/default.nix
   '';
+
+  meta.platforms = lib.platforms.linux;
 }

@@ -35,7 +35,9 @@
     nixos-install-tools
     sbctl
   ];
-in writeShellScriptBin "plate-install" ''
+in (writeShellScriptBin "plate-install" ''
   export PATH=${lib.makeBinPath runtimePath}
   exec ${lib.getExe nushell} ${./plate-install.nu}
-''
+'').overrideAttrs {
+  meta.platforms = lib.platforms.linux;
+}
