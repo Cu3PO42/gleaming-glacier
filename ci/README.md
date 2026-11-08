@@ -14,6 +14,8 @@ The runners are `ubuntu-24.04`, `ubuntu-24.04-arm`, and `macos-15`, respectively
 Build jobs fetch derivations from Hestia and build by store path, without
 checking out or evaluating the flake again. `Nix CI result` is the stable status
 check for branch protection; it also handles a fully cached, empty matrix.
+The evaluated matrix is split by platform. Each platform calls
+`build-platform.yml` with its own package/check and configuration matrices.
 
 ## Exclusions
 
@@ -55,10 +57,15 @@ During development, use `path:.#ciJobs` to include untracked files.
 
 ## Cache reuse
 
-The package/check matrix finishes, including Hestia's cache uploads, before
-the configuration matrix starts. Configurations can therefore substitute
-packages built in the first phase when their store paths match. This avoids
-many redundant builds while keeping each output as its own matrix job.
+On each platform, the package/check matrix finishes, including Hestia's cache
+uploads, before that platform's configuration matrix starts. Linux
+configurations can start while Darwin packages are still building, and the
+two Linux architectures also progress independently. A failure on one platform
+does not cancel another platform's builds.
+
+Configurations can therefore substitute packages built in their platform's
+first phase when their store paths match. This avoids many redundant builds
+while keeping each output as its own matrix job.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different

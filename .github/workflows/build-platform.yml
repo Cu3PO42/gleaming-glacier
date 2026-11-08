@@ -1,0 +1,72 @@
+name: Build platform
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: Package and configuration matrices for one platform
+        type: string
+        required: true
+      manifest-version:
+        description: Hestia cache manifest containing the evaluated derivations
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  # Reusable workflows do not inherit the caller's workflow-level environment.
+  NIX_CONFIG: |
+    accept-flake-config = true
+    extra-substituters = https://nix-community.cachix.org
+    extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+jobs:
+  packages:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    if: fromJSON(inputs.matrix).any-packages
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(inputs.matrix).packages }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          wait-manifest-version: ${{ inputs.manifest-version }}
+      - name: Build
+        env:
+          INSTALLABLES: ${{ matrix.installables }}
+        run: |
+          read -r -a installables <<< "$INSTALLABLES"
+          "$HESTIA_BIN" prefetch "${installables[@]}"
+          nix build -L --no-link "${installables[@]}"
+
+  configurations:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    needs: packages
+    # Only this platform's packages must finish uploading before its configs.
+    if: >-
+      ${{ !cancelled()
+          && (needs.packages.result == 'success' || needs.packages.result == 'skipped')
+          && fromJSON(inputs.matrix).any-configurations }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(inputs.matrix).configurations }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          wait-manifest-version: ${{ inputs.manifest-version }}
+      - name: Build
+        env:
+          INSTALLABLES: ${{ matrix.installables }}
+        run: |
+          read -r -a installables <<< "$INSTALLABLES"
+          "$HESTIA_BIN" prefetch "${installables[@]}"
+          nix build -L --no-link "${installables[@]}"
