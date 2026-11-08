@@ -260,8 +260,9 @@ job if authentication or uploading fails.
 niks3 stores the complete runtime closure, including upstream dependencies.
 It deduplicates objects already in our cache, but does not exclude paths
 available from other caches. Hestia separately filters NixOS- and Nix
-Community-signed paths from its Actions cache using the shared
-`ci.upstreamCacheKeyNames` list. We retain the upstream niks3 client and
+Community-signed paths from its Actions cache using the
+`hestia.upstreamCacheKeyNames` list in [`ci/cache.nix`](../../../ci/cache.nix).
+We retain the upstream niks3 client and
 measure S3 usage before considering a custom filtering client.
 
 Initially, uploads are allowed only for `push` and `workflow_dispatch`

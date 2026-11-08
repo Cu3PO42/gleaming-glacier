@@ -17,12 +17,5 @@
     # Exact matches, shared by the workflow and the server's OIDC policy.
     repositories = ["Cu3PO42/gleaming-glacier"];
     refs = ["refs/heads/master"];
-
-    # Hestia's filter replaces its default key list when explicitly configured.
-    # Keep the NixOS key alongside every additional upstream cache we use.
-    upstreamCacheKeyNames = [
-      "cache.nixos.org-1"
-      "nix-community.cachix.org-1"
-    ];
   };
 }

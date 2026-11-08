@@ -44,13 +44,13 @@ jobs:
       - name: Prepare shared build configuration
         id: config
         run: |
-          cache_config=$(nix eval --json --file ./shared/nix-cache.nix)
+          cache_config=$(nix eval --json --file ./ci/cache.nix)
           build_config=$(jq -c --arg nixConfig "$NIX_CONFIG" \
             --arg repository "$GITHUB_REPOSITORY" --arg ref "$GITHUB_REF" --arg event "$GITHUB_EVENT_NAME" '
             {
               nixConfig: $nixConfig,
               cacheServerUrl: .upload.url,
-              upstreamCacheKeyNames: (.ci.upstreamCacheKeyNames | join(" ")),
+              upstreamCacheKeyNames: (.hestia.upstreamCacheKeyNames | join(" ")),
               cacheUpload: (
                 (.ci.repositories | index($repository) != null)
                 and (.ci.refs | index($ref) != null)

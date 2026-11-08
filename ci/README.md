@@ -113,8 +113,8 @@ avoid concurrency duplicates completely, at the cost of parallelism.
 
 Hestia excludes paths signed by `cache.nixos.org-1` or
 `nix-community.cachix.org-1`, including when uploading derivation closures.
-The exact key-name allowlist lives in `ci.upstreamCacheKeyNames` in
-`shared/nix-cache.nix` and is passed to every Hestia instance. Explicit
+The exact key-name allowlist lives in `hestia.upstreamCacheKeyNames` in
+[`ci/cache.nix`](./cache.nix) and is passed to every Hestia instance. Explicit
 key names replace Hestia's default list, so retain the NixOS key when
 adding another cache. The filter uses signatures present in the local
 store; it does not probe arbitrary caches for unsigned paths.
@@ -140,7 +140,9 @@ GitHub Actions only.
 Successful build jobs also push their output closures to the private OVH
 cache through azurite's HTTPS upload API. The hostname, derived URL, and
 repository/ref allowlists live in
-[shared/nix-cache.nix](../shared/nix-cache.nix). The eval job reads this file
+[shared/nix-cache.nix](../shared/nix-cache.nix). These remain shared because
+the niks3 server enforces the same upload policy. `ci/cache.nix` imports
+that configuration and adds the Hestia settings. The eval job reads it
 and includes the URL and upload decision in `build-config`; build
 jobs still need no checkout or flake evaluation.
 
