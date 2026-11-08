@@ -17,7 +17,9 @@
   select = prefix: lib.filterAttrs (name: _: !lib.any (matches (prefix ++ [name])) exclude);
   perSystem = kind:
     lib.genAttrs systems (system:
-      select [kind system] (flake.${kind}.${system} or {}));
+      # Inspect metadata only after name exclusions, and before forcing drvPath.
+      lib.filterAttrs (_: drv: !(drv.meta.broken or false))
+      (select [kind system] (flake.${kind}.${system} or {})));
   configurations = kind: build:
     lib.filterAttrs (_: drv: builtins.elem drv.system systems)
     (lib.mapAttrs (_: build) (select [kind] (flake.${kind} or {})));

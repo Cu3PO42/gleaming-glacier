@@ -40,11 +40,14 @@ output path. `*` matches one complete attribute component, for example:
 ]
 ```
 
-The installer exclusion from `garnix.yaml` is retained, and the broken SDDM
-theme is excluded on all systems. `exclude.nix` also documents the existing
-evaluation failures excluded from the initial matrix: `illogical-impulse`,
-`gtkrc-reload`, `microtex`, and `rga-fzf`. Remove these entries as the packages
-are repaired.
+Packages and checks marked `meta.broken = true` are omitted automatically,
+including `sddm-theme-corners` and `illogical-impulse`. Metadata is inspected
+after name exclusions and before forcing derivation paths.
+The installer exclusion from `garnix.yaml` is retained. `exclude.nix` also
+documents evaluation failures in `gtkrc-reload`, `microtex`, and `rga-fzf`.
+These still need explicit exclusions: a broken dependency or an evaluation
+error does not necessarily mark the package itself as broken. Remove these
+entries as the packages are repaired.
 
 An exclusion removes the standalone CI job, not dependencies of other selected
 outputs. It does not remove anything from the public `packages` or configuration outputs.

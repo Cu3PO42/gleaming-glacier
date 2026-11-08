@@ -9,6 +9,10 @@
   arm = drv "aarch64-linux" "arm";
   darwin = drv "aarch64-darwin" "darwin";
   unsupported = drv "x86_64-darwin" "unsupported";
+  broken = linux // {
+    meta.broken = true;
+    drvPath = throw "broken derivation forced";
+  };
   jobs = import ../ci {
     inherit lib systems;
     exclude = [
@@ -22,6 +26,8 @@
       packages = {
         x86_64-linux = {
           keep = linux;
+          inherit broken;
+          healthy = linux // {meta.broken = false;};
           excluded = throw "excluded package forced";
         };
         aarch64-linux = {
@@ -33,6 +39,7 @@
       };
       checks.x86_64-linux = {
         keep = linux;
+        inherit broken;
         excluded = throw "excluded check forced";
       };
       homeConfigurations = {
@@ -63,7 +70,9 @@ in {
   };
   testPackageWildcardExclusions = {
     expr = lib.mapAttrs (_: builtins.attrNames) jobs.packages;
-    expected = lib.genAttrs systems (_: ["keep"]);
+    expected = (lib.genAttrs systems (_: ["keep"])) // {
+      x86_64-linux = ["healthy" "keep"];
+    };
   };
   testCheckExclusions = {
     expr = builtins.attrNames jobs.checks.x86_64-linux;
