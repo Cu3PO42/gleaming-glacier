@@ -6,7 +6,7 @@
   tinyxml-2,
   gtkmm3,
   gtksourceviewmm,
-  cairomm,
+  cairomm_1_0,
   fontconfig,
 
   fetchFromGitHub,
@@ -28,7 +28,7 @@
     gtkmm3
     tinyxml-2
     gtksourceviewmm
-    cairomm
+    cairomm_1_0
     fontconfig
   ];
 

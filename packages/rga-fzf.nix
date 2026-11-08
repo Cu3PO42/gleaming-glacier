@@ -23,7 +23,7 @@
   meta = with lib; {
     description = "Integration of ripgrep-all and fzf.";
     homepage = "https://github.com/phiresky/ripgrep-all";
-    license = licenses.agpl3;
+    license = licenses.agpl3Only;
     maintainers = ["Cu3PO42"];
   };
 }
