@@ -2,6 +2,8 @@ name: Nix CI
 
 on:
   push:
+    branches-ignore: [deploy]
+    tags: ['**']
   pull_request:
   workflow_dispatch:
 
@@ -31,8 +33,8 @@ jobs:
       build-config: ${{ steps.config.outputs.config }}
     steps:
       - uses: actions/checkout@v6
-      - name: Test matrix partitioning
-        run: python3 -m unittest discover -s tests -p 'test_ci_matrix.py'
+      - name: Test CI helpers
+        run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
       - uses: NixOS/nix-installer-action@main
       - name: Prepare shared build configuration
         id: config
@@ -59,10 +61,12 @@ jobs:
           filter-drv-closures: true
       - id: matrix
         uses: Mic92/hestia/matrix@v3
+        env:
+          CACHE_UPLOAD: ${{ fromJSON(steps.config.outputs.config).cacheUpload }}
         with:
           flake: .#ciJobs
           # Use the flake's locked nixpkgs, including for the evaluation tool.
-          nix-eval-jobs: nix run --inputs-from . nixpkgs#nix-eval-jobs -- --workers 1 --max-memory-size 4096
+          nix-eval-jobs: bash ci/nix-eval-jobs.sh --workers 1 --max-memory-size 4096
           runner-map: |
             x86_64-linux=ubuntu-24.04
             aarch64-linux=ubuntu-24.04-arm
@@ -105,3 +109,23 @@ jobs:
         run: |
           [[ "$EVAL" == success ]]
           [[ "$BUILD" == success || "$BUILD" == skipped ]]
+
+  promote:
+    name: Advance deploy branch
+    runs-on: ubuntu-24.04
+    needs: [eval, result]
+    if: >-
+      ${{ !cancelled()
+          && needs.result.result == 'success'
+          && github.ref == 'refs/heads/master'
+          && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+          && fromJSON(needs.eval.outputs.build-config).cacheUpload }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Promote the tested commit
+        run: bash ci/promote-deploy.sh

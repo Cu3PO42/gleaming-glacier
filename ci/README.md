@@ -1,7 +1,8 @@
 # Nix CI
 
 GitHub Actions uses [Hestia](https://github.com/Mic92/hestia) to evaluate
-`ciJobs` once and build the uncached outputs in a matrix. The output contains:
+`ciJobs` once and build the selected outputs in a matrix. Runs without private
+cache uploads omit already-cached outputs. The output contains:
 
 - `packages` and `checks` on the flake's declared systems: `x86_64-linux`,
   `aarch64-linux`, and `aarch64-darwin`. Package availability is already
@@ -71,9 +72,10 @@ builds or additional flake evaluation.
 Packages/checks whose exact `.drv` paths occur in that graph run in the
 prerequisite matrix. Configurations wait for that matrix and its Hestia cache
 uploads. All remaining packages/checks run independently, so configurations
-do not wait for them. If all prerequisite packages are cached, configurations
-can start immediately. Cached configuration jobs are already omitted by
-Hestia, so packages needed only by those configurations do not cause waits.
+do not wait for them. On runs without private-cache uploads, cached jobs are
+omitted by Hestia. Configurations can then start immediately when all their
+prerequisite packages are cached, and packages needed only by cached
+configurations do not cause waits.
 
 Both matrices still contribute to `Nix CI result`. An independent package
 failure fails CI while allowing configuration builds to proceed. Linux
@@ -86,8 +88,8 @@ For a Hestia group, every installable is checked; the whole group becomes a
 prerequisite if any member is needed. Configurations can then substitute
 matching packages from the cache while each output keeps its own matrix job.
 
-The eval job runs the dependency partitioning tests before evaluation. Run
-them locally with `python3 -m unittest discover -s tests -p 'test_ci_matrix.py'`.
+The eval job runs the CI helper tests before evaluation. Run them locally
+with `python3 -m unittest discover -s tests -p 'test_ci_*.py'`.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different
@@ -140,8 +142,15 @@ OIDC token script with `skip-push: true`. Hestia retains the post-build
 hook. After a successful build, `nix build --print-out-paths` supplies all
 outputs (including grouped jobs and Hestia hits) to an explicit `niks3 push`.
 An upload failure fails that job. Failed builds retain Hestia's intermediate
-caching but do not push their partial outputs to niks3. Fully cached jobs
-omitted by Hestia do not run and are not backfilled into S3.
+caching but do not push their partial outputs to niks3.
+
+On upload-enabled runs, `ci/nix-eval-jobs.sh` removes Hestia's
+`--check-cache-status` argument. This keeps every selected output in the
+matrix, including outputs available only from Hestia or upstream caches.
+Build jobs substitute those outputs where possible and push their full
+closures to niks3. Other runs retain normal cache filtering. This also
+backfills outputs cached before private uploads were enabled, without
+evaluating the flake a second time.
 
 The niks3 uploads deliberately keep complete runtime closures, including
 dependencies available from upstream caches. Existing objects/NAR content
@@ -164,6 +173,28 @@ the subdomain's DNS record and deploy azurite's Caddy and OIDC
 configuration. See [azurite's setup guide](../hosts/nixos/azurite/README.md).
 When changing the hostname or allowlists, deploy the server before running
 CI with the new settings.
+
+## Deployment branch
+
+After `Nix CI result` succeeds on an upload-enabled `master` push or manual
+run, the `Advance deploy branch` job creates or fast-forwards `deploy` to
+that run's exact commit. It waits for all selected builds and private-cache
+uploads. Deploying from `deploy` therefore selects a revision whose selected
+CI outputs and runtime closures have been uploaded to the private cache.
+The exclusions above still apply, and later cache deletion can remove those
+objects.
+
+Only the promotion job has `contents: write`. `ci/promote-deploy.sh` checks
+that the tested commit remains in `master` history and uses a normal push.
+Rerunning an older commit leaves an already newer `deploy` unchanged;
+divergent history or a conflicting concurrent update fails without rewriting
+the branch. Repository rules must permit this job's `GITHUB_TOKEN` to create
+and fast-forward `deploy`.
+
+Pushes to `deploy` are excluded from CI. GitHub also
+[does not start push workflows for pushes made with `GITHUB_TOKEN`](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
+Machines or deployment tools can follow `deploy`; this workflow only advances
+the branch and does not switch any machines itself.
 
 `garnix.yaml` remains independent: disable the Garnix integration separately
 if GitHub Actions is intended to replace it.
