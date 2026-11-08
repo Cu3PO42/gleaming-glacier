@@ -102,6 +102,9 @@ See [LICENSE.md](./LICENSE.md).
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
+GitHub Actions builds packages, checks, and host configurations with Hestia.
+See [CI configuration](./ci/README.md) for supported systems, exclusions, and cache reuse.
+
 ## Credits and Resources
 
 These dotfiles reuse parts of various others' configurations and are inspired by many more.

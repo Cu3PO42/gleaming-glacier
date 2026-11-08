@@ -1,0 +1,43 @@
+name: Hestia cache GC
+
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Plan only, without changing the cache
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hestia-gc
+  cancel-in-progress: false
+
+jobs:
+  gc:
+    # Cache deletion must run in the default branch's cache scope.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Install Nix
+        uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          read-only: true
+      - name: Run garbage collection
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          args=()
+          if [[ "$DRY_RUN" == true ]]; then
+            args+=(--dry-run)
+          fi
+          "$HESTIA_BIN" gc "${args[@]}"

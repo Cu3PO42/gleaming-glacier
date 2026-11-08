@@ -155,6 +155,14 @@
     ];
 
     flake.tests.loading = import ./tests/loading.nix { inherit (inputs.nixpkgs) lib; };
+    flake.tests.ci = import ./tests/ci.nix { inherit (inputs.nixpkgs) lib; };
+
+    flake.ciJobs = import ./ci {
+      inherit (inputs.nixpkgs) lib;
+      inherit (config) systems;
+      flake = inputs.self;
+      exclude = import ./ci/exclude.nix;
+    };
 
     # We don't want to inherit our own modules!
     copper.inheritModules = false;

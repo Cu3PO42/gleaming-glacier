@@ -1,0 +1,126 @@
+name: Nix CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  # Build jobs have no checkout, so repeat the flake's additional cache here.
+  NIX_CONFIG: |
+    accept-flake-config = true
+    extra-substituters = https://nix-community.cachix.org
+    extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+concurrency:
+  group: nix-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  eval:
+    name: Evaluate build matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      packages: ${{ steps.split.outputs.packages }}
+      any-packages: ${{ steps.split.outputs.any-packages }}
+      configurations: ${{ steps.split.outputs.configurations }}
+      any-configurations: ${{ steps.split.outputs.any-configurations }}
+      manifest-version: ${{ steps.matrix.outputs.manifest-version }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          filter-drv-closures: true
+      - id: matrix
+        uses: Mic92/hestia/matrix@v3
+        with:
+          flake: .#ciJobs
+          # Use the flake's locked nixpkgs, including for the evaluation tool.
+          nix-eval-jobs: nix run --inputs-from . nixpkgs#nix-eval-jobs -- --workers 1 --max-memory-size 4096
+          runner-map: |
+            x86_64-linux=ubuntu-24.04
+            aarch64-linux=ubuntu-24.04-arm
+            aarch64-darwin=macos-15
+      - name: Split packages and configurations
+        id: split
+        env:
+          MATRIX: ${{ steps.matrix.outputs.matrix }}
+        run: |
+          packages=$(jq -c '{include: [.include[] | select(.attr | startswith("packages.") or startswith("checks."))]}' <<< "$MATRIX")
+          configurations=$(jq -c '{include: [.include[] | select(.attr | startswith("packages.") or startswith("checks.") | not)]}' <<< "$MATRIX")
+          {
+            echo "packages=$packages"
+            echo "any-packages=$(jq '.include | length > 0' <<< "$packages")"
+            echo "configurations=$configurations"
+            echo "any-configurations=$(jq '.include | length > 0' <<< "$configurations")"
+          } >> "$GITHUB_OUTPUT"
+
+  packages:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    needs: eval
+    if: needs.eval.outputs.any-packages == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.eval.outputs.packages) }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          wait-manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      - name: Build
+        env:
+          INSTALLABLES: ${{ matrix.installables }}
+        run: |
+          read -r -a installables <<< "$INSTALLABLES"
+          "$HESTIA_BIN" prefetch "${installables[@]}"
+          nix build -L --no-link "${installables[@]}"
+
+  configurations:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    needs: [eval, packages]
+    # Wait for package uploads, including when every package was already cached.
+    if: >-
+      ${{ !cancelled() && needs.eval.result == 'success'
+          && (needs.packages.result == 'success' || needs.packages.result == 'skipped')
+          && needs.eval.outputs.any-configurations == 'true' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.eval.outputs.configurations) }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          wait-manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      - name: Build
+        env:
+          INSTALLABLES: ${{ matrix.installables }}
+        run: |
+          read -r -a installables <<< "$INSTALLABLES"
+          "$HESTIA_BIN" prefetch "${installables[@]}"
+          nix build -L --no-link "${installables[@]}"
+
+  result:
+    name: Nix CI result
+    runs-on: ubuntu-24.04
+    needs: [eval, packages, configurations]
+    if: always()
+    steps:
+      - name: Check results
+        env:
+          EVAL: ${{ needs.eval.result }}
+          PACKAGES: ${{ needs.packages.result }}
+          CONFIGURATIONS: ${{ needs.configurations.result }}
+        run: |
+          [[ "$EVAL" == success ]]
+          [[ "$PACKAGES" == success || "$PACKAGES" == skipped ]]
+          [[ "$CONFIGURATIONS" == success || "$CONFIGURATIONS" == skipped ]]
