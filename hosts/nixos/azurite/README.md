@@ -257,6 +257,11 @@ distribution within GitHub Actions. The niks3 action runs with `skip-push`
 so it does not replace Hestia's post-build hook. Explicit pushes fail the
 job if authentication or uploading fails.
 
+Cached outputs are omitted from the build matrix. On upload-enabled runs,
+one additional job restores those outputs from Hestia or upstream caches
+and pushes their closures to niks3. Its failure also blocks deployment
+promotion; see [the CI documentation](../../../ci/README.md#private-niks3-uploads).
+
 niks3 stores the complete runtime closure, including upstream dependencies.
 It deduplicates objects already in our cache, but does not exclude paths
 available from other caches. Hestia separately filters NixOS- and Nix

@@ -1,8 +1,8 @@
 # Nix CI
 
 GitHub Actions uses [Hestia](https://github.com/Mic92/hestia) to evaluate
-`ciJobs` once and build the selected outputs in a matrix. Runs without private
-cache uploads omit already-cached outputs. The output contains:
+`ciJobs` once and build uncached outputs in a matrix. Already-cached outputs
+are omitted from the build matrix on every run. The output contains:
 
 - `packages` and `checks` on the flake's declared systems: `x86_64-linux`,
   `aarch64-linux`, and `aarch64-darwin`. Package availability is already
@@ -18,7 +18,8 @@ check for branch protection; it also handles a fully cached, empty matrix.
 GitHub reports an overall workflow result, but required status checks select
 individual checks. The aggregate avoids requiring a changing set of matrix
 jobs. It runs even after failures and requires helper tests and evaluation to
-succeed, accepting a skipped build only when the matrix is empty.
+succeed, accepting a skipped build only when the matrix is empty. It also
+waits for the cached-output upload job when private-cache uploads are enabled.
 The evaluated matrix is split by platform. Each platform calls
 `build-platform.yml` with three matrices: packages needed by configurations,
 independent packages/checks, and configurations. The three phases share one
@@ -79,8 +80,8 @@ builds or additional flake evaluation.
 Packages/checks whose exact `.drv` paths occur in that graph run in the
 prerequisite matrix. Configurations wait for that matrix and its Hestia cache
 uploads. All remaining packages/checks run independently, so configurations
-do not wait for them. On runs without private-cache uploads, cached jobs are
-omitted by Hestia. Configurations can then start immediately when all their
+do not wait for them. Cached jobs are always omitted by Hestia.
+Configurations can then start immediately when all their
 prerequisite packages are cached, and packages needed only by cached
 configurations do not cause waits.
 
@@ -155,17 +156,29 @@ repository, ref, and event claims using GitHub OIDC. CI has only the
 `Mic92/niks3-action` installs the upload client and supplies a renewable
 OIDC token script with `skip-push: true`. Hestia retains the post-build
 hook. After a successful build, `nix build --print-out-paths` supplies all
-outputs (including grouped jobs and Hestia hits) to an explicit `niks3 push`.
+outputs (including grouped jobs) to an explicit `niks3 push`.
 An upload failure fails that job. Failed builds retain Hestia's intermediate
 caching but do not push their partial outputs to niks3.
 
-On upload-enabled runs, `ci/nix-eval-jobs.sh` removes Hestia's
-`--check-cache-status` argument. This keeps every selected output in the
-matrix, including outputs available only from Hestia or upstream caches.
-Build jobs substitute those outputs where possible and push their full
-closures to niks3. Other runs retain normal cache filtering. This also
-backfills outputs cached before private uploads were enabled, without
-evaluating the flake a second time.
+`ci/nix-eval-jobs.sh` preserves Hestia's `--check-cache-status` argument and
+saves the same evaluation's JSON lines. `ci/cached_outputs.py` extracts all
+outputs of derivations marked `isCached`, including multi-output packages,
+and deduplicates them. These outputs do not get individual build jobs.
+
+On upload-enabled runs with cached outputs, one additional job, `Upload
+cached outputs to niks3`, runs alongside the build matrix. It restores those
+outputs and their runtime closures from Hestia or upstream caches and pushes
+them to niks3. The job needs no checkout or second evaluation. Substitution
+works for all three platforms on a single Linux runner; local and remote
+builds are disabled. Runs with no cached outputs need no extra upload job.
+Freshly built outputs are still uploaded by their own build jobs, so the
+additional job only downloads outputs omitted from the matrix.
+
+Restoration or upload failure fails `Nix CI result` and blocks promotion.
+If a cached output is evicted before restoration, the uploader fails rather
+than attempting to build another platform's output. Rerunning evaluation
+can then schedule the missing build. The uploader needs disk space for the
+restored closures, and niks3 deduplicates previously uploaded content.
 
 Hestia uses GitHub's branch-scoped cache access: a run can read its current
 scope and the default branch's scope; PR runs can also read their base branch.
@@ -180,8 +193,8 @@ of whether our later explicit niks3 push succeeds. An interrupted or failed
 upload can therefore leave a reusable Hestia entry without a corresponding
 niks3 upload. Older entries can also predate uploads, and niks3 has its own
 garbage collection. Cache-status checks can find upstream outputs too.
-Skipping jobs safely would require checking niks3 availability or maintaining
-upload receipts with a retention guarantee; branch isolation alone is insufficient.
+The additional upload job repairs that gap without starting a build job for
+each cached derivation. Branch isolation alone would not establish upload success.
 
 The niks3 uploads deliberately keep complete runtime closures, including
 dependencies available from upstream caches. Existing objects/NAR content

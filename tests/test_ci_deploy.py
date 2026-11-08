@@ -5,33 +5,75 @@ import subprocess
 import tempfile
 import unittest
 
+from ci.cached_outputs import cached_outputs
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class EvaluationPolicyTests(unittest.TestCase):
-    def test_cache_status_is_disabled_only_for_uploads(self):
+    def test_cache_status_is_preserved_and_evaluation_is_saved(self):
         with tempfile.TemporaryDirectory() as directory:
             nix = Path(directory) / "nix"
             nix.write_text('#!/usr/bin/env python3\nimport json, sys\nprint(json.dumps(sys.argv[1:]))\n')
             nix.chmod(0o755)
             for upload in ("true", "false", ""):
                 with self.subTest(upload=upload):
+                    saved = Path(directory) / "evaluation.jsonl"
                     result = subprocess.run(
                         ["bash", str(ROOT / "ci/nix-eval-jobs.sh"),
                          "--workers", "1", "--flake", ".#ciJobs",
                          "--check-cache-status", "--meta", "--force-recurse"],
                         env={**os.environ, "PATH": f"{directory}:{os.environ['PATH']}",
-                             "CACHE_UPLOAD": upload},
+                             "CACHE_UPLOAD": upload, "NIX_EVAL_JOBS_OUTPUT": str(saved)},
                         check=True, capture_output=True, text=True,
                     )
                     arguments = json.loads(result.stdout)
                     expected = ["run", "--inputs-from", ".", "nixpkgs#nix-eval-jobs",
                                 "--", "--workers", "1", "--flake", ".#ciJobs"]
-                    if upload != "true":
-                        expected.append("--check-cache-status")
+                    expected.append("--check-cache-status")
                     expected.extend(["--meta", "--force-recurse"])
                     self.assertEqual(arguments, expected)
+                    self.assertEqual(saved.read_text(), result.stdout)
+
+    def test_failed_evaluation_is_not_hidden_by_tee(self):
+        with tempfile.TemporaryDirectory() as directory:
+            nix = Path(directory) / "nix"
+            nix.write_text('#!/usr/bin/env bash\necho partial-output\nexit 42\n')
+            nix.chmod(0o755)
+            saved = Path(directory) / "evaluation.jsonl"
+            result = subprocess.run(
+                ["bash", str(ROOT / "ci/nix-eval-jobs.sh")],
+                env={**os.environ, "PATH": f"{directory}:{os.environ['PATH']}",
+                     "NIX_EVAL_JOBS_OUTPUT": str(saved)},
+                capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 42)
+            self.assertEqual(saved.read_text(), "partial-output\n")
+
+
+class CachedOutputTests(unittest.TestCase):
+    def test_cached_outputs_include_all_platforms_and_deduplicate_all_outputs(self):
+        jobs = [
+            {"system": "aarch64-darwin", "isCached": True,
+             "outputs": {"out": "/nix/store/mac", "dev": "/nix/store/mac-dev"}},
+            {"system": "aarch64-linux", "isCached": True,
+             "outputs": {"out": "/nix/store/linux"}},
+            {"isCached": True, "outputs": {"out": "/nix/store/mac"}},
+            {"isCached": False, "outputs": {"out": "/nix/store/pending"}},
+        ]
+        self.assertEqual(cached_outputs(jobs),
+                         ["/nix/store/linux", "/nix/store/mac", "/nix/store/mac-dev"])
+
+    def test_fully_uncached_or_empty_runs_have_no_backfill(self):
+        self.assertEqual(cached_outputs([]), [])
+        self.assertEqual(cached_outputs([{"isCached": False}]), [])
+
+    def test_unresolved_outputs_and_eval_errors_fail_closed(self):
+        for job in ({"error": "broken"}, {"isCached": True, "outputs": {}},
+                    {"isCached": True, "outputs": {"out": None}}):
+            with self.subTest(job=job), self.assertRaises(ValueError):
+                cached_outputs([job])
 
 
 class PromotionTests(unittest.TestCase):

@@ -38,6 +38,7 @@ jobs:
       any-jobs: ${{ steps.matrix.outputs.any-jobs }}
       manifest-version: ${{ steps.matrix.outputs.manifest-version }}
       build-config: ${{ steps.config.outputs.config }}
+      cached-outputs: ${{ steps.split.outputs.cached-outputs }}
     steps:
       - uses: actions/checkout@v6
       - uses: NixOS/nix-installer-action@main
@@ -67,7 +68,7 @@ jobs:
       - id: matrix
         uses: Mic92/hestia/matrix@v3
         env:
-          CACHE_UPLOAD: ${{ fromJSON(steps.config.outputs.config).cacheUpload }}
+          NIX_EVAL_JOBS_OUTPUT: ${{ runner.temp }}/ci-evaluation.jsonl
         with:
           flake: .#ciJobs
           # Use the flake's locked nixpkgs, including for the evaluation tool.
@@ -83,6 +84,8 @@ jobs:
         run: |
           platforms=$(python3 ci/matrix.py <<< "$MATRIX")
           echo "matrix=$platforms" >> "$GITHUB_OUTPUT"
+          cached_outputs=$(python3 ci/cached_outputs.py < "$RUNNER_TEMP/ci-evaluation.jsonl")
+          echo "cached-outputs=$cached_outputs" >> "$GITHUB_OUTPUT"
 
   build:
     name: ${{ matrix.system }}
@@ -101,10 +104,49 @@ jobs:
       manifest-version: ${{ needs.eval.outputs.manifest-version }}
       build-config: ${{ needs.eval.outputs.build-config }}
 
+  upload-cached:
+    name: Upload cached outputs to niks3
+    needs: eval
+    if: >-
+      ${{ fromJSON(needs.eval.outputs.build-config).cacheUpload
+          && needs.eval.outputs.cached-outputs != '[]' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      NIX_CONFIG: ${{ fromJSON(needs.eval.outputs.build-config).nixConfig }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          read-only: true
+          wait-manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      - uses: Mic92/niks3-action@v1
+        id: niks3
+        with:
+          server-url: ${{ fromJSON(needs.eval.outputs.build-config).cacheServerUrl }}
+          skip-push: true
+      - name: Restore and push cached output closures
+        env:
+          CACHED_OUTPUTS: ${{ needs.eval.outputs.cached-outputs }}
+          NIKS3_SERVER_URL: ${{ fromJSON(needs.eval.outputs.build-config).cacheServerUrl }}
+          NIKS3_BIN: ${{ steps.niks3.outputs.binary-dir }}
+          NIKS3_AUTH_TOKEN_SCRIPT: ${{ steps.niks3.outputs.auth-token-script }}
+        run: |
+          test -n "$NIKS3_AUTH_TOKEN_SCRIPT"
+          jq -r '.[]' <<< "$CACHED_OUTPUTS" > "$RUNNER_TEMP/cached-outputs"
+          while IFS= read -r output; do
+            # Substitute any platform's outputs; never build locally or remotely.
+            nix-store --realise "$output" --max-jobs 0 --option builders ""
+            "$NIKS3_BIN/niks3" push --auth-token-script "$NIKS3_AUTH_TOKEN_SCRIPT" "$output"
+          done < "$RUNNER_TEMP/cached-outputs"
+
   result:
     name: Nix CI result
     runs-on: ubuntu-24.04
-    needs: [tests, eval, build]
+    needs: [tests, eval, build, upload-cached]
     if: always()
     steps:
       - name: Check results
@@ -112,10 +154,12 @@ jobs:
           TESTS: ${{ needs.tests.result }}
           EVAL: ${{ needs.eval.result }}
           BUILD: ${{ needs.build.result }}
+          UPLOAD_CACHED: ${{ needs.upload-cached.result }}
         run: |
           [[ "$TESTS" == success ]]
           [[ "$EVAL" == success ]]
           [[ "$BUILD" == success || "$BUILD" == skipped ]]
+          [[ "$UPLOAD_CACHED" == success || "$UPLOAD_CACHED" == skipped ]]
 
   promote:
     name: Advance deploy branch
