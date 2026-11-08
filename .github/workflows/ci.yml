@@ -30,6 +30,8 @@ jobs:
       manifest-version: ${{ steps.matrix.outputs.manifest-version }}
     steps:
       - uses: actions/checkout@v6
+      - name: Test matrix partitioning
+        run: python3 -m unittest discover -s tests -p 'test_ci_matrix.py'
       - uses: NixOS/nix-installer-action@main
       - uses: Mic92/hestia@v3
         with:
@@ -45,24 +47,12 @@ jobs:
             x86_64-linux=ubuntu-24.04
             aarch64-linux=ubuntu-24.04-arm
             aarch64-darwin=macos-15
-      - name: Split matrix by platform
+      - name: Split matrix by platform and configuration dependencies
         id: split
         env:
           MATRIX: ${{ steps.matrix.outputs.matrix }}
         run: |
-          platforms=$(jq -c '
-            def isPackage: .attr | startswith("packages.") or startswith("checks.");
-            {
-              include: (.include | group_by(.system) | map({
-                system: .[0].system,
-                packages: {include: map(select(isPackage))},
-                configurations: {include: map(select(isPackage | not))}
-              } | . + {
-                "any-packages": (.packages.include | length > 0),
-                "any-configurations": (.configurations.include | length > 0)
-              }))
-            }
-          ' <<< "$MATRIX")
+          platforms=$(python3 ci/matrix.py <<< "$MATRIX")
           echo "matrix=$platforms" >> "$GITHUB_OUTPUT"
 
   build:

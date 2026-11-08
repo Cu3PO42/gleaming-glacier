@@ -15,7 +15,8 @@ Build jobs fetch derivations from Hestia and build by store path, without
 checking out or evaluating the flake again. `Nix CI result` is the stable status
 check for branch protection; it also handles a fully cached, empty matrix.
 The evaluated matrix is split by platform. Each platform calls
-`build-platform.yml` with its own package/check and configuration matrices.
+`build-platform.yml` with three matrices: packages needed by configurations,
+independent packages/checks, and configurations.
 
 ## Exclusions
 
@@ -57,15 +58,31 @@ During development, use `path:.#ciJobs` to include untracked files.
 
 ## Cache reuse
 
-On each platform, the package/check matrix finishes, including Hestia's cache
-uploads, before that platform's configuration matrix starts. Linux
-configurations can start while Darwin packages are still building, and the
-two Linux architectures also progress independently. A failure on one platform
-does not cancel another platform's builds.
+After Hestia evaluates once, `ci/matrix.py` queries each platform's pending
+configuration derivations with `nix-store --query --requisites`. This reads
+the already-instantiated transitive build dependency graph; it performs no
+builds or additional flake evaluation.
 
-Configurations can therefore substitute packages built in their platform's
-first phase when their store paths match. This avoids many redundant builds
-while keeping each output as its own matrix job.
+Packages/checks whose exact `.drv` paths occur in that graph run in the
+prerequisite matrix. Configurations wait for that matrix and its Hestia cache
+uploads. All remaining packages/checks run independently, so configurations
+do not wait for them. If all prerequisite packages are cached, configurations
+can start immediately. Cached configuration jobs are already omitted by
+Hestia, so packages needed only by those configurations do not cause waits.
+
+Both matrices still contribute to `Nix CI result`. An independent package
+failure fails CI while allowing configuration builds to proceed. Linux
+configurations can start while Darwin packages are still building, and the
+two Linux architectures also progress independently.
+
+Matching uses derivation paths rather than package names: a configuration's
+override only matches a standalone package if their derivations are identical.
+For a Hestia group, every installable is checked; the whole group becomes a
+prerequisite if any member is needed. Configurations can then substitute
+matching packages from the cache while each output keeps its own matrix job.
+
+The eval job runs the dependency partitioning tests before evaluation. Run
+them locally with `python3 -m unittest discover -s tests -p 'test_ci_matrix.py'`.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different

@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       matrix:
-        description: Package and configuration matrices for one platform
+        description: Prerequisite package, independent package, and configuration matrices for one platform
         type: string
         required: true
       manifest-version:
@@ -45,10 +45,32 @@ jobs:
           "$HESTIA_BIN" prefetch "${installables[@]}"
           nix build -L --no-link "${installables[@]}"
 
+  other-packages:
+    name: ${{ matrix.name }} (${{ matrix.system }})
+    # These packages/checks are not prerequisites of any pending configuration.
+    if: fromJSON(inputs.matrix).any-other-packages
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(inputs.matrix).other-packages }}
+    steps:
+      - uses: NixOS/nix-installer-action@main
+      - uses: Mic92/hestia@v3
+        with:
+          upstream-cache-filter: true
+          wait-manifest-version: ${{ inputs.manifest-version }}
+      - name: Build
+        env:
+          INSTALLABLES: ${{ matrix.installables }}
+        run: |
+          read -r -a installables <<< "$INSTALLABLES"
+          "$HESTIA_BIN" prefetch "${installables[@]}"
+          nix build -L --no-link "${installables[@]}"
+
   configurations:
     name: ${{ matrix.name }} (${{ matrix.system }})
     needs: packages
-    # Only this platform's packages must finish uploading before its configs.
+    # Wait only for packages used by this platform's pending configurations.
     if: >-
       ${{ !cancelled()
           && (needs.packages.result == 'success' || needs.packages.result == 'skipped')
