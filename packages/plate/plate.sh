@@ -151,7 +151,7 @@ update() {
         CMD="switch"
     fi
 
-    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" $CMD --fast --use-remote-sudo --use-substitutes "${REMOTE_ARGS[@]}"
+    NIX_SSHOPTS="-o ForwardAgent=yes" nixos-rebuild --flake "$FLAKE" --target-host "$TARGET_USER@$TARGET" $CMD --no-reexec --elevate=sudo --use-substitutes "${REMOTE_ARGS[@]}"
 }
 
 unlock() {
