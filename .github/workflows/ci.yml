@@ -23,6 +23,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tests:
+    name: Test CI helpers
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
+
   eval:
     name: Evaluate build matrix
     runs-on: ubuntu-24.04
@@ -33,8 +40,6 @@ jobs:
       build-config: ${{ steps.config.outputs.config }}
     steps:
       - uses: actions/checkout@v6
-      - name: Test CI helpers
-        run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
       - uses: NixOS/nix-installer-action@main
       - name: Prepare shared build configuration
         id: config
@@ -99,14 +104,16 @@ jobs:
   result:
     name: Nix CI result
     runs-on: ubuntu-24.04
-    needs: [eval, build]
+    needs: [tests, eval, build]
     if: always()
     steps:
       - name: Check results
         env:
+          TESTS: ${{ needs.tests.result }}
           EVAL: ${{ needs.eval.result }}
           BUILD: ${{ needs.build.result }}
         run: |
+          [[ "$TESTS" == success ]]
           [[ "$EVAL" == success ]]
           [[ "$BUILD" == success || "$BUILD" == skipped ]]
 

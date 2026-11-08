@@ -15,6 +15,10 @@ The runners are `ubuntu-24.04`, `ubuntu-24.04-arm`, and `macos-15`, respectively
 Build jobs fetch derivations from Hestia and build by store path, without
 checking out or evaluating the flake again. `Nix CI result` is the stable status
 check for branch protection; it also handles a fully cached, empty matrix.
+GitHub reports an overall workflow result, but required status checks select
+individual checks. The aggregate avoids requiring a changing set of matrix
+jobs. It runs even after failures and requires helper tests and evaluation to
+succeed, accepting a skipped build only when the matrix is empty.
 The evaluated matrix is split by platform. Each platform calls
 `build-platform.yml` with three matrices: packages needed by configurations,
 independent packages/checks, and configurations. The three phases share one
@@ -91,8 +95,14 @@ For a Hestia group, every installable is checked; the whole group becomes a
 prerequisite if any member is needed. Configurations can then substitute
 matching packages from the cache while each output keeps its own matrix job.
 
-The eval job runs the CI helper tests before evaluation. Run them locally
-with `python3 -m unittest discover -s tests -p 'test_ci_*.py'`.
+The `Test CI helpers` job runs the Python helper tests independently of Nix
+evaluation, giving failures their own status and logs. It contributes to
+`Nix CI result`, so a failure blocks deployment promotion. Previously these
+quick tests ran before evaluation to stop faulty helpers before spending
+time on Nix; the separate job lets evaluation proceed in parallel.
+Run them locally with `python3 -m unittest discover -s tests -p 'test_ci_*.py'`.
+The Nix tests in `tests/ci.nix` and `tests/loading.nix` are exposed through
+the flake's nix-unit checks and run in the build matrix.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different
