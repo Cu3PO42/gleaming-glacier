@@ -10,7 +10,7 @@ permissions:
   actions: read
 
 env:
-  # Build jobs have no checkout, so repeat the flake's additional cache here.
+  # The eval job forwards these settings to every build via build-config.
   NIX_CONFIG: |
     accept-flake-config = true
     extra-substituters = https://nix-community.cachix.org
@@ -28,14 +28,34 @@ jobs:
       matrix: ${{ steps.split.outputs.matrix }}
       any-jobs: ${{ steps.matrix.outputs.any-jobs }}
       manifest-version: ${{ steps.matrix.outputs.manifest-version }}
+      build-config: ${{ steps.config.outputs.config }}
     steps:
       - uses: actions/checkout@v6
       - name: Test matrix partitioning
         run: python3 -m unittest discover -s tests -p 'test_ci_matrix.py'
       - uses: NixOS/nix-installer-action@main
+      - name: Prepare shared build configuration
+        id: config
+        run: |
+          cache_config=$(nix eval --json --file ./shared/nix-cache.nix)
+          build_config=$(jq -c --arg nixConfig "$NIX_CONFIG" \
+            --arg repository "$GITHUB_REPOSITORY" --arg ref "$GITHUB_REF" --arg event "$GITHUB_EVENT_NAME" '
+            {
+              nixConfig: $nixConfig,
+              cacheServerUrl: .upload.url,
+              upstreamCacheKeyNames: (.ci.upstreamCacheKeyNames | join(" ")),
+              cacheUpload: (
+                (.ci.repositories | index($repository) != null)
+                and (.ci.refs | index($ref) != null)
+                and ($event == "push" or $event == "workflow_dispatch")
+              )
+            }
+          ' <<< "$cache_config")
+          echo "config=$build_config" >> "$GITHUB_OUTPUT"
       - uses: Mic92/hestia@v3
         with:
           upstream-cache-filter: true
+          upstream-cache-key-names: ${{ fromJSON(steps.config.outputs.config).upstreamCacheKeyNames }}
           filter-drv-closures: true
       - id: matrix
         uses: Mic92/hestia/matrix@v3
@@ -63,9 +83,14 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.eval.outputs.matrix) }}
     uses: ./.github/workflows/build-platform.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
     with:
       matrix: ${{ toJSON(matrix) }}
       manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      build-config: ${{ needs.eval.outputs.build-config }}
 
   result:
     name: Nix CI result

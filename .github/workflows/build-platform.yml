@@ -11,17 +11,18 @@ on:
         description: Hestia cache manifest containing the evaluated derivations
         type: string
         required: true
+      build-config:
+        description: Shared Nix settings, upstream filter, and upload policy as JSON
+        type: string
+        required: true
 
 permissions:
   contents: read
   actions: read
+  id-token: write
 
 env:
-  # Reusable workflows do not inherit the caller's workflow-level environment.
-  NIX_CONFIG: |
-    accept-flake-config = true
-    extra-substituters = https://nix-community.cachix.org
-    extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+  NIX_CONFIG: ${{ fromJSON(inputs.build-config).nixConfig }}
 
 jobs:
   packages:
@@ -31,19 +32,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).packages }}
-    steps:
+    steps: &build-steps
       - uses: NixOS/nix-installer-action@main
       - uses: Mic92/hestia@v3
         with:
           upstream-cache-filter: true
+          upstream-cache-key-names: ${{ fromJSON(inputs.build-config).upstreamCacheKeyNames }}
           wait-manifest-version: ${{ inputs.manifest-version }}
+      - name: Set up niks3 uploads
+        id: niks3
+        if: fromJSON(inputs.build-config).cacheUpload
+        uses: Mic92/niks3-action@v1
+        with:
+          server-url: ${{ fromJSON(inputs.build-config).cacheServerUrl }}
+          # Hestia owns the post-build hook; push completed outputs explicitly.
+          skip-push: true
       - name: Build
         env:
           INSTALLABLES: ${{ matrix.installables }}
         run: |
           read -r -a installables <<< "$INSTALLABLES"
           "$HESTIA_BIN" prefetch "${installables[@]}"
-          nix build -L --no-link "${installables[@]}"
+          nix build -L --no-link --print-out-paths "${installables[@]}" > "$RUNNER_TEMP/build-outputs"
+      - name: Push outputs to niks3
+        if: fromJSON(inputs.build-config).cacheUpload
+        env:
+          NIKS3_SERVER_URL: ${{ fromJSON(inputs.build-config).cacheServerUrl }}
+          NIKS3_BIN: ${{ steps.niks3.outputs.binary-dir }}
+          NIKS3_AUTH_TOKEN_SCRIPT: ${{ steps.niks3.outputs.auth-token-script }}
+        run: |
+          test -n "$NIKS3_AUTH_TOKEN_SCRIPT"
+          outputs=()
+          while IFS= read -r output; do outputs+=("$output"); done < "$RUNNER_TEMP/build-outputs"
+          test "${#outputs[@]}" -gt 0
+          # niks3 keeps complete closures; Hestia's upstream filter is separate.
+          "$NIKS3_BIN/niks3" push --auth-token-script "$NIKS3_AUTH_TOKEN_SCRIPT" "${outputs[@]}"
 
   other-packages:
     name: ${{ matrix.name }} (${{ matrix.system }})
@@ -53,19 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).other-packages }}
-    steps:
-      - uses: NixOS/nix-installer-action@main
-      - uses: Mic92/hestia@v3
-        with:
-          upstream-cache-filter: true
-          wait-manifest-version: ${{ inputs.manifest-version }}
-      - name: Build
-        env:
-          INSTALLABLES: ${{ matrix.installables }}
-        run: |
-          read -r -a installables <<< "$INSTALLABLES"
-          "$HESTIA_BIN" prefetch "${installables[@]}"
-          nix build -L --no-link "${installables[@]}"
+    steps: *build-steps
 
   configurations:
     name: ${{ matrix.name }} (${{ matrix.system }})
@@ -79,16 +90,4 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).configurations }}
-    steps:
-      - uses: NixOS/nix-installer-action@main
-      - uses: Mic92/hestia@v3
-        with:
-          upstream-cache-filter: true
-          wait-manifest-version: ${{ inputs.manifest-version }}
-      - name: Build
-        env:
-          INSTALLABLES: ${{ matrix.installables }}
-        run: |
-          read -r -a installables <<< "$INSTALLABLES"
-          "$HESTIA_BIN" prefetch "${installables[@]}"
-          nix build -L --no-link "${installables[@]}"
+    steps: *build-steps

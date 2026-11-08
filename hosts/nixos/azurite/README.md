@@ -10,8 +10,31 @@ policy files before importing them in OVH.
 
 Azurite runs niks3 and PostgreSQL. Malachite and azurite read directly from
 OVH through the shared `private-nix-cache` feature. Reads use a separate,
-read-only S3 identity per host. The niks3 read proxy is disabled, and the API
-initially listens on loopback for uploads through an SSH tunnel.
+read-only S3 identity per host. The niks3 read proxy is disabled. Its upload
+API listens on loopback behind Caddy at `https://niks3.libethenite.dev`, with
+automatic HTTPS certificates and HTTP-to-HTTPS redirects. Public
+access to this API does not make cache objects publicly readable.
+
+`shared/nix-cache.nix` also holds `upload.domain`, the derived `upload.url`,
+and the exact repository/ref allowlists in `ci`. Both the server's OIDC
+policy and GitHub Actions consume these settings. Change the domain there
+when moving the endpoint, update its DNS, and deploy azurite before running
+CI with the new URL. No workflow URL or GitHub secret needs updating.
+
+Create an A record for **niks3.libethenite.dev** pointing at azurite's
+`128.140.125.200`. The apex domain's A record does not cover this subdomain.
+If you add an AAAA record, it must also point at azurite. TCP ports 80 and
+443 must be reachable for certificate issuance and HTTPS. Caddy's NixOS
+module opens both, plus UDP 443 for HTTP/3. Port 5751 remains bound to
+loopback. Caddy's certificates and state live in `/var/lib/caddy` on the
+persistent `/var/lib` dataset.
+
+Azurite enables the shared Caddy service and firewall integration in
+`default.nix`; each proxied service adds a `services.caddy.virtualHosts`
+entry. The niks3 virtual host preserves upstream's 128 MiB request-body
+limit and 300-second proxy timeouts. Upstream's nginx integration is
+disabled. Its optional mTLS headers/socket are not used: niks3 validates
+OIDC and API bearer tokens itself.
 
 ## 1. Prepare the checkout
 
@@ -118,8 +141,10 @@ nix shell --inputs-from . nixpkgs#openssl --command openssl rand -hex 32
 nix run .#mage -- edit .#azurite niks3-api-token
 ```
 
-Keep a copy of this API token in 1Password for the machines/CI that will
-upload. It authorizes uploads and GC; reader-only hosts do not need it.
+Keep a copy of this API token in 1Password for manual administration.
+It authorizes uploads and GC; reader-only hosts do not need it. GitHub
+Actions uses short-lived OIDC tokens with only the `write` scope and does
+not receive this token, the signing key, or S3 credentials.
 
 Generate the cache signing key locally and put its complete single-line
 output in the signing secret:
@@ -219,23 +244,109 @@ was rebuilt and switched successfully with `private-nix-cache` enabled.
 PostgreSQL and `/var/lib/niks3` live on azurite's persistent `/var/lib` ZFS
 dataset. Daily GC expires closures older than 30 days. Uploads must go
 through `niks3 push`, rather than `nix copy --to s3://...`, so their references
-are tracked in PostgreSQL. Automatic uploads need the separate post-build
-hook setup; configuring substitution does not enable them.
+are tracked in PostgreSQL. CI explicitly uploads successful job outputs;
+automatic uploads from local builds still need a separate post-build hook.
+Configuring substitution does not enable uploads.
+
+## CI uploads
+
+The GitHub Actions workflow pushes each successful build job's output
+closure, including outputs restored by Hestia, through `niks3 push`.
+Hestia continues to handle intermediate build caching and derivation
+distribution within GitHub Actions. The niks3 action runs with `skip-push`
+so it does not replace Hestia's post-build hook. Explicit pushes fail the
+job if authentication or uploading fails.
+
+niks3 stores the complete runtime closure, including upstream dependencies.
+It deduplicates objects already in our cache, but does not exclude paths
+available from other caches. Hestia separately filters NixOS- and Nix
+Community-signed paths from its Actions cache using the shared
+`ci.upstreamCacheKeyNames` list. We retain the upstream niks3 client and
+measure S3 usage before considering a custom filtering client.
+
+Initially, uploads are allowed only for `push` and `workflow_dispatch`
+events on `refs/heads/master` in `Cu3PO42/gleaming-glacier`. Edit the exact
+`ci.repositories` and `ci.refs` lists in `shared/nix-cache.nix` to authorize
+other repositories or branches, and deploy the server policy first.
+The server checks repository, ref, event, issuer, and audience independently
+of the workflow's upload condition. Pull requests, forks, and other refs
+still build with Hestia but do not upload to the private cache.
+
+The reusable build workflow gets `id-token: write` from its caller. The
+niks3 action discovers the audience and signing public key from
+`/api/cache-config`; `cacheUrl` stays unset so the API is not added as a
+public read substituter. No GitHub cache credentials need provisioning.
+See [CI configuration](../../../ci/README.md#private-niks3-uploads).
+
+Hestia omits fully cached jobs from its matrix. Such jobs do not run an
+upload step, so this is not a backfill of old Hestia entries into S3.
+
+## Measuring storage
+
+Use OVH's usage/billing view to track stored data, operations, and transfer.
+Compare the initial cache fill with later nixpkgs updates and the effect of
+the existing 30-day closure retention. Shared NARs are stored once, so each
+CI job does not create another copy of the same dependencies.
+
+For a current-object inventory, enter a shell with the AWS CLI on azurite:
+
+```sh
+nix shell --inputs-from . nixpkgs#awscli2
+```
+
+Then use the existing read-only credentials (adjust the bucket/endpoint
+below if you change the shared storage configuration):
+
+```sh
+sudo env AWS_SHARED_CREDENTIALS_FILE=/run/agenix/nix-cache-credentials \
+  "$(command -v aws)" --profile azurite-cache \
+    --endpoint-url https://s3.de.io.cloud.ovh.net --region de \
+    s3api list-objects-v2 --bucket cupper-private-nix-cache \
+    --query '{objects: length(Contents || `[]`), bytes: sum(Contents[].Size || `[]`)}' \
+    --output json --no-cli-pager
+```
+
+AWS CLI automatically paginates this JSON query. It lists metadata without
+downloading NARs; the byte total measures current object sizes after
+compression. It excludes noncurrent versions and incomplete multipart
+uploads, so OVH billing remains authoritative. niks3's `/api/cache-stats`
+reports logical bytes and should not be used as the compressed storage
+total.
 
 ## 7. Test uploads and authenticated reads
 
-Open an upload tunnel:
+After deploying Caddy and configuring DNS, check the public API:
+
+```sh
+cache_url=$(nix eval --raw --file ./shared/nix-cache.nix --apply 'cache: cache.upload.url')
+curl --fail "$cache_url/api/cache-config?issuer=https://token.actions.githubusercontent.com"
+```
+
+The response should advertise the matching `oidc_audience` and public key,
+with an empty `substituter_url`. An unauthenticated POST to
+`/api/pending_closures` must fail, and a GET for a known `.narinfo` path
+through this URL must not return the object. Trigger CI on an allowed ref
+to verify a complete OIDC upload; GitHub's token cannot be minted locally.
+
+For a manual upload, use a securely stored local copy of the API token:
+
+```sh
+export NIKS3_SERVER_URL="$cache_url"
+export NIKS3_AUTH_TOKEN_FILE=/path/to/api-token
+nix build --inputs-from . nixpkgs#hello --out-link /tmp/azurite-cache-hello
+nix run --inputs-from . niks3 -- push /tmp/azurite-cache-hello
+```
+
+An SSH upload tunnel remains available for administration:
 
 ```sh
 ssh -N -L 5751:127.0.0.1:5751 Cu3PO42@128.140.125.200
 ```
 
-In another terminal, use a securely stored local copy of the API token:
+In another terminal, select the tunnel instead of HTTPS:
 
 ```sh
 export NIKS3_SERVER_URL=http://127.0.0.1:5751
-export NIKS3_AUTH_TOKEN_FILE=/path/to/api-token
-nix build --inputs-from . nixpkgs#hello --out-link /tmp/azurite-cache-hello
 nix run --inputs-from . niks3 -- push /tmp/azurite-cache-hello
 ```
 

@@ -24,6 +24,11 @@
   main = {config, pkgs, lib, origin, ...}: {
     imports = [./niks3.nix];
 
+    services.caddy = {
+      enable = true;
+      openFirewall = true;
+    };
+
     copper.features = [
       "hetzner-server"
       "server"
