@@ -121,7 +121,7 @@
 
       secureBootKeyLocation = mkOption {
         type = types.str;
-        default = "/etc/secureboot";
+        default = "/var/lib/sbctl";
         description = ''
           The location on the system where the key bundle will be stored. This
           must match the `boot.lanzaboote.pkiBundle` setting of the host.

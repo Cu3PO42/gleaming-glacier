@@ -15,7 +15,8 @@
   # Enable Lanzaboote
   boot.lanzaboote = {
     enable = true;
-    pkiBundle = "/etc/secureboot";
+    # sbctl setup --migrate moves existing key bundles here.
+    pkiBundle = "/var/lib/sbctl";
   };
 
   environment.systemPackages = with pkgs; [
