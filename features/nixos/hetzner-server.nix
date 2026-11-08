@@ -44,7 +44,7 @@
       matchConfig.Name = "enp1s0";
       networkConfig.DHCP = "ipv4";
       routes = [
-        {routeConfig.Gateway = "fe80::1";}
+        {Gateway = "fe80::1";}
       ];
       address = [
         config.copper.feature.hetzner-server.ipv6

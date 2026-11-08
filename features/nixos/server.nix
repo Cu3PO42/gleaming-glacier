@@ -4,7 +4,7 @@
   users.mutableUsers = false;
 
   # Needed so we can use our provisioning script.
-  security.pam.enableSSHAgentAuth = true;
+  security.pam.sshAgentAuth.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh = {
