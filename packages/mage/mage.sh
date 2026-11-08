@@ -38,7 +38,9 @@ setupKeys() {
 
     SECRET_PATH="$GIT_ROOT/$SECRET_FOLDER"
 
-    SECRETS_DEF=$(mktemp)
+    # agenix resolves secret paths relative to the rules file, so keep the
+    # temporary rules alongside the host's encrypted secrets.
+    SECRETS_DEF=$(mktemp "$SECRET_PATH/.mage-rules.XXXXXX.nix")
     trap 'rm -f "$SECRETS_DEF"' EXIT
     echo "{\"$FILE.age\".publicKeys=[\"$ROOT_KEY_PUBLIC\" \"$HOST_KEY\"];}" > "$SECRETS_DEF"
 }
@@ -50,7 +52,7 @@ edit() {
     setupKeys
 
     pushd "$SECRET_PATH" > /dev/null
-    RULES="$SECRETS_DEF" agenix -e "$FILE.age" -i <(readOpKey "$ROOT_KEY_REF")
+    AGENIX_RULES="$SECRETS_DEF" agenix -e "$FILE.age" -i <(readOpKey "$ROOT_KEY_REF")
     popd > /dev/null
 }
 
@@ -61,7 +63,7 @@ decrypt() {
     setupKeys
  
     pushd "$SECRET_PATH" > /dev/null
-    RULES="$SECRETS_DEF" agenix -d "$FILE.age" -i <(readOpKey "$ROOT_KEY_REF")
+    AGENIX_RULES="$SECRETS_DEF" agenix -d "$FILE.age" -i <(readOpKey "$ROOT_KEY_REF")
     popd > /dev/null
 }
 
