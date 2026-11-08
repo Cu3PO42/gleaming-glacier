@@ -77,6 +77,8 @@ in {
     ];
 
     boot.supportedFilesystems = ["zfs"];
+    # The old default is true, but upstream recommends setting it to false to avoid data loss.
+    boot.zfs.forceImportRoot = false;
 
     copper.patches.fish = [{
       patch = pkgs.fetchpatch {
