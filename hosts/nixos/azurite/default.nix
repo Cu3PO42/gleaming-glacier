@@ -22,6 +22,8 @@
   };
 
   main = {config, pkgs, lib, origin, ...}: {
+    imports = [./niks3.nix];
+
     copper.features = [
       "hetzner-server"
       "server"
@@ -31,6 +33,7 @@
       "impermanence"
       "home-manager"
       "default-user"
+      "private-nix-cache"
     ];
 
     copper.feature.zfs = {

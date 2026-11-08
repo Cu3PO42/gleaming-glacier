@@ -1,0 +1,16 @@
+{
+  "Statement": [
+    {
+      "Sid": "CacheBucketRead",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Resource": ["arn:aws:s3:::cupper-private-nix-cache"]
+    },
+    {
+      "Sid": "CacheObjectsRead",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::cupper-private-nix-cache/*"]
+    }
+  ]
+}

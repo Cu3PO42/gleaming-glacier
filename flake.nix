@@ -24,6 +24,11 @@
     };
 
     # NixOS inputs
+    niks3 = {
+      url = "github:Mic92/niks3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Secure Boot
     lanzaboote = {
       url = "github:nix-community/lanzaboote";

@@ -6,10 +6,16 @@
     diskEncryptionKey = "op://Private/Malachite Disk Encryption Key/password";
   };
 
+  copperConfig.mage = {
+    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBraqEbHmoKVvfEEoEa8r/ktUeGFqrZbfnsR1a5aMXv+";
+    secrets = ./secrets;
+  };
+
   main = {pkgs, ...}: {
     copper.features = [
       "base"
       "default-user"
+      "private-nix-cache"
       "locale-de"
       "amd"
       "zfs"
