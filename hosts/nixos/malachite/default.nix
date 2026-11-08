@@ -35,6 +35,9 @@
     networking.hostId = "e4c27b74"; # Actually required for ZFS
 
     services.desktopManager.plasma6.enable = true;
+    programs.kde-pim.enable = false;
+    # Keep Breeze's default wallpaper, but omit the extra wallpaper collection.
+    environment.plasma6.excludePackages = [pkgs.kdePackages.plasma-workspace-wallpapers];
 
     copper.feature.zfs = {
       disko = {
@@ -57,7 +60,6 @@
     hardware.bluetooth.enable = true;
 
     environment.systemPackages = with pkgs; [
-      jetbrains.idea
       jdk17
     ];
 

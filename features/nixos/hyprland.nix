@@ -2,7 +2,6 @@
   config,
   origin,
   pkgs,
-  lib,
   copper,
   ...
 }: {
@@ -20,7 +19,11 @@
 
   services.blueman.enable = true;
 
-  environment.systemPackages = builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+  fonts.packages = with pkgs.nerd-fonts; [
+    caskaydia-cove # Kitty and the desktop monospace font
+    jetbrains-mono # WezTerm and Rofi
+    ubuntu # Hyprlock
+  ];
 
   # Required to allow swaylock/hyprlock to unlock.
   security.pam.services.swaylock = {};
