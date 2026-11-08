@@ -43,7 +43,7 @@ in {
         hl.bind("SUPER + mouse:273", hl.dsp.window.resize())
 
         hl.on("hyprland.start", function()
-          hl.exec_cmd("kitty", { workspace = "special:terminal silent", float = true, center = "", size = "1200 800" })
+          hl.exec_cmd("kitty", { workspace = "special:terminal silent", float = true, center = true, size = "1200 800" })
         end)
 
         ${lib.optionalString (config.copper.feature.nixos._1password.enable) "require('${config.xdg.configHome}/hypr/1password.lua')"}

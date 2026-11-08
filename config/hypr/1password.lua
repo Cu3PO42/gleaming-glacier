@@ -8,5 +8,5 @@ hl.window_rule({
 })
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("1password", { workspace = "special:password silent", float = true, center = "" })
+    hl.exec_cmd("1password", { workspace = "special:password silent", float = true, center = true })
 end)
