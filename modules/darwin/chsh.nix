@@ -36,7 +36,10 @@ with lib; let
   # The wrapper waits for /nix to mount and then execs the correct shell for the user
   mkWrapper = users: let
     usersWithNonDefaultShells = lib.filterAttrs (u: shell: !(builtins.elem shell defaultShells)) users;
-    usersWithNormalizedShells = lib.mapAttrs (u: normalizeShellPath) usersWithNonDefaultShells;
+    usersWithNormalizedShells = lib.mapAttrs (user: shell: {
+      uid = config.users.users.${user}.uid;
+      shell = normalizeShellPath shell;
+    }) usersWithNonDefaultShells;
   in
     # Use callPackage instead of a copper.packages references so this module
     # is usable fully standalone.
@@ -59,6 +62,9 @@ in {
         If given a package, it is automatically added to /etc/shells,
         otherwise it must be one of the default shells present there or
         added to `environment.shells`.
+
+        When using the wrapper, set `users.users.<name>.uid` for each user
+        with a non-default shell.
       '';
     };
 

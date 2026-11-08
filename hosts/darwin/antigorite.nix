@@ -1,6 +1,7 @@
 {
   main = {
     defaultUser = "Cu3PO42";
+    users.users.Cu3PO42.uid = 501;
     copper.features = [
       "apps"
       "cli"

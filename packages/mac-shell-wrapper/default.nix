@@ -10,7 +10,7 @@ stdenv.mkDerivation {
   configurePhase = ''
     # The header is also required when no user mappings are configured.
     : > ./mappings
-    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (user: shell: ''echo "case $(id -u ${user}): return \"${shell}\";" >> ./mappings'') users)}
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (_: user: ''echo "case ${toString user.uid}: return \"${user.shell}\";" >> ./mappings'') users)}
   '';
   buildPhase = "$CC wrapper.c -o shell-wrapper -O3";
   installPhase = ''
