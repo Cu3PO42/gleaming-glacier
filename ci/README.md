@@ -167,6 +167,22 @@ closures to niks3. Other runs retain normal cache filtering. This also
 backfills outputs cached before private uploads were enabled, without
 evaluating the flake a second time.
 
+Hestia uses GitHub's branch-scoped cache access: a run can read its current
+scope and the default branch's scope; PR runs can also read their base branch.
+PR writes stay in their PR scope. Hestia additionally maintains per-branch,
+per-system roots for garbage collection; those roots are not upload receipts.
+See [GitHub's cache access rules](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache)
+and [Hestia's roots](https://github.com/Mic92/hestia/tree/v3#roots).
+
+Even a default-branch Hestia hit does not establish that niks3 has the output.
+Hestia caches intermediate dependencies and retains build results independently
+of whether our later explicit niks3 push succeeds. An interrupted or failed
+upload can therefore leave a reusable Hestia entry without a corresponding
+niks3 upload. Older entries can also predate uploads, and niks3 has its own
+garbage collection. Cache-status checks can find upstream outputs too.
+Skipping jobs safely would require checking niks3 availability or maintaining
+upload receipts with a retention guarantee; branch isolation alone is insufficient.
+
 The niks3 uploads deliberately keep complete runtime closures, including
 dependencies available from upstream caches. Existing objects/NAR content
 in our cache are deduplicated; Hestia's upstream filter does not apply to
