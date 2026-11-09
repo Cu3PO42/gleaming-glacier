@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -15,7 +16,7 @@ class EvaluationPolicyTests(unittest.TestCase):
     def test_cache_status_is_preserved_and_evaluation_is_saved(self):
         with tempfile.TemporaryDirectory() as directory:
             nix = Path(directory) / "nix"
-            nix.write_text('#!/usr/bin/env python3\nimport json, sys\nprint(json.dumps(sys.argv[1:]))\n')
+            nix.write_text(f'#!{sys.executable}\nimport json, sys\nprint(json.dumps(sys.argv[1:]))\n')
             nix.chmod(0o755)
             for upload in ("true", "false", ""):
                 with self.subTest(upload=upload):
@@ -39,7 +40,7 @@ class EvaluationPolicyTests(unittest.TestCase):
     def test_failed_evaluation_is_not_hidden_by_tee(self):
         with tempfile.TemporaryDirectory() as directory:
             nix = Path(directory) / "nix"
-            nix.write_text('#!/usr/bin/env bash\necho partial-output\nexit 42\n')
+            nix.write_text('#!/bin/sh\necho partial-output\nexit 42\n')
             nix.chmod(0o755)
             saved = Path(directory) / "evaluation.jsonl"
             result = subprocess.run(
@@ -153,7 +154,7 @@ class PromotionTests(unittest.TestCase):
         # Simulate another run advancing deploy between our fetch and push.
         hook = self.work / ".git/hooks/pre-push"
         hook.write_text(
-            '#!/usr/bin/env bash\n'
+            '#!/bin/sh\n'
             f'git --git-dir="{self.remote}" update-ref refs/heads/deploy {self.third}\n'
         )
         hook.chmod(0o755)

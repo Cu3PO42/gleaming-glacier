@@ -26,8 +26,13 @@ MAGE_TEST_ALPHA_PUBLIC=$("$age_keygen_bin" -y "$work_dir/alpha.agekey")
 MAGE_TEST_BETA_PUBLIC=$("$age_keygen_bin" -y "$work_dir/beta.agekey")
 export MAGE_TEST_ROOT_PUBLIC MAGE_TEST_ALPHA_PUBLIC MAGE_TEST_BETA_PUBLIC
 
-cat > "$work_dir/bin/nix" <<'MOCK'
-#!/usr/bin/env bash
+write_stub() {
+  # Use the running Bash directly; Nix sandboxes need not contain /usr/bin/env.
+  { printf '#!%s\n' "$BASH"; cat; } > "$work_dir/bin/$1"
+  chmod +x "$work_dir/bin/$1"
+}
+
+write_stub nix <<'MOCK'
 set -euo pipefail
 case "$*" in
   *ageRootKey.private*) printf '%s\n' 'op://test/root/private key' ;;
@@ -41,21 +46,17 @@ case "$*" in
 esac
 MOCK
 
-cat > "$work_dir/bin/op" <<'MOCK'
-#!/usr/bin/env bash
+write_stub op <<'MOCK'
 cat -- "$MAGE_TEST_IDENTITY"
 MOCK
 
-cat > "$work_dir/bin/dos2unix" <<'MOCK'
-#!/usr/bin/env bash
+write_stub dos2unix <<'MOCK'
 cat
 MOCK
 
-cat > "$work_dir/bin/agenix" <<'MOCK'
-#!/usr/bin/env bash
+write_stub agenix <<'MOCK'
 exec "$MAGE_TEST_AGENIX" "$@"
 MOCK
-chmod +x "$work_dir/bin/"*
 export PATH="$work_dir/bin:$PATH"
 
 run_mage() {
