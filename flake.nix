@@ -173,6 +173,21 @@
     copper.inheritModules = false;
 
     perSystem = {system, pkgs, ...}: {
+      checks.mage = pkgs.runCommand "mage-integration-tests" {
+        nativeBuildInputs = [
+          pkgs.bash
+          pkgs.git
+          pkgs.age
+          inputs.agenix.packages.${system}.agenix
+        ];
+      } ''
+        mkdir -p tests packages/mage
+        cp ${./tests/test_mage.sh} tests/test_mage.sh
+        cp ${./packages/mage/mage.sh} packages/mage/mage.sh
+        bash tests/test_mage.sh
+        touch "$out"
+      '';
+
       nix-unit = {
         package = pkgs.nix-unit;
         inputs = {
