@@ -29,6 +29,10 @@ The eval job assembles a single `build-config` JSON object containing the
 Nix settings, upstream filter keys, and upload policy, then passes it
 to the reusable workflow. `NIX_CONFIG` is defined once in `ci.yml`.
 
+Actions are pinned to commit SHAs and Dependabot checks for updates weekly.
+Hestia's binary is pinned separately with its native `version` input; keep
+that release consistent across evaluation, builds, backfill, and GC when updating it.
+
 ## Exclusions
 
 Edit [exclude.nix](./exclude.nix) to remove CI jobs by their original flake

@@ -33,16 +33,17 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).packages }}
     steps: &build-steps
-      - uses: NixOS/nix-installer-action@main
-      - uses: Mic92/hestia@v3
+      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # main
+      - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
         with:
+          version: v3.1.0
           upstream-cache-filter: true
           upstream-cache-key-names: ${{ fromJSON(inputs.build-config).upstreamCacheKeyNames }}
           wait-manifest-version: ${{ inputs.manifest-version }}
       - name: Set up niks3 uploads
         id: niks3
         if: fromJSON(inputs.build-config).cacheUpload
-        uses: Mic92/niks3-action@v1
+        uses: Mic92/niks3-action@347a156f2b7d8120fee9609272c0961ce555f7f9 # v1
         with:
           server-url: ${{ fromJSON(inputs.build-config).cacheServerUrl }}
           # Hestia owns the post-build hook; push completed outputs explicitly.
