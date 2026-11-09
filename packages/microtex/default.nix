@@ -24,6 +24,8 @@
     hash = "sha256-L4bx8x9hobwQQCt8Rsd1ycr0FZfHBbKBJfL3LpZu2HM=";
   };
 
+  patches = [ ./fontconfig-freetype.patch ];
+
   buildInputs = [
     gtkmm3
     tinyxml-2

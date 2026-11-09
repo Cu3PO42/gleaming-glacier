@@ -1,0 +1,10 @@
+--- a/src/platform/cairo/graphic_cairo.cpp
++++ b/src/platform/cairo/graphic_cairo.cpp
+@@ -5,6 +5,7 @@
+ #include "platform/cairo/graphic_cairo.h"
+ 
+ #include <fontconfig/fontconfig.h>
++#include <fontconfig/fcfreetype.h>
+ 
+ #include <utility>
+ 
