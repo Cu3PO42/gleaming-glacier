@@ -55,6 +55,13 @@ fails, the workflow falls back to normal evaluation and builds. The action's
 run cancellation is disabled; existing branch/PR concurrency handles outdated
 runs, and duplicate detection only needs read permissions.
 
+## Time limits
+
+Preflight, helper tests, result aggregation, and promotion each have five
+minutes. Evaluation and cache GC have 30 minutes. Each package/configuration
+build phase and the cached-output backfill have two hours. Duplicate waiters
+have five hours to cover evaluation plus both sequential build phases.
+
 ## Exclusions
 
 Edit [exclude.nix](./exclude.nix) to remove CI jobs by their original flake
@@ -74,11 +81,10 @@ output path. `*` matches one complete attribute component, for example:
 Packages and checks marked `meta.broken = true` are omitted automatically,
 including `sddm-theme-corners` and `illogical-impulse`. Metadata is inspected
 after name exclusions and before forcing derivation paths.
-The installer exclusion from `garnix.yaml` is retained. `exclude.nix` also
-documents evaluation failures in `gtkrc-reload`, `microtex`, and `rga-fzf`.
-These still need explicit exclusions: a broken dependency or an evaluation
-error does not necessarily mark the package itself as broken. Remove these
-entries as the packages are repaired.
+The installer exclusion from `garnix.yaml` is retained. `gtkrc-reload` is also
+explicitly excluded because its deprecated Gtk2 dependency fails evaluation.
+A broken dependency or an evaluation error does not necessarily mark the
+package itself as broken. Remove the entry when the package is repaired.
 
 An exclusion removes the standalone CI job, not dependencies of other selected
 outputs. It does not remove anything from the public `packages` or configuration outputs.

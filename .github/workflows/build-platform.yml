@@ -29,6 +29,7 @@ jobs:
     name: ${{ matrix.name }} (${{ matrix.system }})
     if: fromJSON(inputs.matrix).any-packages
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).packages }}
@@ -74,6 +75,7 @@ jobs:
     # These packages/checks are not prerequisites of any pending configuration.
     if: fromJSON(inputs.matrix).any-other-packages
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).other-packages }}
@@ -88,6 +90,7 @@ jobs:
           && (needs.packages.result == 'success' || needs.packages.result == 'skipped')
           && fromJSON(inputs.matrix).any-configurations }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix).configurations }}

@@ -22,6 +22,7 @@ jobs:
     # Cache deletion must run in the default branch's cache scope.
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     permissions:
       contents: read
       actions: write

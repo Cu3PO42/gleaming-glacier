@@ -26,6 +26,7 @@ jobs:
   deduplicate:
     name: Find duplicate CI run
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     outputs:
       should-skip: ${{ steps.decision.outputs.should-skip }}
       run-id: ${{ steps.decision.outputs.run-id }}
@@ -64,6 +65,7 @@ jobs:
     needs: deduplicate
     if: needs.deduplicate.outputs.should-skip == 'true'
     runs-on: ubuntu-24.04
+    timeout-minutes: 300
     steps:
       - name: Require duplicate success
         env:
@@ -87,6 +89,7 @@ jobs:
   tests:
     name: Test CI helpers
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
@@ -96,6 +99,7 @@ jobs:
     needs: deduplicate
     if: needs.deduplicate.outputs.should-skip != 'true'
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
       any-jobs: ${{ steps.matrix.outputs.any-jobs }}
@@ -184,6 +188,7 @@ jobs:
       ${{ fromJSON(needs.eval.outputs.build-config).cacheUpload
           && needs.eval.outputs.cached-outputs != '[]' }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 120
     permissions:
       contents: read
       actions: read
@@ -214,6 +219,7 @@ jobs:
   result:
     name: Nix CI result
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     needs: [deduplicate, wait-duplicate, tests, eval, build, upload-cached]
     if: always()
     steps:
@@ -246,6 +252,7 @@ jobs:
   promote:
     name: Advance deploy branch
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     needs: [eval, result]
     if: >-
       ${{ !cancelled()
