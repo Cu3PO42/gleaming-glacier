@@ -15,6 +15,10 @@ pkgs.writeShellApplication {
   ];
   text = builtins.readFile ./mage.sh;
 
+  passthru.tests.integration = pkgs.callPackage ../../tests/mage.nix {
+    agenix = inputs.agenix.packages.agenix;
+  };
+
   meta = with lib; {
     description = "A tool to make usage of Agenix that much more convenient.";
     homepage = "https://github.com/Cu3PO42/gleaming-glacier";

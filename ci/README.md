@@ -123,9 +123,10 @@ time on Nix; the separate job lets evaluation proceed in parallel.
 Run them locally with `python3 -m unittest discover -s tests -p 'test_ci_*.py'`.
 The Nix tests in `tests/ci.nix` and `tests/loading.nix` are exposed through
 the flake's nix-unit checks and run in the build matrix.
-`checks.<system>.mage` runs the existing Mage edit/decrypt integration test
-with real agenix/age and stubbed Nix/1Password metadata on every CI platform.
-Run it locally with `nix build .#checks.<system>.mage`.
+Mage owns its edit/decrypt integration test as `passthru.tests.integration`;
+`tests/mage.nix` supplies real agenix/age and stubbed Nix/1Password metadata.
+The flake exposes that package test as `checks.<system>.mage` for CI discovery.
+Run it locally with `nix build .#packages.<system>.mage.tests.integration`.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different

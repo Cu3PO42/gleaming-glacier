@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Run with agenix, age, age-keygen, and git available. Nix and 1Password
 # metadata are stubbed; editing and decryption use real agenix and age.
-mage_script=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/packages/mage/mage.sh
+mage_script=${MAGE_SCRIPT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/packages/mage/mage.sh}
 export MAGE_TEST_AGENIX=${AGENIX_BIN:-$(command -v agenix)}
 age_bin=${AGE_BIN:-$(command -v age)}
 age_keygen_bin=${AGE_KEYGEN_BIN:-$(command -v age-keygen)}
