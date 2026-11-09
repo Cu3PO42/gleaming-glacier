@@ -2,7 +2,7 @@ name: Nix CI
 
 on:
   push:
-    branches-ignore: [deploy]
+    branches-ignore: [deploy, 'dependabot/**']
     tags: ['**']
   pull_request:
   workflow_dispatch:
@@ -23,69 +23,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deduplicate:
-    name: Find duplicate CI run
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    outputs:
-      should-skip: ${{ steps.decision.outputs.should-skip }}
-      run-id: ${{ steps.decision.outputs.run-id }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: fkirc/skip-duplicate-actions@b974a9395958c231af965b70070979a577efa578 # v5
-        id: duplicate
-        # Deployment needs its own uploads. Manual runs and full reruns are escape hatches.
-        if: github.ref != 'refs/heads/master' && github.event_name != 'workflow_dispatch' && github.run_attempt == '1'
-        continue-on-error: true
-        with:
-          concurrent_skipping: same_content_newer
-          skip_after_successful_duplicate: 'true'
-          cancel_others: 'false'
-      - name: Verify duplicate content
-        id: decision
-        env:
-          CANDIDATE_SKIP: ${{ steps.duplicate.outputs.should_skip }}
-          CANDIDATE: ${{ steps.duplicate.outputs.skipped_by }}
-        run: |
-          should_skip=false
-          run_id=''
-          # The Actions API describes PR branch heads, not their tested merge trees.
-          # Only push runs have an unambiguous tree we can compare to this checkout.
-          if [[ "$CANDIDATE_SKIP" == true ]] \
-              && [[ "$(jq -r '.event' <<< "$CANDIDATE")" == push ]] \
-              && [[ "$(jq -r '.treeHash' <<< "$CANDIDATE")" == "$(git rev-parse 'HEAD^{tree}')" ]]; then
-            run_id=$(jq -er '.id | select(type == "number")' <<< "$CANDIDATE")
-            should_skip=true
-          fi
-          echo "should-skip=$should_skip" >> "$GITHUB_OUTPUT"
-          echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
-
-  wait-duplicate:
-    name: Wait for duplicate CI run
-    needs: deduplicate
-    if: needs.deduplicate.outputs.should-skip == 'true'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 300
-    steps:
-      - name: Require duplicate success
-        env:
-          GH_TOKEN: ${{ github.token }}
-          DUPLICATE_RUN_ID: ${{ needs.deduplicate.outputs.run-id }}
-        run: |
-          echo "Waiting for https://github.com/$GITHUB_REPOSITORY/actions/runs/$DUPLICATE_RUN_ID"
-          while true; do
-            run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$DUPLICATE_RUN_ID")
-            if [[ "$(jq -r '.status' <<< "$run")" == completed ]]; then
-              conclusion=$(jq -r '.conclusion' <<< "$run")
-              if [[ "$conclusion" != success ]]; then
-                echo "::error::Duplicate run concluded with $conclusion. Rerun all jobs to build independently."
-                exit 1
-              fi
-              break
-            fi
-            sleep 30
-          done
-
   tests:
     name: Test CI helpers
     runs-on: ubuntu-24.04
@@ -96,8 +33,6 @@ jobs:
 
   eval:
     name: Evaluate build matrix
-    needs: deduplicate
-    if: needs.deduplicate.outputs.should-skip != 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
@@ -220,15 +155,12 @@ jobs:
     name: Nix CI result
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    needs: [deduplicate, wait-duplicate, tests, eval, build, upload-cached]
+    needs: [tests, eval, build, upload-cached]
     if: always()
     steps:
       - name: Check results
         env:
           TESTS: ${{ needs.tests.result }}
-          DEDUPLICATE: ${{ needs.deduplicate.result }}
-          SHOULD_SKIP: ${{ needs.deduplicate.outputs.should-skip }}
-          WAIT_DUPLICATE: ${{ needs.wait-duplicate.result }}
           EVAL: ${{ needs.eval.result }}
           BUILD: ${{ needs.build.result }}
           UPLOAD_CACHED: ${{ needs.upload-cached.result }}
@@ -240,12 +172,7 @@ jobs:
                 && 'success' || 'skipped' }}
         run: |
           [[ "$TESTS" == success ]]
-          [[ "$DEDUPLICATE" == success ]]
-          if [[ "$SHOULD_SKIP" == true ]]; then
-            [[ "$WAIT_DUPLICATE" == success && "$EVAL" == skipped ]]
-          else
-            [[ "$WAIT_DUPLICATE" == skipped && "$EVAL" == success ]]
-          fi
+          [[ "$EVAL" == success ]]
           [[ "$BUILD" == "$EXPECTED_BUILD" ]]
           [[ "$UPLOAD_CACHED" == "$EXPECTED_UPLOAD" ]]
 

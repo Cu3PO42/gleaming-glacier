@@ -33,34 +33,18 @@ Actions are pinned to commit SHAs and Dependabot checks for updates weekly.
 Hestia's binary is pinned separately with its native `version` input; keep
 that release consistent across evaluation, builds, backfill, and GC when updating it.
 
-## Duplicate runs
+## Triggers
 
-Pushes to temporary branches and PR updates both continue to trigger CI,
-including Dependabot PRs. A preflight uses
-[skip-duplicate-actions](https://github.com/fkirc/skip-duplicate-actions) to
-find an older successful or concurrent run with matching content. We only
-reuse push runs whose tree matches the current checkout exactly. The action
-compares PR branch heads, so PR candidates alone do not establish that their
-tested merge result matches; a changed merge tree is built normally.
-
-When a matching push run exists, evaluation and builds are skipped, but the
-lightweight helper tests still run. `Nix CI result` waits for the original
-workflow to finish successfully. Failure or cancellation of that original
-fails the duplicate too. Run **Re-run all jobs** to build independently;
-rerunning only failed jobs retains the original preflight decision.
-
-`master` runs always evaluate, build as needed, and upload before promotion.
-Manual runs and full reruns also bypass deduplication. If duplicate detection
-fails, the workflow falls back to normal evaluation and builds. The action's
-run cancellation is disabled; existing branch/PR concurrency handles outdated
-runs, and duplicate detection only needs read permissions.
+Pushes to temporary branches and PR updates both trigger CI. Branch pushes
+under `dependabot/**` are excluded: Dependabot's PR events provide their CI
+coverage. Pushes to `deploy` remain excluded. A manually opened PR from another
+branch can still produce both push and PR runs; we accept that occasional
+cost to keep the workflow simple and test the PR's merge result.
 
 ## Time limits
 
-Preflight, helper tests, result aggregation, and promotion each have five
-minutes. Evaluation and cache GC have 30 minutes. Each package/configuration
-build phase and the cached-output backfill have two hours. Duplicate waiters
-have five hours to cover evaluation plus both sequential build phases.
+Helper tests, result aggregation, and promotion each have five minutes. Evaluation and cache GC have 30 minutes. Each package/configuration
+build phase and the cached-output backfill have two hours.
 
 ## Exclusions
 
