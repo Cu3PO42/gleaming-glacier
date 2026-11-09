@@ -29,6 +29,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      # Discover all CI helper tests, including backfill and workflow guards.
       - run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
 
   eval:
@@ -84,11 +85,7 @@ jobs:
         env:
           ANY_JOBS: ${{ steps.matrix.outputs.any-jobs }}
           MANIFEST_VERSION: ${{ steps.matrix.outputs.manifest-version }}
-        run: |
-          if [[ "$ANY_JOBS" == true && ! "$MANIFEST_VERSION" =~ ^[1-9][0-9]*$ ]]; then
-            echo '::error::Hestia did not commit the derivation manifest. Rerun evaluation before starting builds.'
-            exit 1
-          fi
+        run: bash ci/check-handoff.sh
       - name: Split matrix by platform and configuration dependencies
         id: split
         env:
@@ -158,6 +155,7 @@ jobs:
     needs: [tests, eval, build, upload-cached]
     if: always()
     steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Check results
         env:
           TESTS: ${{ needs.tests.result }}
@@ -170,11 +168,7 @@ jobs:
                 && fromJSON(needs.eval.outputs.build-config).cacheUpload
                 && needs.eval.outputs.cached-outputs != '[]'
                 && 'success' || 'skipped' }}
-        run: |
-          [[ "$TESTS" == success ]]
-          [[ "$EVAL" == success ]]
-          [[ "$BUILD" == "$EXPECTED_BUILD" ]]
-          [[ "$UPLOAD_CACHED" == "$EXPECTED_UPLOAD" ]]
+        run: bash ci/check-results.sh
 
   promote:
     name: Advance deploy branch

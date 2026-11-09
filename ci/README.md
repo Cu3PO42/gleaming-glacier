@@ -113,7 +113,10 @@ prerequisite if any member is needed. Configurations can then substitute
 matching packages from the cache while each output keeps its own matrix job.
 
 The `Test CI helpers` job runs the Python helper tests independently of Nix
-evaluation, giving failures their own status and logs. It contributes to
+evaluation, giving failures their own status and logs. Standard-library
+`unittest` discovery includes every `tests/test_ci_*.py` module, including
+backfill and workflow guard tests. Guard tests invoke the same shell scripts
+as Actions; they do not parse workflow YAML. It contributes to
 `Nix CI result`, so a failure blocks deployment promotion. Previously these
 quick tests ran before evaluation to stop faulty helpers before spending
 time on Nix; the separate job lets evaluation proceed in parallel.

@@ -1,24 +1,10 @@
 import os
 from pathlib import Path
 import subprocess
-import textwrap
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def step_script(name):
-    """Run the actual workflow shell block so gate tests cannot drift from it."""
-    workflow = (ROOT / ".github/workflows/ci.yml").read_text()
-    step = workflow.split(f"      - name: {name}\n", 1)[1]
-    lines = step.split("        run: |\n", 1)[1].splitlines(keepends=True)
-    script = []
-    for line in lines:
-        if line.strip() and not line.startswith("          "):
-            break
-        script.append(line)
-    return textwrap.dedent("".join(script))
 
 
 class ResultTests(unittest.TestCase):
@@ -29,7 +15,7 @@ class ResultTests(unittest.TestCase):
             "EXPECTED_UPLOAD": "success",
         }
         return subprocess.run(
-            ["bash", "-e", "-c", step_script("Check results")],
+            ["bash", str(ROOT / "ci/check-results.sh")],
             env={**os.environ, **env, **overrides}, capture_output=True, text=True,
         ).returncode
 
@@ -59,7 +45,7 @@ class HandoffTests(unittest.TestCase):
             for version in ("", "0", "invalid", "1", "123"):
                 with self.subTest(any_jobs=any_jobs, version=version):
                     result = subprocess.run(
-                        ["bash", "-e", "-c", step_script("Validate derivation cache handoff")],
+                        ["bash", str(ROOT / "ci/check-handoff.sh")],
                         env={**os.environ, "ANY_JOBS": any_jobs, "MANIFEST_VERSION": version},
                         capture_output=True, text=True,
                     )
