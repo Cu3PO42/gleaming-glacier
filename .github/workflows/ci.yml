@@ -151,11 +151,17 @@ jobs:
           EVAL: ${{ needs.eval.result }}
           BUILD: ${{ needs.build.result }}
           UPLOAD_CACHED: ${{ needs.upload-cached.result }}
+          EXPECTED_BUILD: ${{ needs.eval.outputs.any-jobs == 'true' && 'success' || 'skipped' }}
+          EXPECTED_UPLOAD: >-
+            ${{ needs.eval.outputs.build-config != ''
+                && fromJSON(needs.eval.outputs.build-config).cacheUpload
+                && needs.eval.outputs.cached-outputs != '[]'
+                && 'success' || 'skipped' }}
         run: |
           [[ "$TESTS" == success ]]
           [[ "$EVAL" == success ]]
-          [[ "$BUILD" == success || "$BUILD" == skipped ]]
-          [[ "$UPLOAD_CACHED" == success || "$UPLOAD_CACHED" == skipped ]]
+          [[ "$BUILD" == "$EXPECTED_BUILD" ]]
+          [[ "$UPLOAD_CACHED" == "$EXPECTED_UPLOAD" ]]
 
   promote:
     name: Advance deploy branch
