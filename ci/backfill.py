@@ -17,6 +17,7 @@ RESTORE_BATCH_SIZE = 4
 
 
 def narinfo_key(path):
+    # Nix base32 omits e, o, t, and u. Only the hash uses this restricted alphabet.
     match = re.fullmatch(r"/nix/store/([0-9abcdfghijklmnpqrsvwxyz]{32})-[^/\s]+", path)
     if not match:
         raise ValueError(f"Invalid store path: {path!r}")

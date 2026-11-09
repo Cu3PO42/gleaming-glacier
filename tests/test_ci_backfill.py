@@ -60,6 +60,13 @@ class PresenceTests(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 narinfo_key(path)
 
+    def test_hash_uses_nix_base32_but_package_name_does_not(self):
+        alphabet = "0123456789abcdfghijklmnpqrsvwxyz"
+        self.assertEqual(narinfo_key(f"/nix/store/{alphabet}-eotu"), alphabet + ".narinfo")
+        for letter in "eotuA":
+            with self.subTest(letter=letter), self.assertRaises(ValueError):
+                narinfo_key(f"/nix/store/{letter}{alphabet[1:]}-output")
+
 
 class BackfillTests(unittest.TestCase):
     @patch("ci.backfill.subprocess.run")
