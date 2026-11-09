@@ -173,6 +173,7 @@
     copper.inheritModules = false;
 
     perSystem = {system, pkgs, config, ...}: {
+      checks.ci-helpers = pkgs.callPackage ./tests/ci-helpers.nix {};
       checks.mage = config.packages.mage.tests.integration;
 
       nix-unit = {

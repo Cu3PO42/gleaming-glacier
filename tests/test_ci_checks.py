@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class ResultTests(unittest.TestCase):
     def check_result(self, **overrides):
         env = {
-            "TESTS": "success", "EVAL": "success", "BUILD": "success",
+            "EVAL": "success", "BUILD": "success",
             "UPLOAD_CACHED": "success", "EXPECTED_BUILD": "success",
             "EXPECTED_UPLOAD": "success",
         }
@@ -21,7 +21,7 @@ class ResultTests(unittest.TestCase):
 
     def test_required_jobs_must_succeed(self):
         self.assertEqual(self.check_result(), 0)
-        for job in ("TESTS", "EVAL", "BUILD", "UPLOAD_CACHED"):
+        for job in ("EVAL", "BUILD", "UPLOAD_CACHED"):
             for result in ("failure", "cancelled", "skipped", ""):
                 with self.subTest(job=job, result=result):
                     self.assertNotEqual(self.check_result(**{job: result}), 0)

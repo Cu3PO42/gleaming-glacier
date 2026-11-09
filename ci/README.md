@@ -17,8 +17,8 @@ checking out or evaluating the flake again. `Nix CI result` is the stable status
 check for branch protection; it also handles a fully cached, empty matrix.
 GitHub reports an overall workflow result, but required status checks select
 individual checks. The aggregate avoids requiring a changing set of matrix
-jobs. It runs even after failures and requires helper tests and evaluation to
-succeed, accepting a skipped build only when the matrix is empty. It also
+jobs. It runs even after failures and requires evaluation and all selected
+builds/checks to succeed, accepting a skipped build only when the matrix is empty. It also
 waits for the cached-output upload job when private-cache uploads are enabled.
 The evaluated matrix is split by platform. Each platform calls
 `build-platform.yml` with three matrices: packages needed by configurations,
@@ -43,7 +43,7 @@ cost to keep the workflow simple and test the PR's merge result.
 
 ## Time limits
 
-Helper tests, result aggregation, and promotion each have five minutes. Evaluation and cache GC have 30 minutes. Each package/configuration
+Result aggregation and promotion each have five minutes. Evaluation and cache GC have 30 minutes. Each package/configuration
 build phase and the cached-output backfill have two hours.
 
 ## Exclusions
@@ -112,21 +112,27 @@ For a Hestia group, every installable is checked; the whole group becomes a
 prerequisite if any member is needed. Configurations can then substitute
 matching packages from the cache while each output keeps its own matrix job.
 
-The `Test CI helpers` job runs the Python helper tests independently of Nix
-evaluation, giving failures their own status and logs. Standard-library
-`unittest` discovery includes every `tests/test_ci_*.py` module, including
-backfill and workflow guard tests. Guard tests invoke the same shell scripts
-as Actions; they do not parse workflow YAML. It contributes to
-`Nix CI result`, so a failure blocks deployment promotion. Previously these
-quick tests ran before evaluation to stop faulty helpers before spending
-time on Nix; the separate job lets evaluation proceed in parallel.
-Run them locally with `python3 -m unittest discover -s tests -p 'test_ci_*.py'`.
-The Nix tests in `tests/ci.nix` and `tests/loading.nix` are exposed through
-the flake's nix-unit checks and run in the build matrix.
-Mage owns its edit/decrypt integration test as `passthru.tests.integration`;
-`tests/mage.nix` supplies real agenix/age and stubbed Nix/1Password metadata.
-The flake exposes that package test as `checks.<system>.mage` for CI discovery.
-Run it locally with `nix build .#packages.<system>.mage.tests.integration`.
+All tests are exposed as flake checks and run through the same build matrix:
+
+- The Nix expression tests in `tests/ci.nix` and `tests/loading.nix` run through
+  nix-unit. nix-unit compares evaluated Nix values with their expected values.
+- `checks.<system>.ci-helpers` runs all Python helper tests with Nix-provided
+  Python, Bash, and Git. Standard-library `unittest` discovers every
+  `tests/test_ci_*.py` module, including backfill and workflow guard tests.
+  Guard tests invoke the same shell scripts as Actions; they do not parse YAML.
+  The check's source contains only the CI Python/shell helpers and their tests.
+- Mage owns its edit/decrypt integration test as `passthru.tests.integration`;
+  `tests/mage.nix` supplies real agenix/age and stubbed Nix/1Password metadata.
+  The flake exposes that package test as `checks.<system>.mage` for CI discovery.
+  This is a runtime integration test, so it runs as a derivation rather than
+  inside nix-unit's evaluator.
+
+Run them together with `nix flake check`, or select a runtime suite with
+`nix build .#checks.<system>.ci-helpers` or `nix build .#checks.<system>.mage`.
+For a quick Python-only run without Nix, use
+`python3 -m unittest discover -s tests -p 'test_ci_*.py'` with Bash and Git available.
+Python tests have no separate Actions job; their flake check contributes to
+`Nix CI result`, and Hestia can reuse a successful result until its inputs change.
 
 Shared uncached dependencies can still be built by multiple concurrent jobs
 within a phase. Packages overridden by a configuration also have different

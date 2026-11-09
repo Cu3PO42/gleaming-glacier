@@ -23,15 +23,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Test CI helpers
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      # Discover all CI helper tests, including backfill and workflow guards.
-      - run: python3 -m unittest discover -s tests -p 'test_ci_*.py'
-
   eval:
     name: Evaluate build matrix
     runs-on: ubuntu-24.04
@@ -152,13 +143,12 @@ jobs:
     name: Nix CI result
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    needs: [tests, eval, build, upload-cached]
+    needs: [eval, build, upload-cached]
     if: always()
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Check results
         env:
-          TESTS: ${{ needs.tests.result }}
           EVAL: ${{ needs.eval.result }}
           BUILD: ${{ needs.build.result }}
           UPLOAD_CACHED: ${{ needs.upload-cached.result }}
