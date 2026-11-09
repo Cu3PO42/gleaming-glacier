@@ -119,6 +119,7 @@ jobs:
     env:
       NIX_CONFIG: ${{ fromJSON(needs.eval.outputs.build-config).nixConfig }}
     steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # main
       - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
         with:
@@ -136,14 +137,7 @@ jobs:
           NIKS3_SERVER_URL: ${{ fromJSON(needs.eval.outputs.build-config).cacheServerUrl }}
           NIKS3_BIN: ${{ steps.niks3.outputs.binary-dir }}
           NIKS3_AUTH_TOKEN_SCRIPT: ${{ steps.niks3.outputs.auth-token-script }}
-        run: |
-          test -n "$NIKS3_AUTH_TOKEN_SCRIPT"
-          jq -r '.[]' <<< "$CACHED_OUTPUTS" > "$RUNNER_TEMP/cached-outputs"
-          while IFS= read -r output; do
-            # Substitute any platform's outputs; never build locally or remotely.
-            nix-store --realise "$output" --max-jobs 0 --option builders ""
-            "$NIKS3_BIN/niks3" push --auth-token-script "$NIKS3_AUTH_TOKEN_SCRIPT" "$output"
-          done < "$RUNNER_TEMP/cached-outputs"
+        run: python3 ci/backfill.py
 
   result:
     name: Nix CI result

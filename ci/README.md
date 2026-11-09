@@ -170,19 +170,28 @@ outputs of derivations marked `isCached`, including multi-output packages,
 and deduplicates them. These outputs do not get individual build jobs.
 
 On upload-enabled runs with cached outputs, one additional job, `Upload
-cached outputs to niks3`, runs alongside the build matrix. It restores those
-outputs and their runtime closures from Hestia or upstream caches and pushes
-them to niks3. The job needs no checkout or second evaluation. Substitution
-works for all three platforms on a single Linux runner; local and remote
-builds are disabled. Runs with no cached outputs need no extra upload job.
-Freshly built outputs are still uploaded by their own build jobs, so the
-additional job only downloads outputs omitted from the matrix.
+cached outputs to niks3`, runs alongside the build matrix. `ci/backfill.py`
+first queries niks3's bulk `/api/objects/present` endpoint in chunks of 500
+roots. This checks complete uploaded closures and refreshes their GC retention;
+it does not merely check for individual objects. The endpoint is available in
+the locked niks3 server and accepts CI's existing OIDC write scope.
+
+Only missing roots are restored from Hestia or upstream caches and uploaded.
+Restoration proceeds in batches of four roots, with local Nix garbage collection
+after each successful upload. A single batch's closures must still fit on disk,
+but closures from previous batches do not accumulate. API errors fail the job;
+they are never treated as cache hits. Transient request failures are retried.
+The job checks out its helper without reevaluating the flake. Substitution works
+for all three platforms on a single Linux runner; local and remote builds are
+disabled. Runs with no cached outputs need no extra upload job. Freshly built
+outputs are still uploaded by their own build jobs, so the additional job only
+downloads missing outputs omitted from the matrix.
 
 Restoration or upload failure fails `Nix CI result` and blocks promotion.
 If a cached output is evicted before restoration, the uploader fails rather
 than attempting to build another platform's output. Rerunning evaluation
 can then schedule the missing build. The uploader needs disk space for the
-restored closures, and niks3 deduplicates previously uploaded content.
+current batch's closures, and niks3 deduplicates overlapping uploaded content.
 
 Hestia uses GitHub's branch-scoped cache access: a run can read its current
 scope and the default branch's scope; PR runs can also read their base branch.
