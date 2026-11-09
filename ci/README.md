@@ -33,6 +33,28 @@ Actions are pinned to commit SHAs and Dependabot checks for updates weekly.
 Hestia's binary is pinned separately with its native `version` input; keep
 that release consistent across evaluation, builds, backfill, and GC when updating it.
 
+## Duplicate runs
+
+Pushes to temporary branches and PR updates both continue to trigger CI,
+including Dependabot PRs. A preflight uses
+[skip-duplicate-actions](https://github.com/fkirc/skip-duplicate-actions) to
+find an older successful or concurrent run with matching content. We only
+reuse push runs whose tree matches the current checkout exactly. The action
+compares PR branch heads, so PR candidates alone do not establish that their
+tested merge result matches; a changed merge tree is built normally.
+
+When a matching push run exists, evaluation and builds are skipped, but the
+lightweight helper tests still run. `Nix CI result` waits for the original
+workflow to finish successfully. Failure or cancellation of that original
+fails the duplicate too. Run **Re-run all jobs** to build independently;
+rerunning only failed jobs retains the original preflight decision.
+
+`master` runs always evaluate, build as needed, and upload before promotion.
+Manual runs and full reruns also bypass deduplication. If duplicate detection
+fails, the workflow falls back to normal evaluation and builds. The action's
+run cancellation is disabled; existing branch/PR concurrency handles outdated
+runs, and duplicate detection only needs read permissions.
+
 ## Exclusions
 
 Edit [exclude.nix](./exclude.nix) to remove CI jobs by their original flake
