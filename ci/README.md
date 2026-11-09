@@ -112,7 +112,9 @@ For a Hestia group, every installable is checked; the whole group becomes a
 prerequisite if any member is needed. Configurations can then substitute
 matching packages from the cache while each output keeps its own matrix job.
 
-All tests are exposed as flake checks and run through the same build matrix:
+Repository-specific test wiring lives in `tests/flake-module.nix`, explicitly
+imported by `flake.nix`. All tests are exposed as flake checks and run through
+the same build matrix:
 
 - The Nix expression tests in `tests/ci.nix` and `tests/loading.nix` run through
   nix-unit. nix-unit compares evaluated Nix values with their expected values.

@@ -156,11 +156,8 @@
       # Allow unfree packages; required because some of our own packages have
       # unfree dependencies.
       flakeModules.allow-unfree
-      inputs.nix-unit.modules.flake.default
+      ./tests/flake-module.nix
     ];
-
-    flake.tests.loading = import ./tests/loading.nix { inherit (inputs.nixpkgs) lib; };
-    flake.tests.ci = import ./tests/ci.nix { inherit (inputs.nixpkgs) lib; };
 
     flake.ciJobs = import ./ci {
       inherit (inputs.nixpkgs) lib;
@@ -172,18 +169,7 @@
     # We don't want to inherit our own modules!
     copper.inheritModules = false;
 
-    perSystem = {system, pkgs, config, ...}: {
-      checks.ci-helpers = pkgs.callPackage ./tests/ci-helpers.nix {};
-      checks.mage = config.packages.mage.tests.integration;
-
-      nix-unit = {
-        package = pkgs.nix-unit;
-        inputs = {
-          inherit (inputs) nixpkgs flake-parts nix-unit;
-          "flake-parts/nixpkgs-lib" = inputs.flake-parts.inputs.nixpkgs-lib;
-        };
-      };
-
+    perSystem = {pkgs, ...}: {
       devShells = {
         # Shell for bootstrapping either a NixOS or Home-Manager config
         default = import ./shell.nix {inherit pkgs;};
