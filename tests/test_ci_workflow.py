@@ -53,5 +53,19 @@ class ResultTests(unittest.TestCase):
                 self.assertNotEqual(self.check_result(UPLOAD_CACHED=result, EXPECTED_UPLOAD="skipped"), 0)
 
 
+class HandoffTests(unittest.TestCase):
+    def test_pending_builds_require_a_committed_manifest(self):
+        for any_jobs in ("true", "false"):
+            for version in ("", "0", "invalid", "1", "123"):
+                with self.subTest(any_jobs=any_jobs, version=version):
+                    result = subprocess.run(
+                        ["bash", "-e", "-c", step_script("Validate derivation cache handoff")],
+                        env={**os.environ, "ANY_JOBS": any_jobs, "MANIFEST_VERSION": version},
+                        capture_output=True, text=True,
+                    )
+                    expected = any_jobs == "false" or version in ("1", "123")
+                    self.assertEqual(result.returncode == 0, expected)
+
+
 if __name__ == "__main__":
     unittest.main()

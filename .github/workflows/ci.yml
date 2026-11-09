@@ -78,6 +78,15 @@ jobs:
             x86_64-linux=ubuntu-24.04
             aarch64-linux=ubuntu-24.04-arm
             aarch64-darwin=macos-15
+      - name: Validate derivation cache handoff
+        env:
+          ANY_JOBS: ${{ steps.matrix.outputs.any-jobs }}
+          MANIFEST_VERSION: ${{ steps.matrix.outputs.manifest-version }}
+        run: |
+          if [[ "$ANY_JOBS" == true && ! "$MANIFEST_VERSION" =~ ^[1-9][0-9]*$ ]]; then
+            echo '::error::Hestia did not commit the derivation manifest. Rerun evaluation before starting builds.'
+            exit 1
+          fi
       - name: Split matrix by platform and configuration dependencies
         id: split
         env:

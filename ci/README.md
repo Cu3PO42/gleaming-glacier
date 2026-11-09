@@ -130,6 +130,11 @@ before importing Hestia's part. This is the behavior added by
 [Hestia PR #136](https://github.com/Mic92/hestia/pull/136); without that
 option, registered derivation closures bypass upstream filtering.
 Existing unfiltered cache entries remain until they are garbage-collected.
+Before scheduling uncached builds, evaluation requires a positive committed
+Hestia manifest version. Hestia otherwise treats registration/drain failures as
+warnings, but our checkout-free build jobs require that handoff. Failure aborts
+evaluation with a request to rerun it. A committed manifest cannot prevent later
+cache eviction; missing derivations during prefetch also require reevaluation.
 The workflow accepts the flake's Nix configuration and sets up its
 additional Nix Community cache in build jobs too; no account or cache
 secret is needed.
