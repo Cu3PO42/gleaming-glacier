@@ -155,7 +155,7 @@ jobs:
           version: v3.1.0
           read-only: true
           wait-manifest-version: ${{ needs.eval.outputs.manifest-version }}
-      - uses: Mic92/niks3-action@v1.8.0
+      - uses: Mic92/niks3-action@v1.10.0
         id: niks3
         with:
           server-url: ${{ fromJSON(needs.eval.outputs.build-config).cacheServerUrl }}
