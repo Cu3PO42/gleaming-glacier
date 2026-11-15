@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run with agenix, age, age-keygen, and git available. Nix and 1Password
-# metadata are stubbed; editing and decryption use real agenix and age.
+# Run with agenix, age, age-keygen, and git available. Mage's Nix and 1Password
+# metadata lookups are stubbed; agenix evaluates rules with real Nix.
 mage_script=${MAGE_SCRIPT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/packages/mage/mage.sh}
 export MAGE_TEST_AGENIX=${AGENIX_BIN:-$(command -v agenix)}
 age_bin=${AGE_BIN:-$(command -v age)}
 age_keygen_bin=${AGE_KEYGEN_BIN:-$(command -v age-keygen)}
 work_dir=$(mktemp -d)
 trap 'rm -rf -- "$work_dir"' EXIT
+
+# Agenix invokes nix-instantiate by its store path, bypassing the metadata
+# stub below. Keep its state writable inside the Nix build sandbox and use
+# a dummy store: evaluating these literal rules needs no real store access.
+export NIX_STATE_DIR="$work_dir/nix-state"
+export NIX_REMOTE=dummy://
 
 export MAGE_TEST_ROOT="$work_dir/repo"
 export TMPDIR="$work_dir/tmp"
