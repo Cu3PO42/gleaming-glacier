@@ -33,6 +33,8 @@ Actions use exact release tags in the workflows; their commit SHAs and
 transitive action dependencies are pinned in
 [actions.lock](../.github/workflows/actions.lock). Dependabot checks for updates
 weekly and updates the workflow references and lockfile together.
+Dependabot also checks the root `flake.lock` weekly for newer input commits.
+It does not update pinned tags or branches declared in `flake.nix`.
 
 Install GitHub's lockfile generator once with an authenticated GitHub CLI:
 
