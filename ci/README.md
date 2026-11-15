@@ -29,7 +29,31 @@ The eval job assembles a single `build-config` JSON object containing the
 Nix settings, upstream filter keys, and upload policy, then passes it
 to the reusable workflow. `NIX_CONFIG` is defined once in `ci.yml`.
 
-Actions are pinned to commit SHAs and Dependabot checks for updates weekly.
+Actions use exact release tags in the workflows; their commit SHAs and
+transitive action dependencies are pinned in
+[actions.lock](../.github/workflows/actions.lock). Dependabot checks for updates
+weekly and updates the workflow references and lockfile together.
+
+Install GitHub's lockfile generator once with an authenticated GitHub CLI:
+
+```sh
+gh extension install github/gh-actions-lock --pin v0.4.1
+```
+
+After adding or changing workflows or action references, regenerate and verify
+from the repository root:
+
+```sh
+gh actions-lock
+gh actions-lock --verify
+```
+
+Commit the workflow changes and generated lockfile together. Do not edit the
+lockfile by hand. The `Verify action lockfile` workflow checks every workflow on
+pull requests and pushes to `master`; add its check to branch protection to
+require verification before merging. See GitHub's
+[workflow dependency lockfile documentation](https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles).
+
 Hestia's binary is pinned separately with its native `version` input; keep
 that release consistent across evaluation, builds, backfill, and GC when updating it.
 

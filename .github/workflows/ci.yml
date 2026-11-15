@@ -34,8 +34,8 @@ jobs:
       build-config: ${{ steps.config.outputs.config }}
       cached-outputs: ${{ steps.split.outputs.cached-outputs }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # main
+      - uses: actions/checkout@v6.1.0
+      - uses: NixOS/nix-installer-action@v1.0.0
       - name: Prepare shared build configuration
         id: config
         run: |
@@ -54,14 +54,14 @@ jobs:
             }
           ' <<< "$cache_config")
           echo "config=$build_config" >> "$GITHUB_OUTPUT"
-      - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
+      - uses: Mic92/hestia@v3.1.0
         with:
           version: v3.1.0
           upstream-cache-filter: true
           upstream-cache-key-names: ${{ fromJSON(steps.config.outputs.config).upstreamCacheKeyNames }}
           filter-drv-closures: true
       - id: matrix
-        uses: Mic92/hestia/matrix@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
+        uses: Mic92/hestia/matrix@v3.1.0
         env:
           NIX_EVAL_JOBS_OUTPUT: ${{ runner.temp }}/ci-evaluation.jsonl
         with:
@@ -119,14 +119,14 @@ jobs:
     env:
       NIX_CONFIG: ${{ fromJSON(needs.eval.outputs.build-config).nixConfig }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # main
-      - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
+      - uses: actions/checkout@v6.1.0
+      - uses: NixOS/nix-installer-action@v1.0.0
+      - uses: Mic92/hestia@v3.1.0
         with:
           version: v3.1.0
           read-only: true
           wait-manifest-version: ${{ needs.eval.outputs.manifest-version }}
-      - uses: Mic92/niks3-action@347a156f2b7d8120fee9609272c0961ce555f7f9 # v1
+      - uses: Mic92/niks3-action@v1.8.0
         id: niks3
         with:
           server-url: ${{ fromJSON(needs.eval.outputs.build-config).cacheServerUrl }}
@@ -146,7 +146,7 @@ jobs:
     needs: [eval, build, upload-cached]
     if: always()
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@v6.1.0
       - name: Check results
         env:
           EVAL: ${{ needs.eval.result }}
@@ -174,7 +174,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@v6.1.0
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
