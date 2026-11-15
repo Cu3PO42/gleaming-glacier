@@ -5,12 +5,12 @@ version: 'v0.0.3'
 workflows:
     '.github/workflows/build-platform.yml':
         - 'mic92/hestia@v3.1.0'
-        - 'mic92/niks3-action@v1.8.0'
+        - 'mic92/niks3-action@v1.10.0'
         - 'nixos/nix-installer-action@v1.0.0'
     '.github/workflows/ci.yml':
         - 'actions/checkout@v6.1.0'
         - 'mic92/hestia@v3.1.0'
-        - 'mic92/niks3-action@v1.8.0'
+        - 'mic92/niks3-action@v1.10.0'
         - 'nixos/nix-installer-action@v1.0.0'
     '.github/workflows/dependabot-automerge.yml':
         - 'actions/checkout@v6.1.0'
@@ -30,9 +30,9 @@ dependencies:
         commit: 'sha1-dfed9ced335d28978ba74e513939a10db1f71025'
         owner_id: 96200
         repo_id: 1255744972
-    'mic92/niks3-action@v1.8.0':
-        ref: 'v1.8.0'
-        commit: 'sha1-347a156f2b7d8120fee9609272c0961ce555f7f9'
+    'mic92/niks3-action@v1.10.0':
+        ref: 'v1.10.0'
+        commit: 'sha1-01820a2b97ac01531ad9fb859db94af63ffcbd83'
         owner_id: 96200
         repo_id: 1234569622
     'nixos/nix-installer-action@v1.0.0':
