@@ -1,4 +1,5 @@
-{pkgs, lib, modulesPath, ...}: {
+{
+  main = {pkgs, lib, modulesPath, ...}: {
     imports = [
         "${modulesPath}/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix"
     ];
@@ -15,4 +16,5 @@
     environment.systemPackages = with pkgs; [fish];
 
     nixpkgs.hostPlatform = "x86_64-linux";
+  };
 }
