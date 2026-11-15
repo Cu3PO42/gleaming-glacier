@@ -315,3 +315,35 @@ the branch and does not switch any machines itself.
 
 `garnix.yaml` remains independent: disable the Garnix integration separately
 if GitHub Actions is intended to replace it.
+
+## Dependabot flake auto-merge
+
+`dependabot-automerge.yml` runs on completion of the PR workflows `Nix CI`
+and `Verify action lockfile`. It checks the current PR through GitHub's API
+and squash-merges it only when:
+
+- The author is `dependabot[bot]`, the PR is open and ready for review, and
+  both branches belong to `Cu3PO42/gleaming-glacier` with `master` as the base.
+- The complete paginated file list contains exactly one modified root
+  `flake.lock`, with no added, removed, or renamed files.
+- The latest PR run of each workflow succeeded for the current head and base.
+
+The helper rechecks eligibility before merging and pins the merge request to
+that head SHA. GitHub still enforces repository merge rules and required
+reviews; the helper never bypasses them. Unrelated Dependabot updates require
+manual merging. A changed base or head needs fresh successful PR runs.
+
+This privileged `workflow_run` job checks out only the trusted default-branch
+revision. It does not execute PR code, use PR caches, or download PR artifacts.
+It uses `GITHUB_TOKEN` with contents/pull requests write permissions for the
+merge, and actions write permission to dispatch `Nix CI` on master afterwards.
+The explicit dispatch is necessary because merges made with `GITHUB_TOKEN`
+do not start push workflows. Master CI uploads to niks3 and advances `deploy`
+through the existing gates. Repository-level auto-merge and extra credentials
+are not needed.
+
+If merging succeeds but dispatch fails, rerun the auto-merge workflow: it can
+recognize an already merged eligible PR merged by `github-actions[bot]` and
+retry master CI dispatch. A master CI failure uses the normal CI rerun path.
+The auto-merge workflow must reach the default branch before GitHub can run it;
+it applies to subsequent PR workflow completions (including reruns).

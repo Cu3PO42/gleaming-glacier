@@ -12,6 +12,8 @@ workflows:
         - 'mic92/hestia@v3.1.0'
         - 'mic92/niks3-action@v1.8.0'
         - 'nixos/nix-installer-action@v1.0.0'
+    '.github/workflows/dependabot-automerge.yml':
+        - 'actions/checkout@v6.1.0'
     '.github/workflows/hestia-gc.yml':
         - 'mic92/hestia@v3.1.0'
         - 'nixos/nix-installer-action@v1.0.0'

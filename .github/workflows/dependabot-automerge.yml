@@ -1,0 +1,38 @@
+name: Merge Dependabot flake updates
+
+on:
+  workflow_run:
+    workflows: [Nix CI, Verify action lockfile]
+    types: [completed]
+
+permissions:
+  contents: read
+
+# Serialize completions for the same head without dropping another PR's event.
+concurrency:
+  group: dependabot-flake-automerge-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    name: Merge tested flake.lock update
+    if: >-
+      ${{ github.repository == 'Cu3PO42/gleaming-glacier'
+          && github.event.workflow_run.event == 'pull_request'
+          && github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      # workflow_run executes trusted default-branch code, never PR code.
+      - uses: actions/checkout@v6.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Validate current PR and CI, merge, and dispatch master CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 ci/automerge.py
