@@ -28,8 +28,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
-      matrix: ${{ steps.split.outputs.matrix }}
-      any-jobs: ${{ steps.matrix.outputs.any-jobs }}
+      x86_64-linux: ${{ steps.split.outputs.x86_64-linux }}
+      aarch64-linux: ${{ steps.split.outputs.aarch64-linux }}
+      aarch64-darwin: ${{ steps.split.outputs.aarch64-darwin }}
       manifest-version: ${{ steps.matrix.outputs.manifest-version }}
       build-config: ${{ steps.config.outputs.config }}
       cached-outputs: ${{ steps.split.outputs.cached-outputs }}
@@ -83,24 +84,52 @@ jobs:
           MATRIX: ${{ steps.matrix.outputs.matrix }}
         run: |
           platforms=$(python3 ci/matrix.py <<< "$MATRIX")
-          echo "matrix=$platforms" >> "$GITHUB_OUTPUT"
+          for system in x86_64-linux aarch64-linux aarch64-darwin; do
+            platform=$(jq -c --arg system "$system" '.include[] | select(.system == $system)' <<< "$platforms")
+            echo "$system=$platform" >> "$GITHUB_OUTPUT"
+          done
           cached_outputs=$(python3 ci/cached_outputs.py < "$RUNNER_TEMP/ci-evaluation.jsonl")
           echo "cached-outputs=$cached_outputs" >> "$GITHUB_OUTPUT"
 
-  build:
-    name: ${{ matrix.system }}
+  build-x86_64-linux:
+    name: x86_64-linux
     needs: eval
-    if: needs.eval.outputs.any-jobs == 'true'
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.eval.outputs.matrix) }}
+    if: needs.eval.outputs.x86_64-linux != ''
     uses: ./.github/workflows/build-platform.yml
     permissions:
       contents: read
       actions: read
       id-token: write
     with:
-      matrix: ${{ toJSON(matrix) }}
+      matrix: ${{ needs.eval.outputs.x86_64-linux }}
+      manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      build-config: ${{ needs.eval.outputs.build-config }}
+
+  build-aarch64-linux:
+    name: aarch64-linux
+    needs: eval
+    if: needs.eval.outputs.aarch64-linux != ''
+    uses: ./.github/workflows/build-platform.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    with:
+      matrix: ${{ needs.eval.outputs.aarch64-linux }}
+      manifest-version: ${{ needs.eval.outputs.manifest-version }}
+      build-config: ${{ needs.eval.outputs.build-config }}
+
+  build-aarch64-darwin:
+    name: aarch64-darwin
+    needs: eval
+    if: needs.eval.outputs.aarch64-darwin != ''
+    uses: ./.github/workflows/build-platform.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    with:
+      matrix: ${{ needs.eval.outputs.aarch64-darwin }}
       manifest-version: ${{ needs.eval.outputs.manifest-version }}
       build-config: ${{ needs.eval.outputs.build-config }}
 
@@ -143,16 +172,20 @@ jobs:
     name: Nix CI result
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    needs: [eval, build, upload-cached]
+    needs: [eval, build-x86_64-linux, build-aarch64-linux, build-aarch64-darwin, upload-cached]
     if: always()
     steps:
       - uses: actions/checkout@v6.1.0
       - name: Check results
         env:
           EVAL: ${{ needs.eval.result }}
-          BUILD: ${{ needs.build.result }}
+          BUILD_X86_64_LINUX: ${{ needs.build-x86_64-linux.result }}
+          BUILD_AARCH64_LINUX: ${{ needs.build-aarch64-linux.result }}
+          BUILD_AARCH64_DARWIN: ${{ needs.build-aarch64-darwin.result }}
           UPLOAD_CACHED: ${{ needs.upload-cached.result }}
-          EXPECTED_BUILD: ${{ needs.eval.outputs.any-jobs == 'true' && 'success' || 'skipped' }}
+          EXPECTED_BUILD_X86_64_LINUX: ${{ needs.eval.outputs.x86_64-linux != '' && 'success' || 'skipped' }}
+          EXPECTED_BUILD_AARCH64_LINUX: ${{ needs.eval.outputs.aarch64-linux != '' && 'success' || 'skipped' }}
+          EXPECTED_BUILD_AARCH64_DARWIN: ${{ needs.eval.outputs.aarch64-darwin != '' && 'success' || 'skipped' }}
           EXPECTED_UPLOAD: >-
             ${{ needs.eval.outputs.build-config != ''
                 && fromJSON(needs.eval.outputs.build-config).cacheUpload

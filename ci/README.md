@@ -18,9 +18,11 @@ check for branch protection; it also handles a fully cached, empty matrix.
 GitHub reports an overall workflow result, but required status checks select
 individual checks. The aggregate avoids requiring a changing set of matrix
 jobs. It runs even after failures and requires evaluation and all selected
-builds/checks to succeed, accepting a skipped build only when the matrix is empty. It also
+builds/checks to succeed, accepting a skipped platform only when its matrix is empty. It also
 waits for the cached-output upload job when private-cache uploads are enabled.
-The evaluated matrix is split by platform. Each platform calls
+The evaluated matrix is split by platform. Three explicit caller jobs make
+`x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` separate top-level graph
+nodes. A platform with no uncached jobs is skipped. Each platform calls
 `build-platform.yml` with three matrices: packages needed by configurations,
 independent packages/checks, and configurations. The three phases share one
 install/cache/build/upload step list through the `build-steps` YAML anchor;

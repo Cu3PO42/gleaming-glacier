@@ -8,12 +8,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ResultTests(unittest.TestCase):
+    systems = ("X86_64_LINUX", "AARCH64_LINUX", "AARCH64_DARWIN")
+
     def check_result(self, **overrides):
         env = {
-            "EVAL": "success", "BUILD": "success",
-            "UPLOAD_CACHED": "success", "EXPECTED_BUILD": "success",
-            "EXPECTED_UPLOAD": "success",
+            "EVAL": "success",
+            "UPLOAD_CACHED": "success", "EXPECTED_UPLOAD": "success",
         }
+        for system in self.systems:
+            env[f"BUILD_{system}"] = "success"
+            env[f"EXPECTED_BUILD_{system}"] = "success"
         return subprocess.run(
             ["bash", str(ROOT / "ci/check-results.sh")],
             env={**os.environ, **env, **overrides}, capture_output=True, text=True,
@@ -21,22 +25,33 @@ class ResultTests(unittest.TestCase):
 
     def test_required_jobs_must_succeed(self):
         self.assertEqual(self.check_result(), 0)
-        for job in ("EVAL", "BUILD", "UPLOAD_CACHED"):
+        jobs = ("EVAL", "UPLOAD_CACHED", *(f"BUILD_{s}" for s in self.systems))
+        for job in jobs:
             for result in ("failure", "cancelled", "skipped", ""):
                 with self.subTest(job=job, result=result):
                     self.assertNotEqual(self.check_result(**{job: result}), 0)
 
     def test_skips_are_accepted_only_when_expected(self):
-        self.assertEqual(self.check_result(BUILD="skipped", EXPECTED_BUILD="skipped"), 0)
-        self.assertEqual(self.check_result(UPLOAD_CACHED="skipped", EXPECTED_UPLOAD="skipped"), 0)
-        self.assertEqual(self.check_result(
-            BUILD="skipped", UPLOAD_CACHED="skipped",
-            EXPECTED_BUILD="skipped", EXPECTED_UPLOAD="skipped",
-        ), 0)
-        for result in ("failure", "cancelled"):
-            with self.subTest(result=result):
-                self.assertNotEqual(self.check_result(BUILD=result, EXPECTED_BUILD="skipped"), 0)
-                self.assertNotEqual(self.check_result(UPLOAD_CACHED=result, EXPECTED_UPLOAD="skipped"), 0)
+        jobs = [(f"BUILD_{s}", f"EXPECTED_BUILD_{s}") for s in self.systems]
+        jobs.append(("UPLOAD_CACHED", "EXPECTED_UPLOAD"))
+        all_skipped = {}
+        for job, expected in jobs:
+            with self.subTest(job=job):
+                skipped = {job: "skipped", expected: "skipped"}
+                self.assertEqual(self.check_result(**skipped), 0)
+                all_skipped.update(skipped)
+                for result in ("failure", "cancelled", "success", ""):
+                    self.assertNotEqual(self.check_result(**{job: result, expected: "skipped"}), 0)
+        self.assertEqual(self.check_result(**all_skipped), 0)
+
+    def test_failure_is_not_hidden_by_other_platforms_being_cached(self):
+        for failed in self.systems:
+            with self.subTest(failed=failed):
+                overrides = {}
+                for system in self.systems:
+                    overrides[f"BUILD_{system}"] = "failure" if system == failed else "skipped"
+                    overrides[f"EXPECTED_BUILD_{system}"] = "success" if system == failed else "skipped"
+                self.assertNotEqual(self.check_result(**overrides), 0)
 
 
 class HandoffTests(unittest.TestCase):
