@@ -161,7 +161,7 @@ in {
   };
 
   config = let
-    neovimConfig = pkgs.neovimUtils.makeNeovimConfig {
+    neovimConfig = {
       inherit (cfg) extraPython3Packages;
       withRuby = true;
       extraName = "-lunarvim";
@@ -185,9 +185,7 @@ in {
           (neovimConfig
             // {
               wrapperArgs =
-                (lib.escapeShellArgs neovimConfig.wrapperArgs)
-                + " "
-                + extraMakeWrapperArgs
+                extraMakeWrapperArgs
                 + " "
                 + extraMakeWrapperLuaCArgs
                 + " "
