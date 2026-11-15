@@ -35,7 +35,7 @@ jobs:
       build-config: ${{ steps.config.outputs.config }}
       cached-outputs: ${{ steps.split.outputs.cached-outputs }}
     steps:
-      - uses: actions/checkout@v6.1.0
+      - uses: actions/checkout@v7.0.1
       - uses: NixOS/nix-installer-action@v1.0.0
       - name: Prepare shared build configuration
         id: config
@@ -148,7 +148,7 @@ jobs:
     env:
       NIX_CONFIG: ${{ fromJSON(needs.eval.outputs.build-config).nixConfig }}
     steps:
-      - uses: actions/checkout@v6.1.0
+      - uses: actions/checkout@v7.0.1
       - uses: NixOS/nix-installer-action@v1.0.0
       - uses: Mic92/hestia@v3.1.0
         with:
@@ -175,7 +175,7 @@ jobs:
     needs: [eval, build-x86_64-linux, build-aarch64-linux, build-aarch64-darwin, upload-cached]
     if: always()
     steps:
-      - uses: actions/checkout@v6.1.0
+      - uses: actions/checkout@v7.0.1
       - name: Check results
         env:
           EVAL: ${{ needs.eval.result }}
@@ -207,7 +207,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6.1.0
+      - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
