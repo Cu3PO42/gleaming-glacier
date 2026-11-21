@@ -35,6 +35,7 @@
     niks3 = {
       url = "github:Mic92/niks3";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
     # Secure Boot
@@ -92,6 +93,7 @@
       url = "github:numtide/nixos-anywhere";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.disko.follows = "disko";
+      inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
     # Provides a pre-built index database describing which binaries are
@@ -120,6 +122,7 @@
     nix-unit = {
       url = "github:nix-community/nix-unit";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
     };
 
     # Only for deduplication of other transitive dependencies
