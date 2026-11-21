@@ -39,6 +39,7 @@
       "home-manager"
       "default-user"
       "private-nix-cache"
+      "auto-upgrade"
     ];
 
     copper.feature.zfs = {
@@ -51,7 +52,7 @@
     networking.hostId = "6302c2e3";
 
     copper.feature.remote-unlock.initrdHostKeySecret = ./secrets/initrd_host_ed25519_key.age;
-    
+
     copper.feature.hetzner-server.ipv6 = "2a01:4f8:c17:f3da::/64";
 
     users.users.Cu3PO42.hashedPasswordFile = config.age.secrets.password-Cu3PO42.path;
