@@ -44,7 +44,7 @@ jobs:
       - name: Set up niks3 uploads
         id: niks3
         if: fromJSON(inputs.build-config).cacheUpload
-        uses: Mic92/niks3-action@v1.10.0
+        uses: Mic92/niks3-action@v1.11.0
         with:
           server-url: ${{ fromJSON(inputs.build-config).cacheServerUrl }}
           # Hestia owns the post-build hook; push completed outputs explicitly.
